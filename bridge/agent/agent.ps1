@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.4'
+$Version = '1.0.5'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -120,6 +120,22 @@ function Send-Stats {
 }
 
 # ---------------------------------------------------------------- job execution
+function Read-TextShared($path) {
+  # A job that starts a long-lived background process (ComfyUI, a server) hands that child an
+  # inherited copy of the job's own stdout handle, so the file stays locked after the job exits.
+  # [IO.File]::ReadAllText then throws and we lose output we already have. Open with full sharing.
+  if (-not (Test-Path $path)) { return '' }
+  try {
+    $fs = [IO.File]::Open($path, [IO.FileMode]::Open, [IO.FileAccess]::Read, [IO.FileShare]::ReadWrite)
+    try {
+      $sr = New-Object IO.StreamReader($fs)
+      try { return $sr.ReadToEnd() } finally { $sr.Dispose() }
+    } finally { $fs.Dispose() }
+  } catch {
+    return '[AGENT] could not read this stream: ' + $_.Exception.Message
+  }
+}
+
 function Run-Job($job) {
   Log ('job ' + $job.id + ' start: ' + $job.label)
   $stamp   = [guid]::NewGuid().ToString('N').Substring(0, 8)
@@ -178,8 +194,8 @@ function Run-Job($job) {
     Add-Content -Path $errFile -Value $_.Exception.Message
   }
 
-  if (Test-Path $outFile) { $so = [IO.File]::ReadAllText($outFile) }
-  if (Test-Path $errFile) { $se = [IO.File]::ReadAllText($errFile) }
+  $so = Read-TextShared $outFile
+  $se = Read-TextShared $errFile
   if ($code -eq -9) { $se = $se + [Environment]::NewLine + '[AGENT] killed on timeout' }
   if ($exitNote) { $se = $se + [Environment]::NewLine + $exitNote }
   Remove-Item $script, $outFile, $errFile -Force -ErrorAction SilentlyContinue
