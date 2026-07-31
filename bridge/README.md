@@ -74,6 +74,13 @@ curl -s -H "x-admin-token: $AD" "$U/api/job/1"
 - ⚠ **A job that dies without posting a result would sit on `running` forever** and the dashboard
   would lie about what the machine is doing. Two guards: the agent always posts a result, and the
   worker requeues anything past `timeout_s + 120` on the next poll.
+- ⚠ **`Start-Process -PassThru` loses the exit code.** Windows PowerShell disposes the process
+  handle on exit, so `$p.ExitCode` throws *"Process was not started by this object"* and every
+  successful job came back with no exit code — reported as `failed` despite complete output.
+  **Touch `$p.Handle` right after starting** to cache it. (`WaitForExit()` untimed after the timed
+  overload is also required, but on its own it does not fix this.)
+- ⚠ **`raw.githubusercontent.com` serves a stale cached file for minutes after a push.** A `?cb=`
+  query does not bust it. **Pin the commit SHA in the URL** when pushing an agent update.
 - Output is capped at 180,000 characters per stream and the footer **states** what was dropped —
   never a silent slice.
 

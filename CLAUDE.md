@@ -32,6 +32,33 @@ drawn to scale as an interactive strip.
 5. **First deliverable = a 60-second ORIGINAL STORY TRAILER**, same genre and cut grammar as the
    reference, in English. ~9–10 sustained shots + a flash montage. I write script, cast and shot list.
 
+## ⭐ MACHINE INVENTORY — measured over the bridge 2026-08-01, not assumed
+
+**The PC:** `DESKTOP-SFLR7D9`, Windows 11 Pro, PS 5.1. Ryzen 9 9950X3D (16C/32T), **61.6 GB RAM**.
+Disk free: C 1127 GB · **D 5613 GB** · E 1835 GB.
+
+- ⚠⚠ **ONE GPU, not two — RTX PRO 6000 Blackwell Workstation, 97,887 MiB. There is no RTX 5090 in
+  this machine.** Every dual-card plan in `video-engine` and in the sections below is **void**: no
+  bf16-on-the-big-card / quantised-on-the-5090 split, no cross-card scheduling, no sequence
+  parallel. Driver 582.08, CUDA runtime 13.0, **compute capability 12.0 = sm_120**.
+- ⭐⭐ **THE BLACKWELL BLOCKER IS ALREADY SOLVED ON THIS BOX.** The existing ComfyUI portable ships
+  **python 3.13.6 + torch 2.8.0+cu129**, and its `arch list` is
+  `['sm_70','sm_75','sm_80','sm_86','sm_90','sm_100','sm_120']` with `cuda.is_available() = True`
+  on the PRO 6000. We do **not** have to build a torch environment from scratch — the research's
+  "repo pins torch 2.6.0+cu124 = no sm_120" problem is an environment we already have the answer to.
+- **Already on disk, free:** **Wan 2.2 TI2V-5B** (~21 GB incl. `umt5-xxl` encoder + VAE) at
+  `D:\Vova\WAN_T2V`, **VibeVoice-1.5B** TTS, Juggernaut-XL v9 + SD 1.5, and **117 GB of HF cache**
+  (39.5 GB on C:, 77.4 GB on D:). Four ComfyUI installs exist; the **portable at
+  `D:\Vova\ComfyUI_windows_portable` is the live one** — the others are Electron shells.
+- **Gaps to close:** **ffmpeg missing** · **MSVC / Visual Studio missing** (blocks compiling
+  SageAttention from source) · CUDA toolkit **13.1 installed but `nvcc` not on PATH and `CUDA_PATH`
+  empty** · system Pythons (3.12.9, 3.10) have **no torch** and there is no conda.
+- ⚠ The machine has prior AI work on it under `D:\Vova\...` and `D:\DevCalivan\...` — **do not break
+  or repurpose existing installs**; build alongside them.
+- ⚠ **MOVA's fast single-GPU LoRA path wants ≥128 GB host RAM; this box has 61.6 GB.** VRAM is fine
+  (95.6 GB), host RAM is not. That path is out unless RAM is added — the slow path or LoRA-on-stills
+  is what fits.
+
 ## The bridge (BUILT + LIVE 2026-07-31)
 
 **https://ai-film-bridge.fleet-fefsba.workers.dev** — Cloudflare Worker + D1 on the Osanix account.
