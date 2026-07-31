@@ -13,6 +13,39 @@ Successor to `video-engine` (which answered *"is this feasible?"*). This folder 
 Deliverable: `index.html` — single page, noindex, dark, signature = the film's 35 measured cuts
 drawn to scale as an interactive strip.
 
+## Bob's decisions, 2026-07-31 (these override the research where they conflict)
+
+1. **ENGLISH ONLY — Korean and Hindi are dropped.** This removes the project's single biggest
+   unknown (nobody had published a ko/hi lip-sync result). Chatterbox is no longer needed at all.
+2. **Bridge built** — see `bridge/`. Everything the PC does is tracked and charted.
+3. **Stills come from Google Flow (Veo 3.1)**, audio from **ElevenLabs** produced by Bob's VA from a
+   spec sheet we write (voice, settings, script) — 11Labs is NOT API-connected, output arrives as
+   mp3/wav. ⇒ MOVA drops to non-dialogue shots only (it invents its own voice); **LongCat-Video-Avatar
+   is the dialogue tool** because it animates to audio we supply.
+   ⚠ **Flow images CAN be upscaled to 2K/4K in the UI before download** — Bob's correction, applied
+   to `veo-flow-multi/CLAUDE.md`, whose "not available" line was about our tool's unimplemented
+   endpoint, not the product. Keyframes only need ≥1280×720 anyway; the final master is upscaled
+   on our own GPU for free.
+4. **The "90-shot runner" explained:** a script that feeds the shot list to the GPU one clip at a
+   time, unattended overnight, and reports which shots came out usable. Without it someone clicks 90
+   times.
+5. **First deliverable = a 60-second ORIGINAL STORY TRAILER**, same genre and cut grammar as the
+   reference, in English. ~9–10 sustained shots + a flash montage. I write script, cast and shot list.
+
+## The bridge (BUILT + LIVE 2026-07-31)
+
+**https://ai-film-bridge.fleet-fefsba.workers.dev** — Cloudflare Worker + D1 on the Osanix account.
+Full detail, endpoint table and the traps in **`bridge/README.md`**. Tokens in
+`/root/.config/ai-film-bridge.json`. The PC runs `C:\ai-film-bridge\agent.ps1` as scheduled task
+`AIFilmBridge`; **outbound HTTPS only, no ports opened, no admin rights needed after install**.
+Dashboard shows: machine + GPU/VRAM/disk live, a **render ledger** (per clip: GPU seconds, peak
+VRAM, s per video-second, keep rate) and a **claim ledger** marking every number `estimated` vs
+`measured` — 16 rows seeded, and every speed figure we have is still `estimated` because it was
+measured on someone else's card.
+Tested end to end against the live worker with the real agent under `pwsh`: round trip, non-zero
+exit, 2,388,894-char output capped with a footer stating the loss, 15 s timeout kill, orphan
+recovery, and token separation 403 in both directions.
+
 ## What Bob sent
 
 An 88-second Korean AI trailer, **원수와 결혼하기 / "Marrying my enemy"**, Google Drive
@@ -128,16 +161,21 @@ On MSAVBench an **LTX-2.3 keyframe-then-animate pipeline scores 72.63 vs Sora 2'
 it rewards is the one we designed. **The leverage is in the shot list, the keyframe, the continuity
 discipline and the cut — the four stages that are not the video model.**
 
-## Next steps
-1. **Day 1:** feed MOVA and LongCat-Avatar a Korean line and a Hindi line, look at the mouth.
-   Everything else waits on that.
-2. **Day 1:** one fixed prompt through MOVA / LongCat / Wan 2.2 / LTX-2.3 → replace every estimate
-   with our own s-per-video-second, peak VRAM and keep-rate.
-3. **Week 1:** cast one actor — face, bible, LoRA, one cloned voice — and prove it survives four
-   rooms as stills before any video.
-4. **Week 2:** the 90-shot runner (~200 lines; poll ComfyUI's new `/api/jobs`, patch workflows by
-   node `_meta.title` not id).
-5. **Week 3:** one 60-second piece cut to the reference's own grammar, mastered to −14 LUFS.
+## Next steps — REVISED after Bob's 2026-07-31 decisions
+
+~~Korean/Hindi lip-sync test~~ — **dropped, English only.** The old step 1 no longer exists.
+
+1. **BLOCKED ON BOB:** run the installer once in an Administrator PowerShell on the Blackwell PC.
+   Nothing else can start until the agent registers.
+2. **Inventory (automatic, mine):** the moment it connects — GPU + driver, CUDA toolkits, every
+   Python, torch and whether it sees `sm_120`, ComfyUI, ffmpeg, git, free space per drive.
+   Bob says CUDA nightly may already be installed; assume nothing, read it.
+3. **Install** what the inventory says is missing, over the bridge.
+4. **Benchmark:** one fixed prompt through LongCat-Avatar / Wan 2.2 / LTX-2.3 → replace every
+   `estimated` row in the claim ledger with our own measured s-per-video-second, peak VRAM, keep rate.
+5. **Cast one actor** in Flow — face, bible, wardrobe — and prove it survives four rooms as stills
+   before any video is rendered. Voice spec sheet goes to the VA for ElevenLabs at the same time.
+6. **The runner**, then **the 60-second trailer** cut to the reference's grammar, mastered to −14 LUFS.
 
 ## Notes
 - `FORENSICS.md` = everything measured on the file. `NOTES-verified.md` = primary sources I fetched
