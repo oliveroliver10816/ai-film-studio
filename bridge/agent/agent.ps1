@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.2'
+$Version = '1.0.3'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -138,6 +138,10 @@ function Run-Job($job) {
       -ArgumentList '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', ('"' + $script + '"') `
       -RedirectStandardOutput $outFile -RedirectStandardError $errFile `
       -NoNewWindow -PassThru
+    # Touching .Handle caches the process handle. Without it, Windows PowerShell disposes the
+    # handle when the process exits and .ExitCode then throws "Process was not started by this
+    # object", so a perfectly successful job comes back with no exit code at all.
+    try { $null = $p.Handle } catch { }
     $timeout = 900
     if ($job.timeout_s) { $timeout = [int]$job.timeout_s }
     if (-not $p.WaitForExit($timeout * 1000)) {
@@ -151,10 +155,12 @@ function Run-Job($job) {
       # back $null on Windows PowerShell 5.1 and every successful job was reported as failed
       # even though its output was complete.
       try { $p.WaitForExit() } catch { }
-      try { $code = $p.ExitCode } catch { $code = $null }
+      try { $code = $p.ExitCode } catch { $code = $null; $exitNote = '[AGENT] ExitCode unreadable: ' + $_.Exception.Message }
       if ($null -eq $code) {
         $code = -7
-        $exitNote = '[AGENT] the process finished and its output is complete, but Windows returned no exit code'
+        if (-not $exitNote) {
+          $exitNote = '[AGENT] the process finished and its output is complete, but Windows returned no exit code'
+        }
       }
     }
   } catch {
