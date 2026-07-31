@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.1'
+$Version = '1.0.2'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -123,7 +123,7 @@ function Send-Stats {
 function Run-Job($job) {
   Log ('job ' + $job.id + ' start: ' + $job.label)
   $stamp   = [guid]::NewGuid().ToString('N').Substring(0, 8)
-  $so = ''; $se = ''; $code = -1
+  $so = ''; $se = ''; $code = -1; $exitNote = ''
   try {
   if (-not (Test-Path $Work)) { New-Item -ItemType Directory -Path $Work -Force | Out-Null }
   $script  = Join-Path $Work ('job' + $job.id + '_' + $stamp + '.ps1')
@@ -146,7 +146,16 @@ function Run-Job($job) {
       $code = -9
       Log ('job ' + $job.id + ' KILLED after ' + $timeout + 's')
     } else {
-      $code = $p.ExitCode
+      # Microsoft's own note on the timed overload: it can return before the exit state has been
+      # materialised, so the untimed WaitForExit() must follow it. Without this, $p.ExitCode came
+      # back $null on Windows PowerShell 5.1 and every successful job was reported as failed
+      # even though its output was complete.
+      try { $p.WaitForExit() } catch { }
+      try { $code = $p.ExitCode } catch { $code = $null }
+      if ($null -eq $code) {
+        $code = -7
+        $exitNote = '[AGENT] the process finished and its output is complete, but Windows returned no exit code'
+      }
     }
   } catch {
     Add-Content -Path $errFile -Value $_.Exception.Message
@@ -155,6 +164,7 @@ function Run-Job($job) {
   if (Test-Path $outFile) { $so = [IO.File]::ReadAllText($outFile) }
   if (Test-Path $errFile) { $se = [IO.File]::ReadAllText($errFile) }
   if ($code -eq -9) { $se = $se + [Environment]::NewLine + '[AGENT] killed on timeout' }
+  if ($exitNote) { $se = $se + [Environment]::NewLine + $exitNote }
   Remove-Item $script, $outFile, $errFile -Force -ErrorAction SilentlyContinue
 
   } catch {
