@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Marrying my enemy — teardown, and the open-source studio that answers it</title>
+<meta name="description" content="Frame-level teardown of an AI-generated K-drama trailer, and the free, fully-local film pipeline for a 96 GB Blackwell workstation.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&family=Noto+Sans+KR:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* every colour below is MEASURED from the reference film, not chosen */
+  --ink:#06080A;          /* shadow decile, p10 */
+  --ink-2:#0B0F14;
+  --surface:#121820;
+  --surface-2:#18202A;
+  --line:#243039;
+  --line-soft:#1A222B;
+  --bone:#E9E7DE;         /* highlight decile, p90, lifted for text */
+  --bone-dim:#96A0A6;
+  --bone-faint:#7F8A90;  /* lifted from #66727A — the original failed WCAG AA at 10.5px */
+  --sodium:#D89B4E;       /* dominant warm hue cluster, 30-45deg */
+  --sodium-hi:#F0BE79;
+  --steel:#5EA8C9;        /* dominant cool hue cluster, 195-210deg */
+  --alarm:#E2613F;
+  --ok:#7FB47A;
+
+  --display:"Big Shoulders Display",Impact,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --quote:"Newsreader",Georgia,serif;
+  --kr:"Noto Sans KR",var(--body);
+
+  --wrap:1140px;
+  --gut:clamp(18px,4vw,40px);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ink);color:var(--bone);
+  font-family:var(--body);font-size:16.5px;line-height:1.62;
+  font-feature-settings:"ss01","cv01";
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--steel);text-decoration:none;border-bottom:1px solid rgba(94,168,201,.35)}
+a:hover{border-bottom-color:var(--steel)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--sodium);outline-offset:3px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.narrow{max-width:790px}
+
+/* ---------- type ---------- */
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:.95;letter-spacing:.005em;margin:0}
+h1{font-size:clamp(46px,9.5vw,116px);text-transform:uppercase}
+h2{font-size:clamp(32px,5.6vw,62px);text-transform:uppercase}
+h3{font-size:clamp(21px,2.9vw,29px);text-transform:uppercase;letter-spacing:.02em}
+h4{font-family:var(--body);font-weight:600;font-size:16px;letter-spacing:.01em;text-transform:none;line-height:1.4}
+p{margin:0 0 1.05em}
+.lede{font-size:clamp(17.5px,2.1vw,21px);line-height:1.55;color:#CFD4D3}
+.tc{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint)}
+.kr{font-family:var(--kr)}
+strong{color:#fff;font-weight:600}
+em.q{font-family:var(--quote);font-style:italic;color:#D8D2C4}
+code{font-family:var(--mono);font-size:.87em;background:var(--surface);border:1px solid var(--line-soft);padding:1px 5px;border-radius:3px;color:#CBD4D8}
+mark{background:rgba(216,155,78,.17);color:var(--sodium);padding:0 3px;border-radius:2px}
+
+/* ---------- masthead ---------- */
+.mast{padding:clamp(46px,9vw,104px) 0 0}
+.mast .eyebrow{display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;margin-bottom:26px}
+.mast h1{margin:.06em 0 0;color:var(--bone)}
+.mast h1 .sub{display:block;font-size:.38em;color:var(--sodium);letter-spacing:.03em}
+.mast .krtitle{font-family:var(--kr);font-weight:700;font-size:clamp(15px,2.2vw,20px);color:var(--bone-dim);letter-spacing:.02em}
+
+/* ---------- the signature: cut strip ---------- */
+.strip-block{margin:clamp(34px,6vw,60px) 0 0;padding-bottom:clamp(30px,5vw,48px);border-bottom:1px solid var(--line-soft)}
+.strip-legend{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:11px}
+.strip{
+  display:flex;width:100%;height:clamp(70px,11vw,104px);gap:1.5px;
+  background:var(--line-soft);border:1px solid var(--line);border-radius:2px;overflow:hidden;
+}
+.seg{position:relative;background:var(--surface-2);flex-shrink:0;transition:background .18s ease}
+.seg[data-kind="long"]{background:linear-gradient(180deg,#3A2B17,#241A0D);box-shadow:inset 0 0 0 1px rgba(216,155,78,.42)}
+.seg[data-kind="mid"]{background:#1E2831}
+.seg[data-kind="flash"]{background:var(--steel);opacity:.5}
+.seg:hover,.seg:focus{background:var(--sodium);opacity:1;outline:none}
+.seg[data-kind="flash"]:hover{background:#9AD4EE;opacity:1}
+.strip-read{
+  margin-top:11px;min-height:2.9em;font-family:var(--mono);font-size:12.5px;
+  color:var(--bone-dim);line-height:1.5
+}
+.strip-read b{color:var(--sodium);font-weight:500}
+.strip-scale{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10.5px;color:var(--bone-faint);margin-top:5px}
+
+/* ---------- generic sections ---------- */
+section{padding:clamp(56px,9vw,104px) 0}
+.rule{border:0;border-top:1px solid var(--line-soft);margin:0}
+.shead{display:flex;gap:clamp(14px,3vw,30px);align-items:flex-start;margin-bottom:clamp(24px,4vw,40px)}
+.shead .idx{font-family:var(--mono);font-size:12px;letter-spacing:.13em;color:var(--sodium);padding-top:.7em;white-space:nowrap}
+.shead .idx.cool{color:var(--steel)}
+
+/* ---------- cards / grids ---------- */
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:860px){.g3,.g4{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;padding:20px 20px 18px}
+.card h4{margin-bottom:7px;color:#fff}
+.card p{font-size:14.5px;color:var(--bone-dim);margin:0}
+.card p+p{margin-top:.7em}
+
+.stat{background:var(--surface);border:1px solid var(--line-soft);border-left:2px solid var(--sodium);border-radius:3px;padding:16px 18px}
+.stat .n{font-family:var(--display);font-weight:800;font-size:clamp(30px,4.4vw,44px);line-height:.9;color:var(--bone)}
+.stat .n small{font-size:.42em;color:var(--bone-dim);font-weight:600;margin-left:.25em}
+.stat .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--bone-faint);margin-top:9px}
+.stat.cool{border-left-color:var(--steel)}
+
+/* ---------- evidence ---------- */
+figure{margin:0}
+.ev{background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;overflow:hidden}
+.ev img{width:100%}
+.ev figcaption{padding:12px 15px 14px;font-size:13.5px;line-height:1.5;color:var(--bone-dim);border-top:1px solid var(--line-soft)}
+.ev figcaption b{color:var(--sodium);font-weight:600}
+
+/* ---------- tables ---------- */
+.tw{overflow-x:auto;border:1px solid var(--line-soft);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:14px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--bone-faint);background:var(--ink-2);font-weight:500;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td b{color:#fff}
+.ok{color:var(--ok)}.no{color:var(--alarm)}.warn{color:var(--sodium)}
+
+/* ---------- callouts ---------- */
+.call{border-left:2px solid var(--sodium);background:linear-gradient(90deg,rgba(216,155,78,.07),transparent 70%);padding:15px 20px;margin:22px 0;border-radius:0 3px 3px 0}
+.call.cool{border-left-color:var(--steel);background:linear-gradient(90deg,rgba(94,168,201,.08),transparent 70%)}
+.call.bad{border-left-color:var(--alarm);background:linear-gradient(90deg,rgba(226,97,63,.08),transparent 70%)}
+.call p:last-child{margin-bottom:0}
+.call .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sodium);display:block;margin-bottom:5px}
+.call.cool .tag{color:var(--steel)}
+.call.bad .tag{color:var(--alarm)}
+
+/* ---------- lists ---------- */
+ul.tight,ol.tight{padding-left:1.15em;margin:0 0 1.05em}
+ul.tight li,ol.tight li{margin-bottom:.5em}
+ul.plain{list-style:none;padding:0;margin:0}
+ul.plain li{padding-left:1.5em;position:relative;margin-bottom:.6em}
+ul.plain li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:1px;background:var(--sodium)}
+
+/* ---------- pipeline ---------- */
+.pipe{display:grid;gap:2px;background:var(--line-soft);border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.stage{background:var(--surface);padding:17px 19px;display:grid;grid-template-columns:78px 1fr;gap:18px;align-items:start}
+@media(max-width:620px){.stage{grid-template-columns:1fr;gap:7px}}
+.stage .dept{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel);padding-top:.28em}
+.stage h4{margin-bottom:5px}
+.stage p{font-size:14px;color:var(--bone-dim);margin:0}
+.stage .tools{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;padding:3px 8px;border-radius:99px;border:1px solid var(--line);background:var(--ink-2);color:var(--bone-dim)}
+.pill.key{border-color:rgba(216,155,78,.5);color:var(--sodium)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line-soft);padding:44px 0 60px;color:var(--bone-faint);font-size:13.5px}
+footer .tc{margin-bottom:10px}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main>
+
+<!-- ============ MASTHEAD + SIGNATURE STRIP ============ -->
+<header class="mast">
+  <div class="wrap">
+    <div class="eyebrow">
+      <span class="tc">Teardown &amp; build plan</span>
+      <span class="tc">31 Jul 2026</span>
+      <span class="tc">88.47 s · 2032×1080 · 35 cuts</span>
+    </div>
+    <div class="krtitle kr">원수와 결혼하기</div>
+    <h1>We read the<br>whole film.<span class="sub">Then we costed the copy.</span></h1>
+
+    <div class="strip-block">
+      <div class="strip-legend">
+        <span class="tc">The film as measured — every cut, to scale</span>
+        <span class="tc">hover a shot</span>
+      </div>
+      <div class="strip" id="strip" role="img" aria-label="Proportional strip of all 35 shots in the 88.5 second film; three shots run 9 to 10 seconds, and 20 flash cuts are packed into the final 9 seconds."></div>
+      <div class="strip-scale"><span>00:00</span><span>00:22</span><span>00:44</span><span>01:06</span><span>01:28</span></div>
+      <div class="strip-read" id="stripRead">Three shots hold for <b>9.1, 9.5 and 10.0 seconds</b> — longer than any open model generates in one pass. The last nine seconds are <b>20 flash cuts</b> averaging 0.27 s, where nothing has to survive scrutiny.</div>
+    </div>
+
+    <div class="narrow" style="margin-top:clamp(30px,5vw,48px)">
+      <p class="lede">Bob sent an 88-second Korean AI trailer and asked how we get to that level, keep one face across shots, and do it all on free software on the Blackwell box. So the file went through ffmpeg frame by frame, the container gave up the editor that made it, and the answer to the hard part — <strong>an actor who speaks, in sync, and stays the same person</strong> — turns out to already exist under Apache 2.0.</p>
+    </div>
+  </div>
+</header>
+
+<hr class="rule">
+
+<!-- ============ THE THREE ANSWERS ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx">Summary</span>
+      <div><h2>Three answers</h2></div>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <h4>1 · What made it</h4>
+        <p>Not one generation — <strong>a 35-cut edit</strong> assembled in a consumer NLE on a Mac, with a library music track and burned-in subtitles. The clips are natively <mark>24 fps</mark>, conformed to 30 by frame duplication.</p>
+      </div>
+      <div class="card">
+        <h4>2 · Why it looks expensive</h4>
+        <p>Roughly half model, half craft. The model earns the <strong>reflections and the skin</strong>. The edit earns the rest by never showing a weak shot for longer than a fifth of a second.</p>
+      </div>
+      <div class="card">
+        <h4>3 · What we build</h4>
+        <p>An all-Apache-2.0 local stack: lock the face as a <strong>still</strong>, then hand that still plus the spoken line to <strong>MOVA</strong>, which returns 8 s of 720p24 video with the audio already in sync.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ PART ONE — TEARDOWN ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx">Part one</span>
+      <div>
+        <h2>What the file<br>actually is</h2>
+        <p class="lede narrow" style="margin-top:18px">Everything in this section was measured here, on the file, with ffmpeg and a bit of numpy. No guessing.</p>
+      </div>
+    </div>
+
+    <div class="grid g4" style="margin-bottom:26px">
+      <div class="stat"><div class="n">24<small>fps</small></div><div class="k">native rate, not 30</div></div>
+      <div class="stat"><div class="n">35<small>cuts</small></div><div class="k">2.53 s average</div></div>
+      <div class="stat"><div class="n">10.0<small>s</small></div><div class="k">longest single shot</div></div>
+      <div class="stat"><div class="n">5<small>lines</small></div><div class="k">of dialogue in 88 s</div></div>
+    </div>
+
+    <div class="narrow">
+      <h3 style="margin-top:34px">The container names the editor</h3>
+      <p>Inside a 736-byte <code>meta</code> atom sits a JSON blob whose keys are <code>"product":"vicut"</code> and <code>"source_type":"vicut"</code>, alongside <code>"os":"mac"</code>, a <code>musicId</code>, and a set of <code>is_use_ai_*</code> flags all reading zero.</p>
+      <p><code>vicut</code> is written by a <strong>ByteDance CapCut-family desktop editor</strong>. One independent sighting of the same atom exists in the wild, on a Windows export. It is <em class="q">not</em> possible to separate the international app from its Chinese sibling on this evidence, so that is as far as the claim goes.</p>
+      <div class="call">
+        <span class="tag">Read the zero flags carefully</span>
+        <p>Every one of those flags names a <strong>first-party button in that editor</strong> — AI Relight, AI image generator, AI video generator, custom voices. The <code>is_use_</code> prefix records what the user clicked, not what the pixels are. An editor has no oracle over imported media.</p>
+        <p>So a clip generated anywhere else, downloaded, and dropped on the timeline leaves every flag at zero. <strong>They are not evidence that no AI was used.</strong> The platforms agree: TikTok auto-labels only its own in-app AI and requires manual disclosure for everything else.</p>
+      </div>
+      <p>What the blob does establish, without ambiguity: the piece is a <strong>multi-clip edit</strong> with an imported library score and burned-in titles, exported from a desktop editor on a Mac. There is no C2PA box anywhere in the file, and no visible watermark survives.</p>
+
+      <h3 style="margin-top:40px">Native frame rate is 24</h3>
+      <p><code>mpdecimate</code> across the whole file keeps <strong>2,128 unique frames of 2,654</strong> — 80.2%. Twenty-four divided by thirty is 80.0%. Per-shot checks land at 80.0, 81.3 and 82.9%. The source clips are 24 fps; the timeline was 30, and the export duplicated frames rather than interpolating.</p>
+      <p>That matters because 24 fps is what the frontier closed models emit. The open models do not: <strong>Wan 2.2 is natively 16 fps.</strong></p>
+
+      <h3 style="margin-top:40px">Where 2032×1080 comes from</h3>
+      <p>No generator outputs a 2032-pixel width. It is not a scope crop either — 2.39:1 at 1080 tall would be 2581 wide. The editor pins export height to the tier (1080) and stretches width to hold the aspect ratio, so an odd width means the source was not 16:9 when it hit the timeline. One number falls straight out:</p>
+      <ul class="plain">
+        <li><strong>60 px of height removed from a 1920×1080 frame</strong> → 1920×1020. Rescale to 1080 tall → 1920 × (1080/1020) = <strong>2032.94 → 2032</strong>, and 2032 is 16 × 127, macroblock-clean.</li>
+        <li>56 px would give 2024; 64 px would give 2040. So <em>sixty</em> is tightly determined — but <strong>where it came off is not</strong>. All 60 off the bottom produces the identical number.</li>
+      </ul>
+      <div class="call">
+        <span class="tag">Why that is interesting, and where the inference stops</span>
+        <p>Google's Flow burns a visible <em class="q">veo</em> wordmark into the bottom-right of its output, and per Google's own help page visible watermarking is <strong>applied automatically in India, South Korea and Vietnam</strong>. A Korean creator using Flow gets the mark whether they want it or not, and the published removal advice is a 5–10% crop. Sixty pixels of 1080 is 5.6%.</p>
+        <p>That is a clean fit, and it is still only a fit. The number proves 60 px of vertical crop; it does not prove <em>why</em>. Leading hypothesis, not a finding.</p>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-top:36px">
+      <figure class="ev">
+        <img src="assets/ev-hand-reflection.jpg" alt="Close crop of a hand resting on a glass desk, with its reflection meeting the fingertips at the glass surface." loading="lazy">
+        <figcaption><b>The best shot in the film, at 1:1.</b> Tendons, veins and knuckle creases are anatomically right, and the reflected hand meets the real one exactly at the contact point. The watch mirrors correctly. This is the behaviour that separates frontier models from everything else.</figcaption>
+      </figure>
+      <figure class="ev">
+        <img src="assets/ev-double-reflection.jpg" alt="A woman at a night office window, her face appearing twice — once directly and once reflected in the glass." loading="lazy">
+        <figcaption><b>Two of the same face, one frame.</b> A night window carrying a full second view of the actor. Look closer and the reflection is softer, angled slightly wrong, and the hair resolves to mush — the reflection is <em class="q">learned</em>, not traced. Approximately right; wrong in detail.</figcaption>
+      </figure>
+    </div>
+
+    <div class="grid g2" style="margin-top:14px">
+      <figure class="ev">
+        <img src="assets/ev-face-skin.jpg" alt="Tight crop of a face showing skin texture, pores and fine hair." loading="lazy">
+        <figcaption><b>Skin holds up close.</b> Pores across the cheek and nose, vellus hair along the jaw, asymmetric brows, a specular break on the lower lip. Not the plastic surface of a year ago. The tell that remains: hair crossing the forehead dissolves into skin instead of casting a shadow.</figcaption>
+      </figure>
+      <figure class="ev">
+        <img src="assets/ev-plaques-gibberish.jpg" alt="A grey-haired man in a study; framed plaques behind him carry unreadable text." loading="lazy">
+        <figcaption><b>The reliable tell is behind him.</b> Every framed award plaque is letterform-shaped noise with no readable character at native resolution. Background text is still the cheapest way to spot generated footage.</figcaption>
+      </figure>
+    </div>
+
+    <figure class="ev" style="margin-top:14px">
+      <img src="assets/ev-visemes.jpg" alt="Twelve consecutive mouth crops across 1.5 seconds of speech, showing the lips moving through distinct shapes." loading="lazy">
+      <figcaption><b>Twelve frames across 1.5 seconds of one Korean line.</b> Closed bilabial, then an open vowel with teeth and tongue visible, then rounding — with jaw drop and throat tension to match. That is real articulation, not lip-flap, and it is the single hardest thing on this list to reproduce.</figcaption>
+    </figure>
+
+    <div class="narrow" style="margin-top:44px">
+      <h3>The identity actually holds</h3>
+      <p>The male lead appears in <strong>7 shots</strong> across an office, a corridor and a rooftop, in two wardrobes. The suited female lead appears in <strong>4 to 5</strong>, across a sunset office, an apartment, a corridor and a night office, in three. That is genuine cross-shot consistency and it is the thing worth copying.</p>
+      <div class="call bad">
+        <span class="tag">The honest caveat</span>
+        <p>Every female face in the film sits in a narrow band of the same face type. Some of what reads as control is the model's prior collapsing toward one look. Two of the women are separable only by hair. Do not assume the creator had more grip than they did.</p>
+      </div>
+    </div>
+
+    <figure class="ev" style="margin-top:32px">
+      <img src="assets/ev-shot-grid.jpg" alt="Contact sheet of all seventeen sustained shots in the film." loading="lazy">
+      <figcaption><b>Every sustained shot in one view.</b> Count the framings that hide a weakness: two wides where a face is thirty pixels tall, a back-of-head, a boardroom shot backlit into silhouette, an insert of a photograph, and a title card. Only five shots put a face large and lit in the centre of frame.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ CRAFT ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx">The free half</span>
+      <div>
+        <h2>Craft is doing<br>half the work</h2>
+        <p class="lede narrow" style="margin-top:18px">This part costs nothing, needs no GPU, and transfers to a weaker model immediately. It is the reason the film reads as expensive.</p>
+      </div>
+    </div>
+    <div class="grid g3">
+      <div class="card"><h4>Five lines in eighty-eight seconds</h4><p>Almost the entire film is silent performance. Dialogue is the most expensive thing to generate and the easiest to get wrong, so there is barely any.</p></div>
+      <div class="card"><h4>Frame the weakness away</h4><p>Back-of-head, over-shoulder, silhouette, extreme wide, or blown to white. Hands appear once — in the one shot built to show off hands.</p></div>
+      <div class="card"><h4>One face in focus, ever</h4><p>Shallow depth of field puts a single face on the focal plane and dissolves everything that would betray the shot behind it.</p></div>
+      <div class="card"><h4>Profile two-shots</h4><p>Both actors turned to face each other in profile — the pose a generator holds most stably, and it reads as intimacy.</p></div>
+      <div class="card"><h4>Spend the climax on speed</h4><p>The last nine seconds are 20 cuts at 0.27 s average. Nothing has to hold up, and the audience reads it as a crescendo.</p></div>
+      <div class="card"><h4>Cut on a flash</h4><p>White-flash transitions hide the seam between two clips that were never going to match. Fourteen of them in this film.</p></div>
+    </div>
+    <div class="narrow">
+      <div class="call cool" style="margin-top:30px">
+        <span class="tag">One thing they got wrong</span>
+        <p>The master sits at <strong>−24.0 LUFS integrated</strong>, true peak −7.4 dBFS. YouTube normalises to about −14. This film will play roughly 10 dB quieter than everything around it. Whatever we ship gets mastered properly; that is a free win over the reference.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ PART TWO — THE BUILD ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx cool">Part two</span>
+      <div>
+        <h2>The studio,<br>on your box</h2>
+        <p class="lede narrow" style="margin-top:18px">Free, local, and — this took some reading — commercially clean at every single step. The constraint that used to kill this idea has just been removed.</p>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <h3>Open models learned to speak</h3>
+      <p>Until this year the honest answer was: open video models are silent, so a talking character means generate mute footage, then bolt a lip-sync model onto a face crop, and accept that it looks dubbed. Two releases changed that, and both are usable.</p>
+    </div>
+
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <h4>MOVA — <span style="color:var(--sodium)">Apache-2.0</span></h4>
+        <p>OpenMOSS. A 32 B mixture-of-experts, 18 B active, that generates <strong>video and audio in one pass</strong> — the same architecture idea as Veo 3 and Sora 2, with weights you can download.</p>
+        <p>Its inference defaults are <code>--num_frames 193 --fps 24 --height 720 --width 1280</code>. That is <strong>8.04 seconds of 720p24</strong> — the exact shape of the shots in the reference film.</p>
+        <p>Its <code>pyproject.toml</code> pins <code>torch</code> with <mark>no version</mark>, so there is no <code>sm_120</code> problem on Blackwell. Ships LoRA training and a ComfyUI node.</p>
+      </div>
+      <div class="card">
+        <h4>LongCat-Video-Avatar 1.5 — <span style="color:var(--steel)">MIT</span></h4>
+        <p>Meituan. Audio-driven, full-body, multi-person, with video continuation for long takes.</p>
+        <p>The line that matters: it <strong>replaced Wav2Vec2 with Whisper-Large</strong> as its audio encoder. Whisper is multilingual by construction, which makes this the one tool in its category that is <em class="q">structurally</em> capable of Korean and Hindi.</p>
+        <p>Every rival — InfiniteTalk, MultiTalk, EchoMimic V3 — runs a Chinese/English wav2vec2 encoder and will produce degraded visemes outside those two languages.</p>
+      </div>
+    </div>
+
+    <div class="narrow">
+      <div class="call cool">
+        <span class="tag">Use them differently</span>
+        <p>MOVA <strong>invents</strong> the voice from your prompt — so your character sounds like a different person in every shot. LongCat <strong>animates to audio you supply</strong>. For a film you want the second: clone one voice per character, then drive every shot from it. MOVA's ComfyUI node also accepts injected audio, so it can work either way.</p>
+      </div>
+      <div class="call bad">
+        <span class="tag">Untested, and it is the biggest unknown</span>
+        <p>No repo in this category publishes a Korean or Hindi result. Whisper-Large makes it <em class="q">architecturally</em> plausible; nobody has shown it. <strong>First GPU-hour on the box goes to testing exactly this</strong>, before any of the plan below is worth starting.</p>
+      </div>
+
+      <h3 style="margin-top:44px">Consistency is four things, not one</h3>
+      <p>The reference film holds a character across seven shots. Copying that means locking four things, and only the first is what people usually mean by "character consistency".</p>
+    </div>
+
+    <div class="grid g4" style="margin-top:22px">
+      <div class="card"><h4>Face</h4><p>A LoRA trained on your own synthetic actor. ~20–40 approved stills, trained with <strong>ai-toolkit</strong> (MIT).</p></div>
+      <div class="card"><h4>Voice</h4><p>One cloned voice per character, reused for the whole film. A character whose voice changes each shot is not consistent.</p></div>
+      <div class="card"><h4>Wardrobe &amp; set</h4><p>Decided in the keyframe still, never in the prompt. The video model inherits it and cannot argue.</p></div>
+      <div class="card"><h4>Grade</h4><p>Colour-match every shot to one master reference frame — never to the previous shot, which compounds drift.</p></div>
+    </div>
+
+    <div class="narrow">
+      <div class="call bad" style="margin-top:26px">
+        <span class="tag">The trap almost everyone falls into</span>
+        <p>The obvious way to lock a face is an identity adapter — InstantID, PuLID, IP-Adapter FaceID. <strong>All of them load InsightFace face-analysis models, and those are non-commercial.</strong> Straight from InsightFace's own README: <em class="q">"The training data containing the annotation (and the models trained with these data) are available for non-commercial research purposes only… Both manual-downloading models from our github repo and auto-downloading models with our python-library follow the above license policy."</em></p>
+        <p>The code of those adapters is Apache-2.0. The weights they silently pull are not. <strong>LatentSync pulls them too.</strong> So the clean route is a LoRA of an actor you generated yourself, plus MediaPipe Face Mesh (Apache-2.0) wherever you need landmarks.</p>
+      </div>
+
+      <h3 style="margin-top:44px">The keyframe is the quality gate</h3>
+      <p>Every stage below is arranged around one rule: <strong>approve a still before you spend a GPU-hour on motion.</strong> A still costs seconds and can be regenerated fifty times. Eight seconds of 720p video costs minutes. Deciding the face, the wardrobe, the set and the light in the still, and letting the video model only add movement, is what turns a slot machine into a production.</p>
+    </div>
+
+    <div class="pipe" style="margin-top:30px">
+      <div class="stage"><span class="dept">Pre</span><div>
+        <h4>Script → shot list</h4>
+        <p>A local LLM emits shot-list JSON against a fixed schema: id, duration, framing, wardrobe, location, light, the spoken line, character ids.</p>
+        <div class="tools"><span class="pill key">Qwen3.6-35B-A3B-FP8 · Apache-2.0</span><span class="pill">vLLM</span><span class="pill">Blender previz</span></div>
+      </div></div>
+      <div class="stage"><span class="dept">Pre</span><div>
+        <h4>Casting — the character bible</h4>
+        <p>Generate the actor once. Then orbit the camera around that one approved still to get the same person at every angle and framing the shot list needs. Train a LoRA on the result.</p>
+        <div class="tools"><span class="pill key">Qwen-Image-2512 · Apache-2.0</span><span class="pill key">FLUX.2 klein 4B · Apache-2.0</span><span class="pill">Z-Image-Turbo</span><span class="pill key">Qwen-Edit Multiple-angles LoRA</span><span class="pill">ai-toolkit</span></div>
+      </div></div>
+      <div class="stage"><span class="dept">Pre</span><div>
+        <h4>Keyframe per shot — <span style="color:var(--sodium)">the gate</span></h4>
+        <p>One approved still per shot, posed and dressed and lit. Always re-edit from the master still, never edit an edit — instruction editors drift over a chain.</p>
+        <div class="tools"><span class="pill key">Qwen-Image-Edit-2511 · Apache-2.0</span><span class="pill">IC-Light</span></div>
+      </div></div>
+      <div class="stage"><span class="dept">Shoot</span><div>
+        <h4>Voice</h4>
+        <p>Record the whole cast before any video. One cloned voice per character, every line, timed. Then pull word-level timings back out for the sync stage.</p>
+        <div class="tools"><span class="pill key">Chatterbox Multilingual V3 · MIT · ko + hi</span><span class="pill">Fun-CosyVoice3 · Apache-2.0</span><span class="pill">WhisperX</span></div>
+      </div></div>
+      <div class="stage"><span class="dept">Shoot</span><div>
+        <h4>Keyframe + line → 8 s of performance</h4>
+        <p>Dialogue shots go to the audio-driven models. Silent shots go to the faster silent ones. Two queues, two cards, grouped by model so nothing reloads.</p>
+        <div class="tools"><span class="pill key">LongCat-Video-Avatar 1.5 · MIT</span><span class="pill key">MOVA · Apache-2.0</span><span class="pill key">Wan 2.2 · Apache-2.0</span><span class="pill">LTX-2.3 · under $10M</span></div>
+      </div></div>
+      <div class="stage"><span class="dept">Post</span><div>
+        <h4>Finish</h4>
+        <p>Restore only if needed, upscale, interpolate to 24, deflicker, grade to one master reference, grain, master audio to −14 LUFS.</p>
+        <div class="tools"><span class="pill key">SeedVR2-7B · Apache-2.0</span><span class="pill key">Practical-RIFE · MIT</span><span class="pill">PMRF · MIT</span><span class="pill">All-In-One-Deflicker</span><span class="pill">ffmpeg loudnorm</span></div>
+      </div></div>
+      <div class="stage"><span class="dept">Post</span><div>
+        <h4>Score, foley, cut</h4>
+        <p>Score and sound effects generated locally, then cut to the grammar the teardown found: ~5.5 s sustained shots, few dialogue lines, flash montage for the climax.</p>
+        <div class="tools"><span class="pill key">ACE-Step · Apache-2.0</span><span class="pill key">ThinkSound</span><span class="pill">Resolve free, in DNxHR</span><span class="pill">ffmpeg for delivery</span></div>
+      </div></div>
+    </div>
+
+    <div class="narrow">
+      <div class="call" style="margin-top:26px">
+        <span class="tag">Two operational gotchas worth knowing before install day</span>
+        <p><strong>DaVinci Resolve free on Linux will not import or export H.264/H.265 at all.</strong> Keep the entire edit in DNxHR or ProRes and do the delivery encode with ffmpeg. And <strong>film grain, spatial noise reduction and magic mask are Studio-only</strong> ($295) — the free grain substitute is an ffmpeg noise pass.</p>
+        <p>ComfyUI's install line now targets <strong>CUDA 13</strong>, not 12.8. Its new <code>/api/jobs</code> endpoint (with <code>pending / in_progress / completed / failed</code>) is what a 90-shot runner should poll — not <code>/history</code>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ LICENCE MINEFIELD ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx">Do not touch</span>
+      <div>
+        <h2>The licence<br>minefield</h2>
+        <p class="lede narrow" style="margin-top:18px">Most of the obvious tools in this space cannot be used in anything that earns money. Several of the traps are invisible — a permissive repo that silently downloads restricted weights. Every clause below was read from the raw licence file.</p>
+      </div>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th>Blocked</th><th>Why, in their words</th><th>Use instead</th></tr></thead>
+        <tbody>
+          <tr><td><b>All FLUX [dev]</b><br>incl. FLUX.2 dev, Kontext dev, Krea dev, klein 9B</td><td>§2(b) <em class="q">"Non-Commercial Use Only."</em> §2(d) appears to free the outputs — but §3(a) prohibits using <em class="q">"any data produced by the FLUX [dev] Model … for any commercial or production purposes"</em>, and §2(d) is written <em class="q">"except as expressly prohibited herein."</em> The carve-out swallows the grant.</td><td class="ok"><b>FLUX.2 klein 4B</b> — its LICENSE.md is the real Apache 2.0 text. The 4B only; the 9B is not.</td></tr>
+          <tr><td><b>InsightFace weights</b><br>→ InstantID, PuLID, IP-Adapter FaceID, most face-swap nodes, LatentSync</td><td><em class="q">"The training data containing the annotation (and the models trained with these data) are available for non-commercial research purposes only."</em> Applies to auto-downloaded models too.</td><td class="ok">A <b>LoRA of your own synthetic actor</b> + MediaPipe Face Mesh</td></tr>
+          <tr><td><b>All Tencent Hunyuan</b><br>HunyuanVideo 1.5, HunyuanImage 3.0, HunyuanVideo-Avatar, HunyuanVideo-Foley</td><td><em class="q">"THIS LICENSE AGREEMENT DOES NOT APPLY IN THE EUROPEAN UNION, UNITED KINGDOM AND SOUTH KOREA"</em> — and the exclusion reaches <em class="q">"Output or results"</em>. A film is displayed wherever it is watched.</td><td class="ok">Wan 2.2, LongCat, MOVA</td></tr>
+          <tr><td><b>Wav2Lip</b> and anything trained against it</td><td>No LICENSE file at all; README: <em class="q">"any form of commercial use is strictly prohibited."</em></td><td class="ok">LongCat-Avatar 1.5, MOVA</td></tr>
+          <tr><td><b>CodeFormer, GFPGAN, SUPIR, GIMM-VFI</b></td><td>S-Lab License 1.0 and NVIDIA stylegan2 terms — all <em class="q">"non-commercial purpose"</em> only. CodeFormer is inside almost every face-restore workflow by default.</td><td class="ok"><b>PMRF</b> (MIT), RestoreFormer++, SeedVR2</td></tr>
+          <tr><td><b>XTTS-v2, F5-TTS weights, Fish-Speech / OpenAudio, Spark-TTS</b></td><td>CPML (and Coqui is defunct, so no commercial path exists), CC-BY-NC-4.0 weights under MIT code, and a research-only licence respectively.</td><td class="ok"><b>Chatterbox Multilingual V3</b> (MIT), Fun-CosyVoice3 (Apache-2.0)</td></tr>
+          <tr><td><b>MMAudio, AudioX, MusicGen / AudioGen, TangoFlux</b></td><td>MIT or Apache <em>code</em> with CC-BY-NC-4.0 <em>weights</em>. The split catches people constantly.</td><td class="ok"><b>ACE-Step</b> (Apache-2.0), ThinkSound</td></tr>
+          <tr><td class="warn"><b>Conditional, not free forever</b></td><td>LTX-2 free under <b>$10 M</b> revenue · Stability under <b>$1 M</b> · IndexTTS-2 under 100 M MAU / ¥1 bn · Higgs Audio over <b>100 k</b> annual active users needs an expanded licence.</td><td>Fine now. Re-read them if this ever works.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="narrow">
+      <div class="call cool" style="margin-top:24px">
+        <span class="tag">The upside</span>
+        <p>Everything in the recommended stack is <strong>Apache-2.0 or MIT</strong> — no revenue caps, no territory carve-outs, no gating, no attribution obligations. That is unusual, and it is worth protecting by not reaching for the convenient thing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ THE RIG ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx cool">The rig</span>
+      <div><h2>Two cards,<br>two queues</h2></div>
+    </div>
+    <div class="narrow">
+      <p>The 96 GB card is not a luxury here — it is the entry ticket. MOVA is 32 B parameters total. LongCat-Avatar wants 720p full-body. Neither is a 32 GB proposition. But the throughput story is stranger than the spec sheet suggests, and it changes how work should be split.</p>
+    </div>
+
+    <div class="tw" style="margin-top:24px">
+      <table>
+        <thead><tr><th>Dense TFLOPS</th><th>RTX 5090</th><th>PRO 6000 Workstation</th><th>Ratio</th></tr></thead>
+        <tbody>
+          <tr><td><b>BF16, FP32 accumulate</b> — what diffusion actually runs</td><td>209.5</td><td>503.8</td><td class="ok"><b>2.41×</b></td></tr>
+          <tr><td>FP8, FP32 accumulate</td><td>419</td><td>1007.6</td><td class="ok">2.41×</td></tr>
+          <tr><td>INT8 / FP4 — what SageAttention runs</td><td>838 / 1676</td><td>1007.6 / 2015.2</td><td class="warn">1.20×</td></tr>
+          <tr><td><b>Memory bandwidth</b></td><td>1792 GB/s</td><td>1792 GB/s</td><td class="no"><b>1.00×</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="narrow">
+      <div class="call cool" style="margin-top:22px">
+        <span class="tag">Why the gap moves</span>
+        <p>GeForce Blackwell half-rates FP16/BF16 <strong>only when accumulating in FP32</strong> — 419 drops to 209.5. The PRO part does not: its two rows are identical. PyTorch SDPA and FlashAttention both accumulate in FP32, so this is exactly the path video diffusion takes.</p>
+        <p>Three things follow. On plain bf16 the big card is genuinely ~2.4×. <strong>Turn on SageAttention and most of that advantage evaporates</strong>, because the 5090 in INT8/FP4 is escaping a penalty the PRO card never paid. And wherever bandwidth binds, the two cards are <strong>identical</strong>.</p>
+      </div>
+
+      <h3 style="margin-top:40px">The bottleneck is not where people look</h3>
+      <p>On the only rigorous public Blackwell video benchmark — LTX-2.3 distilled, fp8, plain SDPA, no offload, on a 5090 — 97 frames at 1280×704 takes <strong>49.8 s, or 12.3 seconds of GPU per second of finished video</strong>, at a <strong>23.66 GiB</strong> peak.</p>
+      <p>The interesting part is the shape of that time. Peak VRAM is <strong>flat across resolutions</strong>, and 2.5× the pixels costs only ~14% more wall clock — because the diffusion transformer is just <strong>12–28% of the run</strong>. The rest is tiled VAE decode, audio decode and h264 encode.</p>
+      <div class="call">
+        <span class="tag">So optimise the decode path, not the attention kernel</span>
+        <p>SageAttention buys 2.7–4.9× <em>at the kernel</em> but only <strong>1.5–2.0× end to end</strong>. And NVFP4, which promises more, is not ready on this silicon: CUTLASS block-scaled FP4 kernels are gated to <code>sm_100a</code>, and there is a documented case of NVFP4 <strong>discarding the I2V reference image entirely</strong>. Since our whole pipeline is image-conditioned, NVFP4 is out for now.</p>
+      </div>
+      <p>For scale on the alternative: Wan 2.2 at 720p is roughly <strong>205 seconds of GPU per second of video</strong> on an H100 — around 17× LTX. Wan is the licence-clean workhorse, not the fast one. Use it where its Apache-2.0 terms matter and LTX where they don't.</p>
+    </div>
+    <div class="grid g2" style="margin-top:24px">
+      <div class="card">
+        <h4>PRO 6000 · 96 GB — bf16 and big models</h4>
+        <p>Everything that will not fit elsewhere and everything running plain bf16 SDPA: MOVA, LongCat-Avatar, Wan 2.2 at 720p, LoRA training. One ComfyUI instance with <code>--highvram --fast fp8_matrix_mult</code>. Never mix model classes in one queue — group every video shot, then every upscale, so nothing reloads.</p>
+      </div>
+      <div class="card">
+        <h4>5090 · 32 GB — quantised and small</h4>
+        <p>Keyframes, image edits, LTX-2.3 at 23.7 GiB, SeedVR2, interpolation, and the LLM writing shot lists. Because the INT8/FP4 gap is only 1.2×, <strong>the 5090 running SageAttention is closer to a peer than a helper.</strong> Its own port, its own queue.</p>
+      </div>
+    </div>
+    <div class="narrow">
+      <div class="call bad" style="margin-top:24px">
+        <span class="tag">Four things that will waste a day if nobody says them</span>
+        <p><strong>Repo <code>torch</code> pins are the Blackwell trap, not the card.</strong> Anything pinning <code>torch==2.x+cu124</code> has no <code>sm_120</code> kernels and will fail — LongCat's own README does exactly this. Ignore the pin. Current torch on <strong>cu130</strong>; cu128 wheels were dropped. MOVA is the exception: it pins no version at all.</p>
+        <p><strong>FlashAttention 3 is Hopper-only and FA4 targets B200, so plain SDPA is the default path on <code>sm_120</code>.</strong> SageAttention has to be built from source — PyPI is frozen at an old release.</p>
+        <p><strong>Never tensor-parallel across these two cards.</strong> No NVLink, unequal VRAM. Sequence/context parallel only, and never split one context across a 96 GB and a 32 GB card.</p>
+        <p><strong>MOVA's fast single-GPU LoRA path does not fit.</strong> The authors measure it at ≈100 GB VRAM and ≥128 GB host RAM; the card has 96 GB and the build spec has 64 GB of system RAM. Training drops to the low-resource path — ≈18 GB, but 600 seconds per step on their 4090. Budget a RAM upgrade before budgeting a LoRA.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ THE STRATEGIC FINDING ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx">The point</span>
+      <div><h2>The gap is not<br>where you think</h2></div>
+    </div>
+    <div class="narrow">
+      <p class="lede">The assumption behind "how do we reach that level" is that open models make worse pictures. On faces and anatomy that is no longer true — the open models are at parity, and they actually <strong>win</strong> on multi-view consistency, which is precisely the thing this project needs.</p>
+      <p>Where closed models still lead is <strong>camera control, dynamic attributes, and audio</strong>. Two of those three we solve by building the shot rather than prompting it: the camera move is decided in the keyframe and by how the clip is cut, not by asking a model for a dolly. The third just arrived under Apache-2.0.</p>
+      <div class="call cool">
+        <span class="tag">The result that makes the case</span>
+        <p>On MSAVBench, an <strong>LTX-2.3 keyframe-then-animate pipeline scores 72.63 against Sora 2's 71.19</strong> — the open pipeline ahead of the closed monolith. One benchmark is not proof, and benchmarks in this field have a bad record. But the architecture it rewards is exactly the one above: decide everything in a still, then let the video model only add motion.</p>
+      </div>
+      <p><strong>So the leverage is not in picking a better base model.</strong> It is in the four stages that are not the video model at all — the shot list, the keyframe, the continuity discipline, and the cut. Which is convenient, because those are the parts nobody can download.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- ============ THE PLAN ============ -->
+<section>
+  <div class="wrap">
+    <div class="shead">
+      <span class="idx">What we do</span>
+      <div><h2>The plan</h2></div>
+    </div>
+    <div class="pipe">
+      <div class="stage"><span class="dept">Day 1</span><div>
+        <h4>Answer the one question that decides everything</h4>
+        <p>Install MOVA and LongCat-Avatar 1.5, feed each a Korean line and a Hindi line, and look at the mouth. Nobody has published this. If the visemes are wrong for our languages, the whole dialogue half of the plan changes and we should know that before anything else is built.</p>
+      </div></div>
+      <div class="stage"><span class="dept">Day 1</span><div>
+        <h4>Replace every estimate with a measurement</h4>
+        <p>One fixed prompt through MOVA, LongCat, Wan 2.2 and LTX-2.3. Record seconds of GPU per second of finished video, peak VRAM, and keep-rate by eye. Everything downstream is scheduled off those four numbers.</p>
+      </div></div>
+      <div class="stage"><span class="dept">Week 1</span><div>
+        <h4>Cast one actor properly</h4>
+        <p>One face, generated and approved. Orbit it to a character bible. Train the LoRA. Clone one voice in Chatterbox. Then prove the actor survives four different rooms, two wardrobes and a night scene — as a set of stills, before any video.</p>
+      </div></div>
+      <div class="stage"><span class="dept">Week 2</span><div>
+        <h4>Build the 90-shot runner</h4>
+        <p>No maintained open tool does this; it is about 200 lines. A shot manifest, API-format workflows patched by node title rather than id, <code>POST /prompt</code>, and <code>GET /api/jobs</code> as the authoritative state. Checkpoint is simply which shot ids have a file on disk.</p>
+      </div></div>
+      <div class="stage"><span class="dept">Week 3</span><div>
+        <h4>Make one 60-second piece, end to end</h4>
+        <p>Cut to the grammar the teardown measured: ~5.5-second sustained shots, no more than five dialogue lines, weak shots framed away, a flash montage for the climax, mastered to −14 LUFS. Then judge it against the reference honestly.</p>
+      </div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+/* Measured cut list. [start, end, label]. Boundaries from ffmpeg scene detection,
+   double-detections on white flashes collapsed at a 0.09 s threshold. */
+const CUTS = [
+ [0.00, 8.93,"Hands on a glass desk, meeting their own reflection"],
+ [8.93,10.93,"Female lead against the sunset — “You will find out soon”"],
+ [10.93,15.03,"Wide two-shot, mirror-polished floor, Namsan tower behind"],
+ [15.03,24.13,"Apartment, dresser — “This is just the beginning”"],
+ [24.13,26.23,"Kitchen, two women, one framed in the doorway"],
+ [26.23,30.13,"Doorway close-up — “Do we really have to go this far?”"],
+ [30.13,35.20,"Boardroom, backlit into silhouette, anamorphic flare"],
+ [35.20,45.20,"Corridor with mirrored stone walls — the longest shot"],
+ [45.20,50.77,"Insert: an old photograph on a desk"],
+ [50.77,60.27,"Night office window carrying a second view of her face"],
+ [60.27,67.43,"Study, grey-haired man, whisky — the plaques are gibberish"],
+ [67.43,72.43,"Blonde at a moonlit window, reflection alongside"],
+ [72.43,72.93,"flash"],[72.93,73.43,"flash"],[73.43,73.90,"flash"],
+ [73.90,77.63,"Rooftop, the couple, city bokeh behind"],
+ [77.63,77.80,"flash"],[77.80,77.97,"flash"],[77.97,78.13,"flash"],
+ [78.13,78.30,"flash"],[78.30,78.47,"flash"],[78.47,78.63,"flash"],
+ [78.63,78.80,"flash"],[78.80,78.97,"flash"],[78.97,79.13,"flash"],
+ [79.13,79.97,"flash"],[79.97,80.30,"flash"],[80.30,80.47,"flash"],
+ [80.47,80.67,"flash"],[80.67,80.90,"flash"],[80.90,81.03,"flash"],
+ [81.03,81.13,"flash"],[81.13,81.47,"flash"],
+ [81.47,86.07,"Rooftop, the couple turn to each other"],
+ [86.07,88.47,"Title card — 원수와 결혼하기 / Marrying my enemy"]
+];
+const strip = document.getElementById('strip');
+const read  = document.getElementById('stripRead');
+const DEFAULT_READ = read.innerHTML;
+
+CUTS.forEach(function(c){
+  var a=c[0], b=c[1], label=c[2], d=b-a;
+  var isFlash = (label==='flash');
+  var seg = document.createElement(isFlash ? 'div' : 'button');
+  seg.className='seg';
+  seg.style.flex = d+' 0 0';
+  seg.style.minWidth = (d<0.6 ? '2px' : '3px');
+  seg.dataset.kind = d>=9 ? 'long' : (d<1.5 ? 'flash' : 'mid');
+  if(!isFlash){
+    seg.type='button';
+    seg.setAttribute('aria-label', label+', '+d.toFixed(2)+' seconds');
+  }
+  var txt = isFlash
+    ? '<b>'+d.toFixed(2)+' s</b> &mdash; flash cut, one of the 20 that close the film'
+    : '<b>'+a.toFixed(2)+'&ndash;'+b.toFixed(2)+' s &nbsp;('+d.toFixed(2)+' s)</b> &mdash; '+label;
+  function show(){ read.innerHTML = txt; }
+  seg.addEventListener('mouseenter', show);
+  seg.addEventListener('focus', show);
+  seg.addEventListener('click', show);
+  strip.appendChild(seg);
+});
+strip.addEventListener('mouseleave', function(){ read.innerHTML = DEFAULT_READ; });
+</script>
+</body>
+</html>
