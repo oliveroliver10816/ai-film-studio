@@ -1,6 +1,12 @@
 # ai-film-studio — reference teardown + the free local film pipeline
 
-**Status (2026-07-31): RESEARCH DELIVERED. Nothing installed, nothing generated, ₹0 spent.**
+**Status (2026-07-31): RESEARCH DELIVERED + DEPLOYED. Nothing installed, nothing generated, ₹0 spent.**
+
+**LIVE:** https://oliveroliver10816.github.io/ai-film-studio/ (noindex, PUBLIC repo
+`oliveroliver10816/ai-film-studio`, collaborators SilentAurora245 + mary3862jon).
+Deploy QA on the live URL: 200 + all 9 assets, 35 interactive strip segments read out shot data
+on hover, 0 console errors, no horizontal overflow desktop 1440 + mobile 390, `noindex, nofollow`
+confirmed in the served HTML.
 Successor to `video-engine` (which answered *"is this feasible?"*). This folder answers
 *"how do we get THAT level, keep one face across shots, and do it on free software on the Blackwell box?"*
 
