@@ -85,6 +85,32 @@ D:\aifilm\  ├ comfy\  ├ tools\  ├ models\  ├ hf-cache\  ├ projects\  �
   (277 Mbps)** on the same machine minutes later — **12.8× faster**. I quoted the GitHub figure as
   the machine's speed and Bob correctly rejected it. **Always name the source host with a speed.**
 
+## ⭐ FIRST RENDER — measured on our card, 2026-08-01
+
+ComfyUI 0.29.2 running headless at `127.0.0.1:8188`, driven entirely over the bridge.
+Workflow: `UNETLoader → ModelSamplingSD3 (shift 8.0) → Wan22ImageToVideoLatent → KSampler
+(20 steps, cfg 5.0, euler/simple) → VAEDecode → CreateVideo → SaveVideo`.
+
+| | measured |
+|---|---|
+| clip | 1280×704, **121 frames @ 24 fps = 5.04 s** |
+| wall time | **81.85 s** |
+| **GPU seconds per second of video** | **16.23** |
+| peak VRAM | **28.8 GB of 95.6 GB — only 30% of the card** |
+| output | h264 mp4, 486 KB, verified with ffprobe |
+
+⭐ **A frame was pulled back through the bridge as base64 and looked at** — coherent cinematic
+image (woman behind rain-streaked glass, city bokeh, correct framing), not noise. Do this on every
+benchmark: a `success` status proves the graph ran, not that the video is real.
+
+⇒ **A 60-second film costs ~16 minutes of GPU at this setting** with one usable take per shot,
+~49 minutes at three takes per shot. ⚠ Still an extrapolation until we render a real shot list.
+
+⚠ **The `~205 s/video-second` figure carried from the research is misleading for us** — that was a
+**14B** model on an H100. Our **5B** on the PRO 6000 is **16.23**. Never compare across model sizes.
+⚠ VRAM at 30% means there is a lot of headroom: bigger model, higher resolution or longer clips are
+all available before the card is the limit.
+
 ## The bridge (BUILT + LIVE 2026-07-31)
 
 **https://ai-film-bridge.fleet-fefsba.workers.dev** — Cloudflare Worker + D1 on the Osanix account.
