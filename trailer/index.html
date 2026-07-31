@@ -146,40 +146,41 @@ a{color:var(--steel)}
 
 <section>
   <h2>Cast</h2>
-  <p>Generate <strong>one approved portrait per character in Flow first</strong>, then feed that image back as the reference for every other still. Consistency comes from reusing one approved face, never from re-describing it.</p>
-
-  <div class="cast">
-    <div class="card">
-      <h4>Elena Voss</h4>
-      <div class="role">Lead · early 30s · in all shots but three</div>
-      <dl>
-        <dt>Face</dt><dd>Sharp jaw, high flat cheekbones, grey-green eyes, dark auburn hair in a low centre-parted chignon, one small mole below the left eye, matte deep-red lip.</dd>
-        <dt>Wardrobe</dt><dd>Charcoal wool overcoat (S02, S09) · oxblood silk blouse (S05, S06) · black satin gown, bare shoulders (S07, S08).</dd>
-        <dt>Bearing</dt><dd>Still. She does not gesture. Movement is head and eyes only.</dd>
-      </dl>
-      <div class="pb">
-        <div class="pb-head"><span>Flow — master portrait, generate this first</span><button data-copy>copy</button></div>
-        <pre>Cinematic film still, medium close-up portrait of a woman in her early thirties, sharp jawline, high flat cheekbones, grey-green eyes, dark auburn hair in a low centre-parted chignon, one small mole below her left eye, matte deep-red lip, charcoal wool overcoat, plain dark background, single warm key light from camera left, cool rim light from behind right, shallow depth of field, 85mm lens, 35mm film grain, neutral expression looking directly at camera</pre>
-      </div>
-    </div>
-
-    <div class="card">
-      <h4>Adrian Kane</h4>
-      <div class="role">Lead · late 30s · four shots</div>
-      <dl>
-        <dt>Face</dt><dd>Black hair swept back, grey at the temples, heavy brow, dark brown eyes, close-cropped stubble, a faint vertical scar through the right eyebrow.</dd>
-        <dt>Wardrobe</dt><dd>Navy three-piece suit, no tie, collar open one button. Same suit in every shot — a trailer reads it as one day.</dd>
-        <dt>Bearing</dt><dd>Occupies the centre of frame. Slow to turn. Never rushed.</dd>
-      </dl>
-      <div class="pb">
-        <div class="pb-head"><span>Flow — master portrait, generate this first</span><button data-copy>copy</button></div>
-        <pre>Cinematic film still, medium close-up portrait of a man in his late thirties, black hair swept back with grey at the temples, heavy brow, dark brown eyes, close-cropped stubble, a faint vertical scar through the right eyebrow, navy three-piece suit with an open collar and no tie, plain dark background, single warm key light from camera right, cool rim light from behind left, shallow depth of field, 85mm lens, 35mm film grain, neutral expression looking slightly off camera</pre>
-      </div>
-    </div>
-  </div>
+  <p class="lede">Generate <strong>one turnaround sheet per character first</strong> — six views of the same face in a single image. Because all six come out of one generation, they are guaranteed to be the same person. That is the whole trick, and it is stronger than generating six separate headshots and hoping they match.</p>
+  <p>Then upscale the sheet to 4K in Flow before downloading, so each of the six views is still around 800&nbsp;px tall and usable as a reference on its own.</p>
 
   <div class="warn">
-    <p><strong>Do not use a face-swap or identity-transfer node to hold the face.</strong> InstantID, PuLID, IP-Adapter FaceID and LatentSync all pull InsightFace weights, and those weights are licensed for non-commercial research only — the code being Apache-2.0 does not change that. One approved Flow portrait reused as a reference image carries no such restriction.</p>
+    <p><strong>The sheet must be lit flat and neutral — that is deliberate, and it is the opposite of every other prompt on this page.</strong> A reference face carrying dramatic side light drags that light into every shot you later build from it. Flat 1:1 lighting on mid-grey keeps the face re-lightable. The drama is added per shot, in the ten prompts below.</p>
+  </div>
+
+  <div id="cast"></div>
+
+  <h3>If you would rather do them one at a time</h3>
+  <p>Single-angle prompts, in case a view on the sheet comes out weak or you want one at full resolution. Each is the full character description plus one camera position, so they can be pasted on their own.</p>
+  <div id="angles"></div>
+
+  <div class="warn">
+    <p><strong>Never hold the face with a face-swap or identity-transfer node.</strong> InstantID, PuLID, IP-Adapter FaceID and LatentSync all download InsightFace weights, which are licensed for non-commercial research only — the surrounding code being Apache-2.0 does not change what the weights permit. An approved Flow sheet reused as a reference image carries no such restriction.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Where the files go</h2>
+  <p class="lede">Nowhere. Save them into a folder on the Blackwell PC and I read them over the bridge — there is no upload, no link to send, no third party.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>What</th><th>Save to</th><th>Name it</th></tr></thead>
+      <tbody>
+        <tr><td><b>Character sheets</b></td><td><b>D:\aifilm\inbox\cast\</b></td><td>elena_sheet.png · adrian_sheet.png</td></tr>
+        <tr><td>Single angles (optional)</td><td>D:\aifilm\inbox\cast\</td><td>elena_front.png · elena_34r.png · adrian_profile.png …</td></tr>
+        <tr><td><b>Shot keyframes</b></td><td><b>D:\aifilm\inbox\keyframes\</b></td><td>s01.png · s02.png … s10.png</td></tr>
+        <tr><td>Voice files from the VA</td><td>D:\aifilm\inbox\voice\</td><td>exactly the filenames on the voice sheet</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:16px">PNG or JPG, any resolution — bigger is better. The folders already exist and there is a <b>READ&nbsp;ME.txt</b> inside repeating this. Drop the files in and tell me; I will confirm what I can see before anything is rendered.</p>
+  <div class="note">
+    <p><strong>If you generate on a different machine</strong>, put them anywhere that machine can reach — a shared folder, a USB drive, or send me a link — and I will move them into the inbox myself. The only thing that matters is that they end up on the Blackwell before the render.</p>
   </div>
 </section>
 
@@ -281,64 +282,9 @@ a{color:var(--steel)}
 
 </div>
 
+<script src="cast.js"></script>
+<script src="shots.js"></script>
 <script>
-const SHOTS=[
- {n:1,d:5.20,t:"Cold open — the ring",tag:null,
-  job:"Establishes tone with no face to defend. Black frame, then one object. The audience is told this is about a marriage before a person appears.",
-  still:"Cinematic film still, extreme close-up of a plain gold wedding ring lying on a dark polished mahogany desk, a single sheet of legal paper beside it, one hard warm light raking across from camera left, deep shadow filling the rest of the frame, shallow depth of field, 100mm macro lens, 35mm film grain, dust in the light beam",
-  motion:"The ring settles and stops spinning on the polished wood, dust drifting through the light beam, camera pushes in very slowly, everything else perfectly still",
-  line:{who:"Elena — voice over",text:"Everyone at the funeral told me to let it go.",file:"01_elena_funeral.wav",note:"Flat. Not sad. A statement of fact she has repeated too many times."}},
- {n:2,d:6.20,t:"Elena at the window",tag:null,
-  job:"First face, and deliberately the safest possible one — behind rain-streaked glass, backlit, half in shadow. This is the shot already proven on the machine.",
-  still:"Cinematic film still, a woman in a charcoal wool overcoat stands at a rain-streaked office window at night, seen from inside, city lights in soft bokeh beyond the glass, warm sodium key light from camera left, cool blue fill from the window, shallow depth of field, anamorphic lens flare, 35mm film grain, her face half in shadow",
-  motion:"She turns her head slowly toward camera and her eyes settle, rain running down the glass in front of her, city lights flickering softly behind, camera holds absolutely still"},
- {n:3,d:4.20,t:"Adrian signs",tag:null,
-  job:"Introduce him without showing him properly. Backlit to silhouette — the cheapest shot in the film and one of the strongest.",
-  still:"Cinematic film still, a man in a navy three-piece suit sits at the head of a long boardroom table signing a document, shot from behind and to the side so he is almost a silhouette against a wall of bright windows, hard backlight, dust in the air, wide lens, deep shadow in the foreground, 35mm film grain",
-  motion:"His hand completes the signature and lifts away, he leans back slowly into the chair, dust drifting in the backlight, camera static"},
- {n:4,d:6.30,t:"The long table",tag:null,
-  job:"The relationship in one frame — two people at opposite ends of a table, neither face readable. Distance does the acting.",
-  still:"Cinematic film still, an extremely long formal dining table lit only by a line of candles down its centre, a woman in a black gown seated at one end and a man in a navy suit at the other, both small in frame, vast dark room around them, symmetrical composition, wide lens, warm candlelight falling off into blackness, 35mm film grain",
-  motion:"Candle flames flicker and lean, both figures perfectly still, a slow almost imperceptible camera push down the length of the table"},
- {n:5,d:4.30,t:"The folder",tag:null,
-  job:"Plot delivered by object, not exposition. Hands only, so no face has to hold.",
-  still:"Cinematic film still, close-up of a woman's hands in an oxblood silk blouse sliding a slim manila folder across a dark polished table toward a man's hand, warm low key light from one side, everything beyond the hands falling into shadow, 50mm lens, shallow depth of field, 35mm film grain",
-  motion:"The folder slides across the table and stops under his fingers, her hand withdraws slowly out of frame, his hand does not move, camera static"},
- {n:6,d:6.90,t:"Adrian — the accusation",tag:"dlg",
-  job:"First held close-up of him and the film's turn. Shallow focus, one light, plain dark field behind.",
-  still:"Cinematic film still, tight close-up of a man in his late thirties with black hair swept back and grey at the temples, heavy brow, a faint vertical scar through his right eyebrow, navy suit with open collar, looking directly at camera, single warm key light from camera right, deep shadow filling the left of his face, plain dark background, 85mm lens, very shallow depth of field, 35mm film grain",
-  motion:"He speaks one short line directly to camera, minimal head movement, eyes locked forward, a slow blink at the end, camera absolutely static",
-  line:{who:"Adrian — on camera",text:"You married me to take it back.",file:"02_adrian_takeitback.wav",note:"Quiet. Certain. He is not asking, and he is not angry. Slight downward inflection on the last word."}},
- {n:7,d:4.50,t:"The staircase",tag:null,
-  job:"The film's only spectacle. Motion, flashbulbs and a gown — and it is over in four and a half seconds, before anything can be examined.",
-  still:"Cinematic film still, a woman in a black satin gown with bare shoulders descends a wide marble staircase, press camera flashes firing from below frame, harsh white bursts against deep shadow, shot from slightly below, motion blur in the gown, 35mm lens, film grain",
-  motion:"She descends two steps, camera flashes burst irregularly lighting her face in hard white snaps, the gown moves with her, camera rises slightly to meet her"},
- {n:8,d:6.80,t:"Elena — the answer",tag:"dlg",
-  job:"The payoff line and the longest held face in the film. Everything before this exists to earn six seconds of one face not moving.",
-  still:"Cinematic film still, tight close-up of a woman in her early thirties, sharp jawline, grey-green eyes wet but not crying, dark auburn hair in a low chignon, one small mole below her left eye, matte deep-red lip, black satin gown, looking directly at camera, single cool key light from camera left, warm practical light far behind her out of focus, plain dark background, 85mm lens, very shallow depth of field, 35mm film grain",
-  motion:"She holds camera without blinking, speaks one short line, then one slow blink as she finishes, no other movement, camera absolutely static",
-  line:{who:"Elena — on camera",text:"I married you to take all of it.",file:"03_elena_allofit.wav",note:"Almost a whisper. No triumph. Land hard on “all”, then let the last two words fall away."}},
- {n:9,d:4.50,t:"Adrian alone",tag:null,
-  job:"Consequence without dialogue. Back to camera again — free, and it reads as defeat.",
-  still:"Cinematic film still, a man in a navy suit stands alone in a dark glass-walled office at night with one hand flat against the window, city grid glowing far below, seen from behind and slightly to the side, reflection of his face faint in the glass, cool blue light only, wide lens, 35mm film grain",
-  motion:"His hand stays flat on the glass, his head lowers very slightly, the city lights shift and flicker below, camera drifts a few inches to the right"},
- {n:10,d:4.30,t:"The elevator",tag:"vo",
-  job:"Last sustained shot. Two faces, one frame, neither looking at the other — and the doors take the image away for you, so the shot ends itself.",
-  still:"Cinematic film still, a woman in a charcoal overcoat and a man in a navy suit stand side by side inside a lift, both facing forward, neither looking at the other, hard overhead light casting shadow into their eye sockets, brushed steel walls, symmetrical composition, 35mm lens, film grain",
-  motion:"Both stand perfectly still facing forward, the lift doors slide closed across the frame from both sides, overhead light dimming as they meet",
-  line:{who:"Elena — voice over",text:"He taught me how to do this. He just never thought I was taking notes.",file:"04_elena_notes.wav",note:"The only line with any dryness in it. Two sentences, small pause between. Runs over this shot and into the montage."}}
-];
-
-const MONTAGE=[
- ["A signature tearing through paper","new"],["Champagne flute set down hard","new"],
- ["Elena's eyes, snap close-up","from S08"],["Boardroom doors swinging open","new"],
- ["A phone screen going dark","new"],["Adrian's hand closing into a fist","from S09"],
- ["Rain hammering the window","from S02"],["The ring being pushed onto a finger","from S01"],
- ["A chair spinning empty","new"],["Press flashes, pure white","from S07"],
- ["Elena's back turning away","from S10"],["Candles blown out","from S04"],
- ["Adrian's face in the glass","from S09"],["Black","—"]
-];
-
 /* ---------- build the strip ---------- */
 const strip=document.getElementById('strip'), readout=document.getElementById('readout');
 let t=0; const segs=[];
@@ -370,8 +316,33 @@ function fmt(x){return x.toFixed(2).padStart(5,'0')}
 function show(b){readout.innerHTML=b.dataset.text}
 function pick(b){segs.forEach(s=>s.setAttribute('aria-current','false'));b.setAttribute('aria-current','true');show(b)}
 
-/* ---------- build the shots ---------- */
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+/* ---------- cast sheets + angles ---------- */
+const ID={elena:ELENA_ID, adrian:ADRIAN_ID};
+const fill=t=>t.replace(/\{ELENA\}/g,ELENA_ID).replace(/\{ADRIAN\}/g,ADRIAN_ID);
+
+document.getElementById('cast').innerHTML='<div class="cast">'+CAST.map(c=>`
+  <div class="card">
+    <h4>${esc(c.name)}</h4>
+    <div class="role">${esc(c.role)}</div>
+    <dl>${c.bio.map(([k,v])=>`<dt>${esc(k)}</dt><dd>${v}</dd>`).join('')}</dl>
+    <div class="pb"><div class="pb-head"><span>Flow — six-view turnaround sheet, generate this first</span><button data-copy>copy</button></div><pre>${esc(c.sheet)}</pre></div>
+  </div>`).join('')+'</div>';
+
+document.getElementById('angles').innerHTML=CAST.map(c=>`
+  <h4 style="font:800 26px/1 var(--display);text-transform:uppercase;margin:30px 0 2px;color:var(--bone)">${esc(c.name)}</h4>
+  ${c.angles.map(([label,use,cam])=>`
+    <div class="shot"><div class="shot-head">
+      <div class="shot-title">${esc(label)}</div><div class="shot-t">${esc(use)}</div></div>
+      <div class="shot-body" style="padding-top:0">
+        <div class="pb"><div class="pb-head"><span>Flow — single angle</span><button data-copy>copy</button></div><pre>${esc(
+          'Professional character reference headshot for film casting, one person on a plain mid-grey seamless studio background, '+cam+'.\n\nTHE SUBJECT: '+ID[c.key]+'.\n\nWARDROBE: '+(c.key==='elena'
+            ? 'a plain matte black high-neck long-sleeved top and plain black trousers, no jewellery, no watch, no pattern, no logo'
+            : 'a plain white cotton dress shirt with the collar open one button, sleeves down, no tie, no jacket, no watch, no ring, no pattern, no logo')+'.\n\nLIGHTING: '+SHEET_LIGHT+'.\n\nTECHNICAL: '+SHEET_TECH+'.'
+        )}</pre></div>
+      </div></div>`).join('')}`).join('');
+
+/* ---------- build the shots ---------- */
 let acc=0;
 document.getElementById('shots').innerHTML=SHOTS.map(s=>{
   const inT=acc, outT=acc+s.d; acc+=s.d;
@@ -381,12 +352,12 @@ document.getElementById('shots').innerHTML=SHOTS.map(s=>{
     <div class="shot-head">
       <div class="shot-no">${String(s.n).padStart(2,'0')}</div>
       <div class="shot-t">${fmt(inT)} – ${fmt(outT)} · ${s.d.toFixed(2)} s</div>
-      <div class="shot-title">${esc(s.t)}</div>${tag}
+      <div class="shot-title">${esc(s.t)}</div>${s.ref?`<span class="tag">ref: ${esc(s.ref)}</span>`:""}${tag}
     </div>
     <div class="shot-body">
       <p class="job">${esc(s.job)}</p>
       ${line}
-      <div class="pb"><div class="pb-head"><span>Still prompt → Flow</span><button data-copy>copy</button></div><pre>${esc(s.still)}</pre></div>
+      <div class="pb"><div class="pb-head"><span>Still prompt → Flow</span><button data-copy>copy</button></div><pre>${esc(fill(s.still))}</pre></div>
       <div class="pb"><div class="pb-head"><span>Motion prompt → Wan, on the Blackwell</span><button data-copy>copy</button></div><pre>${esc(s.motion)}</pre></div>
     </div></article>`;
 }).join('');
