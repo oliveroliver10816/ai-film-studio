@@ -102,9 +102,15 @@ every close-up is one face on a plain field, three shots are hands/objects/silho
 there are no crowds, no fine hand-work and no readable on-screen text — the four things that still
 give generated video away. S02 is deliberately the shot already proven on this machine.
 
-- **Cast bibles + one master Flow portrait per character**, then that image is the reference for
-  every other still. ⚠ **Never a face-swap node** — InstantID/PuLID/IP-Adapter FaceID/LatentSync all
-  pull non-commercial InsightFace weights.
+- ⭐ **Cast = a SIX-VIEW TURNAROUND SHEET per character in one image** (Bob's idea, and better than
+  my first version's single portrait): front · ¾ left · ¾ right · profile · rear ¾ · full length,
+  all from **one generation**, so identity is guaranteed rather than hoped for. Upscale the sheet to
+  4K in Flow before download so each view is still ~800 px. 12 single-angle prompts ship as backup.
+  ⚠ **The sheet is lit FLAT and NEUTRAL on mid-grey (1:1, no rim, 5600K) — the opposite of every
+  other prompt on the page, and deliberate.** A reference face carrying dramatic side light drags
+  that light into every shot built from it. My first draft got this wrong.
+- ⚠ **Never a face-swap node** — InstantID/PuLID/IP-Adapter FaceID/LatentSync all pull
+  non-commercial InsightFace weights.
 - **Voice sheet is written for a VA with no judgement calls:** fixed settings (stability 45,
   similarity 80, style 0, speed 0.92), voices chosen by **description not name** because libraries
   differ between accounts, one file per line with the exact filename, and an **audition step before
@@ -114,7 +120,17 @@ give generated video away. S02 is deliberately the shot already proven on this m
   would be the expensive way to make the least important 4 seconds.
 - Master to **−14 LUFS** (the reference sits at −24, ten under platform target — do not copy that).
 
-**Blocked on Bob for exactly three things:** the two master portraits from Flow, the voice audition
+**Prompt detail is a standing instruction from Bob** — *"the more detailed the prompt is, the more
+curated the image output will be"*. Every still prompt is written in a fixed order: subject →
+wardrobe → set → light direction, colour temperature and shadow ratio → lens, aperture and focus
+point → film stock and grade. Character descriptions are **substituted into each shot prompt at
+render time**, so every copied block is self-contained (~2,000 chars) and needs no other context.
+
+**File handover = `D:\aifilm\inbox\` on the PC** (`cast\`, `keyframes\`, `voice\`, plus a
+READ ME.txt). Nothing is uploaded anywhere — the images have to be on that machine for ComfyUI to
+use them, so that is the drop point and I read it over the bridge.
+
+**Blocked on Bob for exactly three things:** the two turnaround sheets from Flow, the voice audition
 pick, and then ten keyframes. Everything else runs over the bridge unattended.
 
 Page QA: 25 strip segments summing to **60.00**, copy-to-clipboard verified against the real
