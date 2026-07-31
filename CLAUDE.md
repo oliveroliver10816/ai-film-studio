@@ -85,6 +85,41 @@ D:\aifilm\  ├ comfy\  ├ tools\  ├ models\  ├ hf-cache\  ├ projects\  �
   (277 Mbps)** on the same machine minutes later — **12.8× faster**. I quoted the GitHub figure as
   the machine's speed and Bob correctly rejected it. **Always name the source host with a speed.**
 
+## THE ARRANGEMENT — the 60-second trailer (written 2026-08-01)
+
+**LIVE:** https://oliveroliver10816.github.io/ai-film-studio/trailer/ (noindex)
+Shot list + prompt book + ElevenLabs voice sheet, in `trailer/index.html`.
+
+Original English story in the reference's genre. Logline: *she married the man who took her
+father's company; he signed knowing exactly why.* **Two characters, four spoken lines.**
+
+**Timing is copied from the reference's measured grammar, not invented:**
+10 sustained shots **averaging 5.32 s** (reference 5.54) = 53.20 s · **14 flash cuts at 0.293 s**
+(reference 0.27) = 4.10 s · 2.70 s title = **60.00 s exactly**.
+
+⭐ **The script is written to exploit what the reference exploits.** Every wide is dark or backlit,
+every close-up is one face on a plain field, three shots are hands/objects/silhouette only, and
+there are no crowds, no fine hand-work and no readable on-screen text — the four things that still
+give generated video away. S02 is deliberately the shot already proven on this machine.
+
+- **Cast bibles + one master Flow portrait per character**, then that image is the reference for
+  every other still. ⚠ **Never a face-swap node** — InstantID/PuLID/IP-Adapter FaceID/LatentSync all
+  pull non-commercial InsightFace weights.
+- **Voice sheet is written for a VA with no judgement calls:** fixed settings (stability 45,
+  similarity 80, style 0, speed 0.92), voices chosen by **description not name** because libraries
+  differ between accounts, one file per line with the exact filename, and an **audition step before
+  the other three lines are made**. ⚠ It states that length comes from pauses not word count, and
+  that the same text does not produce the same duration twice.
+- Flash montage is mostly **re-used tails of shots already rendered** — fourteen fresh generations
+  would be the expensive way to make the least important 4 seconds.
+- Master to **−14 LUFS** (the reference sits at −24, ten under platform target — do not copy that).
+
+**Blocked on Bob for exactly three things:** the two master portraits from Flow, the voice audition
+pick, and then ten keyframes. Everything else runs over the bridge unattended.
+
+Page QA: 25 strip segments summing to **60.00**, copy-to-clipboard verified against the real
+clipboard, **0 WCAG AA contrast failures**, 0 console errors, no overflow at 1440 or 390.
+
 ## ⭐ FIRST RENDER — measured on our card, 2026-08-01
 
 ComfyUI 0.29.2 running headless at `127.0.0.1:8188`, driven entirely over the bridge.
