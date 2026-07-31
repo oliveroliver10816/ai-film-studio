@@ -59,6 +59,29 @@ Disk free: C 1127 GB · **D 5613 GB** · E 1835 GB.
   (95.6 GB), host RAM is not. That path is out unless RAM is added — the slow path or LoRA-on-stills
   is what fits.
 
+## Our own stack on the PC — `D:\aifilm` (built 2026-08-01)
+
+Deliberately **outside** `D:\Vova\...`, which is someone else's existing AI work. Do not modify
+or repurpose those installs; build alongside them.
+
+```
+D:\aifilm\  ├ comfy\  ├ tools\  ├ models\  ├ hf-cache\  ├ projects\  ├ out\  └ logs\
+```
+
+- **ffmpeg** (BtbN GPL build) at `D:\aifilm\tools\ffmpeg`, on the machine PATH.
+  ⭐ **NVENC present: `h264_nvenc`, `hevc_nvenc`, `av1_nvenc`** — hardware encode on the Blackwell.
+- ⭐ **ComfyUI 0.29.2 portable** at `D:\aifilm\comfy` with **python 3.13.14 + torch 2.13.0+cu130**,
+  `arch list` includes **sm_120**, 95.6 GB VRAM seen. This is the environment `video-engine` said we
+  would have to build by hand — the official portable ships it. **Vova's old portable is 0.3.59 with
+  torch 2.8.0+cu129; ours is the one to use.**
+- `HF_HOME` repointed to `D:\aifilm\hf-cache` so future model pulls stay off C:.
+- ⚠ **The "CUDA v13.1" install is NOT a toolkit** — the folder holds only `extras` and
+  `version.json`. There is **no `nvcc`, no compiler**. Fine for running (torch ships its own
+  runtime); it blocks compiling SageAttention or flash-attn. Skipped Visual Studio Build Tools
+  deliberately rather than spend 7 GB on an optimisation we have not proven we need.
+- ⚠ **Measured download speed to this machine ≈ 2.7 MB/s** (2,005 MB of ComfyUI took 742 s).
+  Budget model pulls accordingly — the 17 GB Wan 2.2 set is roughly a two-hour unattended job.
+
 ## The bridge (BUILT + LIVE 2026-07-31)
 
 **https://ai-film-bridge.fleet-fefsba.workers.dev** — Cloudflare Worker + D1 on the Osanix account.
