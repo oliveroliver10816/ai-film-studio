@@ -80,8 +80,10 @@ D:\aifilm\  ├ comfy\  ├ tools\  ├ models\  ├ hf-cache\  ├ projects\  �
   `version.json`. There is **no `nvcc`, no compiler**. Fine for running (torch ships its own
   runtime); it blocks compiling SageAttention or flash-attn. Skipped Visual Studio Build Tools
   deliberately rather than spend 7 GB on an optimisation we have not proven we need.
-- ⚠ **Measured download speed to this machine ≈ 2.7 MB/s** (2,005 MB of ComfyUI took 742 s).
-  Budget model pulls accordingly — the 17 GB Wan 2.2 set is roughly a two-hour unattended job.
+- ⚠ **Do not judge this machine's bandwidth from a GitHub release download.** GitHub's release CDN
+  served ComfyUI at **2.7 MB/s**; HuggingFace served the 17 GB Wan 2.2 set at **34.68 MB/s
+  (277 Mbps)** on the same machine minutes later — **12.8× faster**. I quoted the GitHub figure as
+  the machine's speed and Bob correctly rejected it. **Always name the source host with a speed.**
 
 ## The bridge (BUILT + LIVE 2026-07-31)
 
