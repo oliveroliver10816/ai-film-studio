@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.3'
+$Version = '1.0.4'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -144,7 +144,18 @@ function Run-Job($job) {
     try { $null = $p.Handle } catch { }
     $timeout = 900
     if ($job.timeout_s) { $timeout = [int]$job.timeout_s }
-    if (-not $p.WaitForExit($timeout * 1000)) {
+    # Wait in slices instead of one long block, so a 2-hour render or download still sends its
+    # heartbeat. Waiting in a single call made the machine read as OFFLINE for the whole job —
+    # exactly when we most want to watch the GPU.
+    $waited = 0
+    $exited = $false
+    while ($waited -lt $timeout) {
+      $slice = [Math]::Min(30, $timeout - $waited)
+      if ($p.WaitForExit($slice * 1000)) { $exited = $true; break }
+      $waited += $slice
+      if (($waited % 60) -eq 0) { Send-Stats }
+    }
+    if (-not $exited) {
       try { $p.Kill() } catch { }
       Start-Sleep -Seconds 1
       $code = -9
