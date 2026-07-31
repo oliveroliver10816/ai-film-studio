@@ -1,0 +1,420 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>THE ARRANGEMENT — 60-second trailer, shot by shot</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@400;600;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#06080A; --ink-2:#0B0F14; --surface:#121820; --surface-2:#18202A;
+  --line:#243039; --line-soft:#1A222B;
+  --bone:#E9E7DE; --bone-dim:#96A0A6; --bone-faint:#7F8A90;
+  --sodium:#D89B4E; --sodium-hi:#F0BE79; --steel:#5EA8C9; --alarm:#E2613F; --ok:#7FB47A;
+  --display:"Big Shoulders Display",Impact,sans-serif;
+  --body:"Instrument Sans",system-ui,-apple-system,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --quote:"Newsreader",Georgia,serif;
+  --wrap:1140px; --gut:clamp(18px,4vw,40px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.62 var(--body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.kick{font:500 11px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--bone-faint)}
+
+/* ---------- masthead ---------- */
+header{padding:clamp(46px,9vw,96px) 0 34px;border-bottom:1px solid var(--line)}
+h1{font:800 clamp(52px,13vw,148px)/0.82 var(--display);letter-spacing:.005em;text-transform:uppercase;margin:16px 0 0}
+h1 span{display:block;color:var(--sodium)}
+.logline{font:300 italic clamp(19px,2.6vw,27px)/1.45 var(--quote);color:var(--bone);max-width:34ch;margin:26px 0 0}
+.facts{display:flex;flex-wrap:wrap;gap:10px 34px;margin-top:30px;font:500 11px/1 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--bone-faint)}
+.facts b{color:var(--sodium);font-weight:700}
+
+/* ---------- strip ---------- */
+.strip-wrap{margin:26px 0 0}
+.strip{display:flex;gap:2px;height:84px;align-items:stretch}
+.seg{border:0;padding:0;cursor:pointer;background:var(--surface-2);border-top:2px solid transparent;transition:background .12s,border-color .12s;position:relative}
+.seg.sus{background:#1B242E}
+.seg.flash{background:#2A3A46}
+.seg.title{background:#3A2E12}
+.seg:hover,.seg[aria-current="true"]{background:var(--sodium);border-top-color:var(--sodium-hi)}
+.scale{display:flex;justify-content:space-between;margin-top:7px;font:400 10px var(--mono);color:var(--bone-faint)}
+.readout{margin-top:11px;font:400 12.5px/1.5 var(--mono);color:var(--bone-dim);min-height:2.6em}
+.readout b{color:var(--sodium)}
+
+/* ---------- sections ---------- */
+section{padding:clamp(46px,7vw,84px) 0;border-bottom:1px solid var(--line-soft)}
+h2{font:800 clamp(28px,4.6vw,50px)/0.95 var(--display);text-transform:uppercase;letter-spacing:.01em;margin:10px 0 8px}
+h3{font:600 13px/1 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--sodium);margin:36px 0 14px}
+p{max-width:70ch;color:var(--bone-dim)}
+p strong{color:var(--bone);font-weight:600}
+.lede{font-size:18px;color:var(--bone)}
+
+/* ---------- cast ---------- */
+.cast{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px;margin-top:22px}
+.card{background:var(--surface);border:1px solid var(--line);padding:22px}
+.card h4{font:800 30px/0.95 var(--display);text-transform:uppercase;margin:0 0 4px}
+.card .role{font:500 11px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--steel);margin-bottom:14px}
+.card dl{margin:0;font-size:14.5px}
+.card dt{font:500 10px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--bone-faint);margin-top:12px}
+.card dd{margin:3px 0 0;color:var(--bone-dim)}
+
+/* ---------- prompt blocks ---------- */
+.pb{margin:12px 0 0;border:1px solid var(--line);background:#040608}
+.pb-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--ink-2)}
+.pb-head span{font:500 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint)}
+.pb-head button{font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--line);color:var(--bone-dim);padding:4px 10px;cursor:pointer}
+.pb-head button:hover{color:var(--sodium);border-color:var(--sodium)}
+.pb-head button.done{color:var(--ok);border-color:var(--ok)}
+.pb pre{margin:0;padding:12px;font:400 12.5px/1.62 var(--mono);color:#C8CFD3;white-space:pre-wrap;word-break:break-word}
+
+/* ---------- shots ---------- */
+.shot{border:1px solid var(--line);background:var(--surface);margin-top:18px}
+.shot-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--surface-2)}
+.shot-no{font:800 34px/0.85 var(--display);color:var(--sodium)}
+.shot-t{font:500 11px var(--mono);letter-spacing:.12em;color:var(--bone-faint)}
+.shot-title{font:600 16px var(--body);color:var(--bone);flex:1 1 240px}
+.tag{font:700 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--line);color:var(--bone-faint)}
+.tag.dlg{color:var(--sodium);border-color:var(--sodium)}
+.tag.vo{color:var(--steel);border-color:var(--steel)}
+.shot-body{padding:18px 20px 22px}
+.job{font:400 14px/1.55 var(--body);color:var(--bone-dim);margin:0 0 4px;max-width:none}
+.job b{color:var(--bone)}
+.line{font:300 italic 19px/1.4 var(--quote);color:var(--sodium-hi);margin:14px 0 0;padding-left:16px;border-left:2px solid var(--sodium)}
+.line small{display:block;font:500 10px var(--mono);font-style:normal;letter-spacing:.13em;text-transform:uppercase;color:var(--bone-faint);margin-top:7px}
+
+/* ---------- tables ---------- */
+.scroll{overflow-x:auto;border:1px solid var(--line);background:var(--ink-2);margin-top:18px}
+table{width:100%;border-collapse:collapse;font:400 13px/1.5 var(--mono)}
+th{text-align:left;font-weight:500;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--bone-faint);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top;color:var(--bone-dim)}
+td b{color:var(--bone)}
+tr:last-child td{border-bottom:0}
+
+/* ---------- callouts ---------- */
+.warn,.note{border-left:2px solid var(--alarm);background:var(--surface);padding:16px 20px;margin:20px 0 0}
+.note{border-left-color:var(--steel)}
+.warn p,.note p{margin:0;max-width:74ch;font-size:14.5px}
+.warn p+p,.note p+p{margin-top:9px}
+
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:22px 0 0}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 0 52px;margin:0 0 20px;max-width:72ch;color:var(--bone-dim);font-size:15px}
+ol.steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:-4px;font:800 26px/1 var(--display);color:var(--sodium)}
+ol.steps b{color:var(--bone)}
+.who{display:inline-block;font:700 9.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border:1px solid var(--line);color:var(--bone-faint);margin-left:8px;vertical-align:2px}
+.who.bob{color:var(--sodium);border-color:var(--sodium)}
+.who.va{color:var(--steel);border-color:var(--steel)}
+
+footer{padding:44px 0 80px;font:400 12px var(--mono);color:var(--bone-faint)}
+a{color:var(--steel)}
+@media(max-width:640px){ .strip{height:62px} .shot-no{font-size:27px} }
+</style>
+
+<div class="wrap">
+
+<header>
+  <div class="kick">Shot list · prompt book · voice sheet — 01 Aug 2026</div>
+  <h1>The<span>Arrangement</span></h1>
+  <p class="logline">She married the man who took her father's company. He signed knowing exactly why.</p>
+  <div class="facts">
+    <div>Runtime <b>60.00 s</b></div>
+    <div>Shots <b>10 sustained + 14 flash</b></div>
+    <div>Spoken lines <b>4</b></div>
+    <div>Language <b>English</b></div>
+    <div>Est. GPU <b>~16 min</b></div>
+  </div>
+
+  <div class="strip-wrap">
+    <div class="kick" style="margin-bottom:9px">The cut, drawn to scale — click a block</div>
+    <div class="strip" id="strip"></div>
+    <div class="scale"><span>00.0</span><span>15.0</span><span>30.0</span><span>45.0</span><span>60.0</span></div>
+    <div class="readout" id="readout">Ten sustained shots average <b>5.32 s</b> against the reference film's 5.54 s, then <b>14 flash cuts at 0.293 s</b> against its 0.27 s. The grammar is copied; the story is not.</div>
+  </div>
+</header>
+
+<section>
+  <h2>Why this story</h2>
+  <p class="lede">The reference film survives scrutiny because it <strong>avoids</strong> scrutiny — five lines of dialogue in 88 seconds, weak shots framed into silhouette, shallow focus hiding everything but one face, and a flash montage where nothing has to hold up. This script is built to exploit exactly those conditions.</p>
+  <p>Two faces only. Four spoken lines. Every wide shot is dark or backlit. Every close-up is one face on a plain field. No crowds, no hands doing fine work, no readable text on screen — the four things that still betray generated video.</p>
+  <div class="note">
+    <p><strong>Nothing rides on this commercially.</strong> It is the test piece: it proves a face survives ten shots, a voice matches a mouth, and a cut reads as film. Everything learned here transfers to work that does earn.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Cast</h2>
+  <p>Generate <strong>one approved portrait per character in Flow first</strong>, then feed that image back as the reference for every other still. Consistency comes from reusing one approved face, never from re-describing it.</p>
+
+  <div class="cast">
+    <div class="card">
+      <h4>Elena Voss</h4>
+      <div class="role">Lead · early 30s · in all shots but three</div>
+      <dl>
+        <dt>Face</dt><dd>Sharp jaw, high flat cheekbones, grey-green eyes, dark auburn hair in a low centre-parted chignon, one small mole below the left eye, matte deep-red lip.</dd>
+        <dt>Wardrobe</dt><dd>Charcoal wool overcoat (S02, S09) · oxblood silk blouse (S05, S06) · black satin gown, bare shoulders (S07, S08).</dd>
+        <dt>Bearing</dt><dd>Still. She does not gesture. Movement is head and eyes only.</dd>
+      </dl>
+      <div class="pb">
+        <div class="pb-head"><span>Flow — master portrait, generate this first</span><button data-copy>copy</button></div>
+        <pre>Cinematic film still, medium close-up portrait of a woman in her early thirties, sharp jawline, high flat cheekbones, grey-green eyes, dark auburn hair in a low centre-parted chignon, one small mole below her left eye, matte deep-red lip, charcoal wool overcoat, plain dark background, single warm key light from camera left, cool rim light from behind right, shallow depth of field, 85mm lens, 35mm film grain, neutral expression looking directly at camera</pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Adrian Kane</h4>
+      <div class="role">Lead · late 30s · four shots</div>
+      <dl>
+        <dt>Face</dt><dd>Black hair swept back, grey at the temples, heavy brow, dark brown eyes, close-cropped stubble, a faint vertical scar through the right eyebrow.</dd>
+        <dt>Wardrobe</dt><dd>Navy three-piece suit, no tie, collar open one button. Same suit in every shot — a trailer reads it as one day.</dd>
+        <dt>Bearing</dt><dd>Occupies the centre of frame. Slow to turn. Never rushed.</dd>
+      </dl>
+      <div class="pb">
+        <div class="pb-head"><span>Flow — master portrait, generate this first</span><button data-copy>copy</button></div>
+        <pre>Cinematic film still, medium close-up portrait of a man in his late thirties, black hair swept back with grey at the temples, heavy brow, dark brown eyes, close-cropped stubble, a faint vertical scar through the right eyebrow, navy three-piece suit with an open collar and no tie, plain dark background, single warm key light from camera right, cool rim light from behind left, shallow depth of field, 85mm lens, 35mm film grain, neutral expression looking slightly off camera</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <p><strong>Do not use a face-swap or identity-transfer node to hold the face.</strong> InstantID, PuLID, IP-Adapter FaceID and LatentSync all pull InsightFace weights, and those weights are licensed for non-commercial research only — the code being Apache-2.0 does not change that. One approved Flow portrait reused as a reference image carries no such restriction.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The ten shots</h2>
+  <p>Each shot has two prompts. The <strong>still prompt</strong> goes to Flow to make the keyframe. The <strong>motion prompt</strong> goes to Wan on your machine, which animates that keyframe. Build the shot in the keyframe — wardrobe, set and light are decided there, not argued with later.</p>
+  <div id="shots"></div>
+</section>
+
+<section>
+  <h2>The flash montage</h2>
+  <p>Fourteen cuts in 4.10 seconds, <strong>0.293 s each</strong>. At this length nothing has to survive inspection, which is the point: this is where the impossible shots go. Each is a single gesture, no faces held longer than a beat.</p>
+  <div class="scroll">
+    <table id="montage"><thead><tr><th>#</th><th>In</th><th>Image</th><th>Source</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="note">
+    <p><strong>Cheapest way to make these:</strong> take the last frame of a sustained shot you already rendered, push it through one second of motion, and use a fraction of it. Fourteen fresh generations is the expensive way to do the least important 4 seconds of the film.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Voice sheet — for the VA, in ElevenLabs</h2>
+  <p>Four lines. Each is generated separately and delivered as a separate file, named exactly as listed. No music, no effects, no edits — raw voice only. We do the timing here.</p>
+
+  <h3>Settings, identical for every line</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Setting</th><th>Value</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><b>Model</b></td><td>Multilingual v2 (or the newest English model in the account)</td><td>Most stable for held, quiet delivery.</td></tr>
+        <tr><td><b>Stability</b></td><td><b>45%</b></td><td>Low enough to carry feeling, high enough not to wobble between takes.</td></tr>
+        <tr><td><b>Similarity</b></td><td><b>80%</b></td><td>Keeps the same voice across all four files.</td></tr>
+        <tr><td><b>Style exaggeration</b></td><td><b>0%</b></td><td>Trailer delivery is underplayed. Style pushes it theatrical.</td></tr>
+        <tr><td><b>Speaker boost</b></td><td><b>On</b></td><td>Consistency across separate generations.</td></tr>
+        <tr><td><b>Speed</b></td><td><b>0.92</b></td><td>Slightly under natural. Reads as weight.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Voice choice</h3>
+  <p>Pick from the account's standard voice library. Names differ between accounts, so <strong>match the description, not the name</strong> — the characteristics are what matter:</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Character</th><th>Look for</th><th>Common names to try first</th><th>Reject if</th></tr></thead>
+      <tbody>
+        <tr><td><b>Elena</b></td><td>Female, low register, British or neutral-transatlantic, unhurried, slight rasp at the bottom of the range</td><td>Charlotte · Alice · Matilda · Sarah</td><td>Bright, young, upward inflections, or anything that sounds like an advert</td></tr>
+        <tr><td><b>Adrian</b></td><td>Male, deep, dry, controlled, no warmth</td><td>George · Daniel · Brian · Callum</td><td>Booming "movie trailer guy", or anything breathy</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">Generate one test line in two or three candidate voices, send those, and we pick before the other lines are made. <strong>Do not settle the voice by generating all four lines in one voice and hoping.</strong></p>
+
+  <h3>The four lines</h3>
+  <div id="lines"></div>
+
+  <div class="warn">
+    <p><strong>Length is set by pauses, not by word count.</strong> Every sentence boundary costs roughly nine tenths of a second. If a line comes back too long for its shot, merge the sentences rather than cutting words, and re-measure — the same text does not produce the same duration twice.</p>
+    <p>Send the files as <strong>WAV if the account allows it</strong>, MP3 at 192 kbps or better otherwise. Do not trim the silence at the start or end.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Sound</h2>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Element</th><th>Plan</th><th>Where from</th></tr></thead>
+      <tbody>
+        <tr><td><b>Score</b></td><td>One cue, single piano figure under a low drone, building to a single hit at the title. No drums until 45 s.</td><td>ACE-Step, Apache-2.0, generated locally — free and licence-clean.</td></tr>
+        <tr><td><b>Foley</b></td><td>Rain on glass, a ring landing on wood, a door seal closing, press shutters.</td><td>ThinkSound locally, or cut from the clips' own generated audio.</td></tr>
+        <tr><td><b>Dialogue</b></td><td>Four ElevenLabs files, placed by hand.</td><td>VA.</td></tr>
+        <tr><td><b>Master</b></td><td><b>−14 LUFS.</b></td><td>ffmpeg loudnorm. The reference film sits at −24 LUFS, about ten under platform target — do not copy that.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>Order of work</h2>
+  <ol class="steps">
+    <li><b>Two master portraits in Flow</b> — Elena and Adrian, prompts above. Upscale and download. Nothing else starts until both faces are approved. <span class="who bob">Bob</span></li>
+    <li><b>Face-survival test.</b> I take the approved portraits and generate four stills each across different rooms and lighting. If a face drifts, we fix it here — a still costs seconds, a video costs minutes. <span class="who">Claude</span></li>
+    <li><b>Voice audition</b> — one line, two or three candidate voices per character, sent back for a pick. Runs in parallel with steps 1–2. <span class="who va">VA</span></li>
+    <li><b>Ten keyframes in Flow</b>, one per sustained shot, each built from the approved portrait. <span class="who bob">Bob</span></li>
+    <li><b>Ten shots rendered</b> on the Blackwell, three takes each, logged to the render ledger with their own GPU seconds and keep rate. About 49 minutes at three takes. <span class="who">Claude</span></li>
+    <li><b>Four final voice files</b> in the chosen voices, once the pick is made. <span class="who va">VA</span></li>
+    <li><b>Montage, cut, grade and master.</b> Grade every shot to one master reference, never to the shot before it — matching neighbour to neighbour is how a film drifts colour across a minute. <span class="who">Claude</span></li>
+  </ol>
+  <div class="note">
+    <p><strong>Steps 1, 3 and 4 are the only things not on our machine.</strong> Everything else runs over the bridge and reports itself. If the two portraits and the voice pick arrive, the rest is a day's work with no further input needed.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap" style="padding:0">
+    Production document · noindex · <a href="../">back to the teardown</a><br>
+    Timings derived from the reference film's own measured cut list. Every prompt on this page is written to be pasted unedited.
+  </div>
+</footer>
+
+</div>
+
+<script>
+const SHOTS=[
+ {n:1,d:5.20,t:"Cold open — the ring",tag:null,
+  job:"Establishes tone with no face to defend. Black frame, then one object. The audience is told this is about a marriage before a person appears.",
+  still:"Cinematic film still, extreme close-up of a plain gold wedding ring lying on a dark polished mahogany desk, a single sheet of legal paper beside it, one hard warm light raking across from camera left, deep shadow filling the rest of the frame, shallow depth of field, 100mm macro lens, 35mm film grain, dust in the light beam",
+  motion:"The ring settles and stops spinning on the polished wood, dust drifting through the light beam, camera pushes in very slowly, everything else perfectly still",
+  line:{who:"Elena — voice over",text:"Everyone at the funeral told me to let it go.",file:"01_elena_funeral.wav",note:"Flat. Not sad. A statement of fact she has repeated too many times."}},
+ {n:2,d:6.20,t:"Elena at the window",tag:null,
+  job:"First face, and deliberately the safest possible one — behind rain-streaked glass, backlit, half in shadow. This is the shot already proven on the machine.",
+  still:"Cinematic film still, a woman in a charcoal wool overcoat stands at a rain-streaked office window at night, seen from inside, city lights in soft bokeh beyond the glass, warm sodium key light from camera left, cool blue fill from the window, shallow depth of field, anamorphic lens flare, 35mm film grain, her face half in shadow",
+  motion:"She turns her head slowly toward camera and her eyes settle, rain running down the glass in front of her, city lights flickering softly behind, camera holds absolutely still"},
+ {n:3,d:4.20,t:"Adrian signs",tag:null,
+  job:"Introduce him without showing him properly. Backlit to silhouette — the cheapest shot in the film and one of the strongest.",
+  still:"Cinematic film still, a man in a navy three-piece suit sits at the head of a long boardroom table signing a document, shot from behind and to the side so he is almost a silhouette against a wall of bright windows, hard backlight, dust in the air, wide lens, deep shadow in the foreground, 35mm film grain",
+  motion:"His hand completes the signature and lifts away, he leans back slowly into the chair, dust drifting in the backlight, camera static"},
+ {n:4,d:6.30,t:"The long table",tag:null,
+  job:"The relationship in one frame — two people at opposite ends of a table, neither face readable. Distance does the acting.",
+  still:"Cinematic film still, an extremely long formal dining table lit only by a line of candles down its centre, a woman in a black gown seated at one end and a man in a navy suit at the other, both small in frame, vast dark room around them, symmetrical composition, wide lens, warm candlelight falling off into blackness, 35mm film grain",
+  motion:"Candle flames flicker and lean, both figures perfectly still, a slow almost imperceptible camera push down the length of the table"},
+ {n:5,d:4.30,t:"The folder",tag:null,
+  job:"Plot delivered by object, not exposition. Hands only, so no face has to hold.",
+  still:"Cinematic film still, close-up of a woman's hands in an oxblood silk blouse sliding a slim manila folder across a dark polished table toward a man's hand, warm low key light from one side, everything beyond the hands falling into shadow, 50mm lens, shallow depth of field, 35mm film grain",
+  motion:"The folder slides across the table and stops under his fingers, her hand withdraws slowly out of frame, his hand does not move, camera static"},
+ {n:6,d:6.90,t:"Adrian — the accusation",tag:"dlg",
+  job:"First held close-up of him and the film's turn. Shallow focus, one light, plain dark field behind.",
+  still:"Cinematic film still, tight close-up of a man in his late thirties with black hair swept back and grey at the temples, heavy brow, a faint vertical scar through his right eyebrow, navy suit with open collar, looking directly at camera, single warm key light from camera right, deep shadow filling the left of his face, plain dark background, 85mm lens, very shallow depth of field, 35mm film grain",
+  motion:"He speaks one short line directly to camera, minimal head movement, eyes locked forward, a slow blink at the end, camera absolutely static",
+  line:{who:"Adrian — on camera",text:"You married me to take it back.",file:"02_adrian_takeitback.wav",note:"Quiet. Certain. He is not asking, and he is not angry. Slight downward inflection on the last word."}},
+ {n:7,d:4.50,t:"The staircase",tag:null,
+  job:"The film's only spectacle. Motion, flashbulbs and a gown — and it is over in four and a half seconds, before anything can be examined.",
+  still:"Cinematic film still, a woman in a black satin gown with bare shoulders descends a wide marble staircase, press camera flashes firing from below frame, harsh white bursts against deep shadow, shot from slightly below, motion blur in the gown, 35mm lens, film grain",
+  motion:"She descends two steps, camera flashes burst irregularly lighting her face in hard white snaps, the gown moves with her, camera rises slightly to meet her"},
+ {n:8,d:6.80,t:"Elena — the answer",tag:"dlg",
+  job:"The payoff line and the longest held face in the film. Everything before this exists to earn six seconds of one face not moving.",
+  still:"Cinematic film still, tight close-up of a woman in her early thirties, sharp jawline, grey-green eyes wet but not crying, dark auburn hair in a low chignon, one small mole below her left eye, matte deep-red lip, black satin gown, looking directly at camera, single cool key light from camera left, warm practical light far behind her out of focus, plain dark background, 85mm lens, very shallow depth of field, 35mm film grain",
+  motion:"She holds camera without blinking, speaks one short line, then one slow blink as she finishes, no other movement, camera absolutely static",
+  line:{who:"Elena — on camera",text:"I married you to take all of it.",file:"03_elena_allofit.wav",note:"Almost a whisper. No triumph. Land hard on “all”, then let the last two words fall away."}},
+ {n:9,d:4.50,t:"Adrian alone",tag:null,
+  job:"Consequence without dialogue. Back to camera again — free, and it reads as defeat.",
+  still:"Cinematic film still, a man in a navy suit stands alone in a dark glass-walled office at night with one hand flat against the window, city grid glowing far below, seen from behind and slightly to the side, reflection of his face faint in the glass, cool blue light only, wide lens, 35mm film grain",
+  motion:"His hand stays flat on the glass, his head lowers very slightly, the city lights shift and flicker below, camera drifts a few inches to the right"},
+ {n:10,d:4.30,t:"The elevator",tag:"vo",
+  job:"Last sustained shot. Two faces, one frame, neither looking at the other — and the doors take the image away for you, so the shot ends itself.",
+  still:"Cinematic film still, a woman in a charcoal overcoat and a man in a navy suit stand side by side inside a lift, both facing forward, neither looking at the other, hard overhead light casting shadow into their eye sockets, brushed steel walls, symmetrical composition, 35mm lens, film grain",
+  motion:"Both stand perfectly still facing forward, the lift doors slide closed across the frame from both sides, overhead light dimming as they meet",
+  line:{who:"Elena — voice over",text:"He taught me how to do this. He just never thought I was taking notes.",file:"04_elena_notes.wav",note:"The only line with any dryness in it. Two sentences, small pause between. Runs over this shot and into the montage."}}
+];
+
+const MONTAGE=[
+ ["A signature tearing through paper","new"],["Champagne flute set down hard","new"],
+ ["Elena's eyes, snap close-up","from S08"],["Boardroom doors swinging open","new"],
+ ["A phone screen going dark","new"],["Adrian's hand closing into a fist","from S09"],
+ ["Rain hammering the window","from S02"],["The ring being pushed onto a finger","from S01"],
+ ["A chair spinning empty","new"],["Press flashes, pure white","from S07"],
+ ["Elena's back turning away","from S10"],["Candles blown out","from S04"],
+ ["Adrian's face in the glass","from S09"],["Black","—"]
+];
+
+/* ---------- build the strip ---------- */
+const strip=document.getElementById('strip'), readout=document.getElementById('readout');
+let t=0; const segs=[];
+SHOTS.forEach(s=>{
+  const b=document.createElement('button');
+  b.className='seg sus'; b.style.flex=s.d;
+  b.dataset.text=`<b>S${String(s.n).padStart(2,'0')} · ${fmt(t)}–${fmt(t+s.d)} (${s.d.toFixed(2)} s)</b> — ${s.t}. ${s.job}`;
+  b.setAttribute('aria-label',`Shot ${s.n}, ${s.t}`);
+  b.onclick=()=>{document.getElementById('shot'+s.n).scrollIntoView({behavior:'smooth',block:'center'});pick(b)};
+  b.onmouseenter=()=>show(b);
+  strip.appendChild(b); segs.push(b); t+=s.d;
+});
+MONTAGE.forEach((m,i)=>{
+  const b=document.createElement('button');
+  b.className='seg flash'; b.style.flex=0.293;
+  b.dataset.text=`<b>Flash ${i+1} · ${fmt(53.20+i*0.293)} (0.293 s)</b> — ${m[0]} <i>(${m[1]})</i>`;
+  b.setAttribute('aria-label',`Flash cut ${i+1}`);
+  b.onmouseenter=()=>show(b); b.onclick=()=>pick(b);
+  strip.appendChild(b); segs.push(b);
+});
+const tb=document.createElement('button');
+tb.className='seg title'; tb.style.flex=2.70;
+tb.dataset.text='<b>Title · 57.30–60.00 (2.70 s)</b> — THE ARRANGEMENT in white on black, single score hit, then hard cut to silence.';
+tb.setAttribute('aria-label','Title card');
+tb.onmouseenter=()=>show(tb); tb.onclick=()=>pick(tb);
+strip.appendChild(tb); segs.push(tb);
+
+function fmt(x){return x.toFixed(2).padStart(5,'0')}
+function show(b){readout.innerHTML=b.dataset.text}
+function pick(b){segs.forEach(s=>s.setAttribute('aria-current','false'));b.setAttribute('aria-current','true');show(b)}
+
+/* ---------- build the shots ---------- */
+const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+let acc=0;
+document.getElementById('shots').innerHTML=SHOTS.map(s=>{
+  const inT=acc, outT=acc+s.d; acc+=s.d;
+  const tag=s.tag==='dlg'?'<span class="tag dlg">dialogue on camera</span>':(s.tag==='vo'?'<span class="tag vo">voice over</span>':'');
+  const line=s.line?`<div class="line">&ldquo;${esc(s.line.text)}&rdquo;<small>${esc(s.line.who)} · file ${esc(s.line.file)} · ${esc(s.line.note)}</small></div>`:'';
+  return `<article class="shot" id="shot${s.n}">
+    <div class="shot-head">
+      <div class="shot-no">${String(s.n).padStart(2,'0')}</div>
+      <div class="shot-t">${fmt(inT)} – ${fmt(outT)} · ${s.d.toFixed(2)} s</div>
+      <div class="shot-title">${esc(s.t)}</div>${tag}
+    </div>
+    <div class="shot-body">
+      <p class="job">${esc(s.job)}</p>
+      ${line}
+      <div class="pb"><div class="pb-head"><span>Still prompt → Flow</span><button data-copy>copy</button></div><pre>${esc(s.still)}</pre></div>
+      <div class="pb"><div class="pb-head"><span>Motion prompt → Wan, on the Blackwell</span><button data-copy>copy</button></div><pre>${esc(s.motion)}</pre></div>
+    </div></article>`;
+}).join('');
+
+/* ---------- montage table ---------- */
+document.querySelector('#montage tbody').innerHTML=MONTAGE.map((m,i)=>
+ `<tr><td><b>${i+1}</b></td><td>${fmt(53.20+i*0.293)}</td><td>${esc(m[0])}</td><td>${esc(m[1])}</td></tr>`).join('');
+
+/* ---------- voice lines ---------- */
+document.getElementById('lines').innerHTML=SHOTS.filter(s=>s.line).map((s,i)=>{
+  const l=s.line;
+  return `<div class="shot"><div class="shot-head">
+      <div class="shot-no">${String(i+1).padStart(2,'0')}</div>
+      <div class="shot-title">${esc(l.who)}</div>
+      <div class="shot-t">save as <b style="color:var(--sodium)">${esc(l.file)}</b></div></div>
+    <div class="shot-body">
+      <div class="pb"><div class="pb-head"><span>Paste exactly this into ElevenLabs</span><button data-copy>copy</button></div><pre>${esc(l.text)}</pre></div>
+      <p class="job" style="margin-top:12px"><b>Delivery:</b> ${esc(l.note)}</p>
+    </div></div>`;
+}).join('');
+
+/* ---------- copy buttons ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-copy]'); if(!b) return;
+  const txt=b.closest('.pb').querySelector('pre').innerText;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const old=b.textContent; b.textContent='copied'; b.classList.add('done');
+    setTimeout(()=>{b.textContent=old;b.classList.remove('done')},1400);
+  });
+});
+</script>
