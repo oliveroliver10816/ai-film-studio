@@ -1,6 +1,7 @@
 # ai-film-studio — reference teardown + the free local film pipeline
 
-**Status (2026-07-31): RESEARCH DELIVERED + DEPLOYED. Nothing installed, nothing generated, ₹0 spent.**
+**Status (2026-08-01): RESEARCH DELIVERED + DEPLOYED · BRIDGE LIVE · STACK INSTALLED ON THE PC.**
+Nothing generated yet, ₹0 spent — everything installed is free software.
 
 **LIVE:** https://oliveroliver10816.github.io/ai-film-studio/ (noindex, PUBLIC repo
 `oliveroliver10816/ai-film-studio`, collaborators SilentAurora245 + mary3862jon).
