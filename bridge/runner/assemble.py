@@ -13,9 +13,9 @@ import json, os, subprocess, sys, math
 
 FF = r"D:\aifilm\tools\ffmpeg\bin\ffmpeg.exe"
 FP = r"D:\aifilm\tools\ffmpeg\bin\ffprobe.exe"
-SHOTS_DIR = r"D:\aifilm\out\shots"
-VOICE_DIR = r"D:\aifilm\out\voice"
-WORK = r"D:\aifilm\out\assembly"
+SHOTS_DIR = r"D:\aifilm\out\04_clips"
+VOICE_DIR = r"D:\aifilm\out\05_voice"
+WORK = r"D:\aifilm\out\06_edit"
 OUT = r"D:\aifilm\out\THE_ARRANGEMENT.mp4"
 W, H, FPS = 1280, 704, 24
 
