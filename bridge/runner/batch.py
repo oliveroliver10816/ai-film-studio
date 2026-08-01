@@ -46,6 +46,11 @@ class GpuWatch(threading.Thread):
     def stop(self):
         self._stop.set()
 
+    def hottest(self, n=3):
+        """Max temperature across the last n samples (~6 s at the 2 s interval)."""
+        rows = self.samples[-n:]
+        return max((r["temp_c"] for r in rows), default=0.0)
+
     def mark(self):
         self._mark = len(self.samples)
 
@@ -81,7 +86,7 @@ def get(url, timeout=60):
         return json.loads(r.read().decode())
 
 
-def run_one(wf, timeout_s):
+def run_one(wf, timeout_s, watch=None, abort_temp=0.0):
     try:
         r = post(f"{COMFY}/prompt", {"prompt": wf, "client_id": "batch"})
     except urllib.error.HTTPError as e:
@@ -94,6 +99,18 @@ def run_one(wf, timeout_s):
     end = time.time() + timeout_s
     while time.time() < end:
         time.sleep(2)
+        # HARD THERMAL ABORT. This card dropped off the PCIe bus after an hour at 94 C.
+        # A warning in a log did not stop that and never will — this cancels the render.
+        if watch is not None and abort_temp > 0 and watch.hottest(3) >= abort_temp:
+            hot = watch.hottest(3)
+            try:
+                urllib.request.urlopen(urllib.request.Request(f"{COMFY}/interrupt", data=b"{}",
+                                       headers={"Content-Type": "application/json"}), timeout=15).read()
+            except Exception:
+                pass
+            return "thermal_abort", None, (f"ABORTED: GPU reached {hot:.0f} C, at or above the "
+                                           f"{abort_temp:.0f} C limit. The render was cancelled to "
+                                           f"protect the card.")
         try:
             h = get(f"{COMFY}/history/{pid}", timeout=20)
         except Exception:
@@ -118,6 +135,7 @@ def main():
         b64 = open(b64, "r", encoding="utf-8").read().strip()
     batch = json.loads(base64.b64decode(b64).decode("utf-8"))
     per_timeout = int(os.environ.get("BATCH_ITEM_TIMEOUT", "1800"))
+    abort_temp = float(os.environ.get("BATCH_ABORT_TEMP", "87"))
 
     watch = GpuWatch()
     watch.start()
@@ -168,7 +186,7 @@ def main():
             pass
         watch.mark()
         t0 = time.time()
-        status, files, err = run_one(item["wf"], per_timeout)
+        status, files, err = run_one(item["wf"], per_timeout, watch, abort_temp)
         el = time.time() - t0
         g = watch.since_mark()
         print(f"[{i}/{len(batch)}] {shot:<5} {status:<10} {el:7.1f}s  "
@@ -178,6 +196,9 @@ def main():
         results.append({"shot": shot, "model": item.get("model"), "status": status,
                         "elapsed_s": round(el, 2), "files": files if status == "done" else [],
                         "error": err, "gpu": g})
+        if status == "thermal_abort":
+            print(f"!! THERMAL ABORT on {shot} — stopping the whole batch. {err}", flush=True)
+            break
 
     watch.stop()
     try:
