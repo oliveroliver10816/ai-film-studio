@@ -126,6 +126,32 @@ wardrobe → set → light direction, colour temperature and shadow ratio → le
 point → film stock and grade. Character descriptions are **substituted into each shot prompt at
 render time**, so every copied block is self-contained (~2,000 chars) and needs no other context.
 
+## CAST REVIEW — first 12 images, 2026-08-01
+
+Bob generated **12 separate images** in Flow (not the six-view sheet) at **2752×1536**, uploaded
+through the link. All pulled back through the bridge and inspected as native-resolution face crops
+side by side — not judged from thumbnails.
+
+**ELENA — PASSES. Lock her.** Same bone structure, hair, lip and eyes across front, both
+three-quarters, profile and full length. Five usable angles plus the rear = the whole sheet.
+- ⚠ **The mole drifts**: below the eye in the front view, beside the mouth in one three-quarter.
+  Side is consistent, height is not. **Decision: drop the mole from the spec** — it is decorative,
+  it is the least stable feature, and a mole that moves between shots is exactly what an audience
+  notices without knowing why.
+- ⚠ It sits on her **RIGHT**; our written spec said LEFT. Change the spec, never the images.
+
+**ADRIAN — one image is a DIFFERENT MAN.** `Man_..._0530` has **no eyebrow scar** and a narrower
+face. `0530__1_`, `0532` and `0532__1_` agree with each other and carry the scar. **Discard 0530.**
+Still needed: one more three-quarter from the other side, generated from `0530__1_` as reference.
+
+⭐ **This is the headline finding: separate generations do not hold a face — 1 in 4 drifted to a
+different person.** It is the exact failure a single six-view sheet avoids, and it means *no amount
+of automation fixes consistency*; automating this pipeline just produces different faces faster.
+
+⚠ **Every Flow image carries a Gemini watermark** — four-pointed star, ~55 px, bottom-right, about
+115 px in from each edge. Must be cropped before use. Our keyframes are re-framed to 1280×704
+anyway, so this costs nothing if it is remembered.
+
 ## ⭐ THE UPLOAD LINK — files go straight onto the render machine (built 2026-08-01)
 
 ⚠ **Bob generates images on a DIFFERENT PC from the Blackwell**, so "save it to D:\aifilm\inbox"
