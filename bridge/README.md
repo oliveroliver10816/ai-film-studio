@@ -116,3 +116,34 @@ hostname the tunnel currently has. Scheduled task `AIFilmInbox` brings both back
 - ⚠ **PowerShell backtick line-continuations do not survive an unquoted bash heredoc** — they came
   through empty and `cloudflared` launched with no arguments at all, so no tunnel was created while
   the job still reported success. Use splatting (`@args`) for multi-line `Start-Process` calls.
+
+## Live view (added 2026-08-01)
+
+The dashboard's top panel shows what the machine is doing **right now**, refreshed every 2 s.
+Agent 1.0.7 posts to `/api/live` every ~4 s *while a job runs* — the wait loop was cut from 30 s
+slices to 4 s for this.
+
+A job describes itself by writing `D:\aifilm\logs\current.json`:
+
+```json
+{ "task": "download", "item": "qwen_image_edit_2511_bf16.safetensors",
+  "source": "huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI",
+  "dest": "D:\\aifilm\\comfy\\ComfyUI\\models\\diffusion_models\\qwen...safetensors",
+  "total_bytes": 40854781952 }
+```
+
+Everything else is measured by the agent: bytes written so far (it stats `dest`), transfer rate
+(delta between samples), the last 24 lines of the job's output, and a GPU snapshot. The panel then
+shows verb + item, source, destination, a progress bar, MB/s and ETA.
+
+⚠ **Any long-running job should write `current.json`** or the panel can only show the label,
+elapsed time, GPU and output tail. The agent deletes the file when the job ends.
+
+⚠ **`Promise.all` on the dashboard turned one throttled call into a total failure**, which is what
+made Refresh look broken — it fired correctly every time but a single `1042` blanked the result.
+Now `Promise.allSettled`, each panel updates independently, and the header states how many calls
+were throttled. The button also disables itself and says *refreshing…* so it visibly does something.
+
+⚠ **`if/else` inside a PS 5.1 hashtable literal parses fine under pwsh 7**, so the Linux parse check
+does NOT catch it. It was reintroduced while writing the live payload and caught by eye. Resolve
+values into variables first, always.
