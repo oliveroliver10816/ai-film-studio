@@ -126,9 +126,34 @@ wardrobe → set → light direction, colour temperature and shadow ratio → le
 point → film stock and grade. Character descriptions are **substituted into each shot prompt at
 render time**, so every copied block is self-contained (~2,000 chars) and needs no other context.
 
-**File handover = `D:\aifilm\inbox\` on the PC** (`cast\`, `keyframes\`, `voice\`, plus a
-READ ME.txt). Nothing is uploaded anywhere — the images have to be on that machine for ComfyUI to
-use them, so that is the drop point and I read it over the bridge.
+## ⭐ THE UPLOAD LINK — files go straight onto the render machine (built 2026-08-01)
+
+⚠ **Bob generates images on a DIFFERENT PC from the Blackwell**, so "save it to D:\aifilm\inbox"
+was not usable. Solved without any cloud storage in between:
+
+**Permanent link:** `https://ai-film-bridge.fleet-fefsba.workers.dev/inbox?k=<upload_token>`
+(token in `/root/.config/ai-film-bridge.json`). It 302s to whatever the machine's current public
+address is.
+
+- **`bridge/uploader/uploader.py` runs ON the PC** (system python 3.12.9, no dependencies) serving a
+  drag-and-drop page and writing into `D:\aifilm\inbox\{cast,keyframes,voice}`.
+  ⭐ **Raw `PUT` with the filename in the URL, not multipart** — nothing to parse, and it survives
+  `cgi` being removed in Python 3.13. Body is written to `.part` and renamed only on a complete
+  read, so a dropped connection never leaves a truncated file that looks finished.
+- **Exposed by a Cloudflare quick tunnel** (`cloudflared tunnel --url`) — no domain, no DNS, no
+  Cloudflare account on the machine, **no inbound port opened**.
+  ⚠ **R2 was the first choice and is NOT enabled on the Osanix account** (`code: 10042`), which is
+  what pushed this to the better design anyway.
+- ⚠ **A quick tunnel's hostname is random and changes on every restart.** The agent reads
+  `D:\aifilm\logs\tunnel-url.txt` and reports it with each heartbeat; the worker's `/inbox`
+  route redirects to the latest one. That is why the bookmark is permanent and the tunnel is not.
+- Scheduled task **`AIFilmInbox`** restarts uploader + tunnel at every logon (alongside
+  `AIFilmBridge`).
+- Auth: `upload_token` on both the page and every PUT. **403 verified with no key and a wrong key**,
+  on the public URL. ⚠ Anyone with the full link can write to the machine — never paste it publicly.
+- Path traversal tested with encoded `..%2f`, `..%5c` and `C:%5C` — all contained inside the target
+  folder. Tested end to end: browser upload → bytes on disk with an intact PNG header and exact
+  size, then the test file removed.
 
 **Blocked on Bob for exactly three things:** the two turnaround sheets from Flow, the voice audition
 pick, and then ten keyframes. Everything else runs over the bridge unattended.
