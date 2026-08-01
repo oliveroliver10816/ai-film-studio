@@ -166,21 +166,34 @@ a{color:var(--steel)}
 
 <section>
   <h2>Where the files go</h2>
-  <p class="lede">Nowhere. Save them into a folder on the Blackwell PC and I read them over the bridge — there is no upload, no link to send, no third party.</p>
+  <p class="lede">One link. Drop files on it from any machine and they land on the Blackwell's disk — no cloud storage in between, no size limit, and no port opened on the machine.</p>
+
+  <div class="pb" style="margin-top:20px">
+    <div class="pb-head"><span>Bookmark this — it is the upload page</span><button data-copy>copy</button></div>
+    <pre>https://ai-film-bridge.fleet-fefsba.workers.dev/inbox?k=afu_UTGevkz7BNaBAu_mDQ2BafnyNMKl8Wkm</pre>
+  </div>
+  <p style="margin-top:14px"><a href="https://ai-film-bridge.fleet-fefsba.workers.dev/inbox?k=afu_UTGevkz7BNaBAu_mDQ2BafnyNMKl8Wkm" target="_blank" rel="noopener" style="font:700 13px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--sodium)">Open the upload page →</a></p>
+
+  <p>Pick a folder at the top of that page, drag files in, and each one shows its progress and the exact path it was written to. It also lists everything already on the machine, so you can see what arrived.</p>
+
   <div class="scroll">
     <table>
-      <thead><tr><th>What</th><th>Save to</th><th>Name it</th></tr></thead>
+      <thead><tr><th>Tab</th><th>Lands in</th><th>Name it</th></tr></thead>
       <tbody>
-        <tr><td><b>Character sheets</b></td><td><b>D:\aifilm\inbox\cast\</b></td><td>elena_sheet.png · adrian_sheet.png</td></tr>
-        <tr><td>Single angles (optional)</td><td>D:\aifilm\inbox\cast\</td><td>elena_front.png · elena_34r.png · adrian_profile.png …</td></tr>
-        <tr><td><b>Shot keyframes</b></td><td><b>D:\aifilm\inbox\keyframes\</b></td><td>s01.png · s02.png … s10.png</td></tr>
-        <tr><td>Voice files from the VA</td><td>D:\aifilm\inbox\voice\</td><td>exactly the filenames on the voice sheet</td></tr>
+        <tr><td><b>cast</b></td><td>D:ifilm\inbox\cast\</td><td>elena_sheet.png · adrian_sheet.png</td></tr>
+        <tr><td><b>keyframes</b></td><td>D:ifilm\inbox\keyframes\</td><td>s01.png · s02.png … s10.png</td></tr>
+        <tr><td><b>voice</b></td><td>D:ifilm\inboxoice\</td><td>exactly the filenames on the voice sheet</td></tr>
       </tbody>
     </table>
   </div>
-  <p style="margin-top:16px">PNG or JPG, any resolution — bigger is better. The folders already exist and there is a <b>READ&nbsp;ME.txt</b> inside repeating this. Drop the files in and tell me; I will confirm what I can see before anything is rendered.</p>
+
   <div class="note">
-    <p><strong>If you generate on a different machine</strong>, put them anywhere that machine can reach — a shared folder, a USB drive, or send me a link — and I will move them into the inbox myself. The only thing that matters is that they end up on the Blackwell before the render.</p>
+    <p><strong>The link is permanent, but what it points at is not.</strong> The machine's public address is a Cloudflare quick tunnel, which takes a new random hostname every time it restarts — that is the price of needing no domain, no DNS and no open ports. The bookmark above always redirects to the current one, because the machine reports its address every minute.</p>
+    <p>If it ever says the machine has not reported an address, the PC is off or still booting. Tell me and I will restart the tunnel over the bridge.</p>
+  </div>
+
+  <div class="warn">
+    <p><strong>Anyone with that full link can write files to the machine.</strong> The key at the end of it is the only thing standing in the way, and without the key the page returns 403. Do not paste it into anything public — send the folder contents, never the link.</p>
   </div>
 </section>
 
