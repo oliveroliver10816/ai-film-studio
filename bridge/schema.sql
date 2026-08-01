@@ -70,3 +70,21 @@ CREATE TABLE IF NOT EXISTS ledger (
   source  TEXT,
   status  TEXT DEFAULT 'estimated'   -- estimated | measured | verified | corrected | refuted
 );
+
+-- one row per agent, overwritten constantly: what the machine is doing RIGHT NOW
+CREATE TABLE IF NOT EXISTS live (
+  agent_id   TEXT PRIMARY KEY,
+  ts         INTEGER,
+  job_id     INTEGER,
+  label      TEXT,
+  elapsed_s  INTEGER,
+  task       TEXT,      -- download | render | install | shell
+  item       TEXT,      -- the file or shot being worked on
+  source     TEXT,      -- where it is coming from
+  dest       TEXT,      -- where it is being written
+  done_bytes INTEGER,
+  total_bytes INTEGER,
+  rate_bps   REAL,
+  gpu_json   TEXT,
+  tail       TEXT       -- last lines of the running job's output
+);

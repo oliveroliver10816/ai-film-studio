@@ -127,6 +127,25 @@ export default {
       return json({ ok: true });
     }
 
+    if (p === "/api/live" && request.method === "POST") {
+      if (!agentOK(request, env)) return json({ error: "bad agent token" }, 403);
+      const b = await request.json();
+      const t = cap(b.tail || "");
+      await env.DB.prepare(
+        `INSERT INTO live (agent_id,ts,job_id,label,elapsed_s,task,item,source,dest,done_bytes,total_bytes,rate_bps,gpu_json,tail)
+         VALUES (?1,?2,?3,?4,?5,?6,?7,?8,?9,?10,?11,?12,?13,?14)
+         ON CONFLICT(agent_id) DO UPDATE SET
+           ts=?2, job_id=?3, label=?4, elapsed_s=?5, task=?6, item=?7, source=?8, dest=?9,
+           done_bytes=?10, total_bytes=?11, rate_bps=?12, gpu_json=?13, tail=?14`
+      ).bind(
+        b.agent_id, now(), b.job_id ?? null, b.label || "", b.elapsed_s ?? null,
+        b.task || "", b.item || "", b.source || "", b.dest || "",
+        b.done_bytes ?? null, b.total_bytes ?? null, b.rate_bps ?? null,
+        JSON.stringify(b.gpu || []), t.text
+      ).run();
+      return json({ ok: true });
+    }
+
     if (p === "/api/render" && request.method === "POST") {
       if (!agentOK(request, env) && !adminOK(request, env, url)) return json({ error: "forbidden" }, 403);
       const b = await request.json();
@@ -208,6 +227,13 @@ export default {
            FROM renders GROUP BY model ORDER BY clips DESC`
       ).all();
       return json({ renders: results, by_model: agg.results });
+    }
+
+    if (p === "/api/live") {
+      if (!adminOK(request, env, url)) return json({ error: "forbidden" }, 403);
+      const row = await env.DB.prepare(`SELECT * FROM live ORDER BY ts DESC LIMIT 1`).first();
+      const a = await env.DB.prepare(`SELECT id,hostname,last_seen FROM agents ORDER BY last_seen DESC LIMIT 1`).first();
+      return json({ live: row || null, agent: a || null, server_time: now() });
     }
 
     if (p === "/api/ledger" && request.method === "POST") {
@@ -293,6 +319,26 @@ button{background:var(--sodium);color:#160E03;border:0;font-weight:700;cursor:po
 button:hover{background:var(--sodium-hi)}
 button.ghost{background:transparent;color:var(--bone-dim);border:1px solid var(--line);font-weight:500;text-transform:none;letter-spacing:0}
 button.ghost:hover{color:var(--bone);border-color:var(--bone-faint)}
+.livebox{border:1px solid var(--sodium);background:linear-gradient(180deg,#1B1408,#121820);padding:18px 20px;margin-bottom:8px}
+.livebox.idle{border-color:var(--line);background:var(--surface)}
+.live-top{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--ok);display:inline-block;animation:pulse 1.4s infinite}
+.dot.off{background:var(--bone-faint);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.live-what{font:800 clamp(19px,2.6vw,27px)/1.15 var(--display);text-transform:uppercase;letter-spacing:.01em;color:var(--bone)}
+.live-sub{font:400 12px/1.55 var(--mono);color:var(--bone-dim);margin-top:8px;word-break:break-all}
+.live-sub b{color:var(--sodium-hi)}
+.live-sub .k{color:var(--bone-faint);display:inline-block;min-width:82px}
+.pbar{height:10px;background:#0A0E12;border:1px solid var(--line);margin-top:12px;overflow:hidden}
+.pbar i{display:block;height:100%;background:linear-gradient(90deg,var(--sodium),var(--sodium-hi));transition:width .4s}
+.pnum{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--bone-dim);margin-top:6px}
+.pnum b{color:var(--bone)}
+.tail{margin-top:14px;background:#040608;border:1px solid var(--line);padding:11px 13px;max-height:190px;overflow:auto;
+ font:400 11.5px/1.6 var(--mono);color:#9FB0BA;white-space:pre-wrap;word-break:break-word}
+.gpuchips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{font:500 11px var(--mono);border:1px solid var(--line);padding:5px 10px;color:var(--bone-dim);background:var(--ink-2)}
+.chip b{color:var(--steel)}
+button.ghost[disabled]{opacity:.5;cursor:default}
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px}
 .card{background:var(--surface);border:1px solid var(--line);padding:14px 15px}
 .card .k{font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--bone-faint)}
@@ -335,10 +381,20 @@ a{color:var(--steel)}
     <div class="sub" id="stamp">—</div>
   </div>
   <div class="row" style="margin:0">
-    <button class="ghost" onclick="load()">Refresh</button>
+    <button class="ghost" id="refreshBtn" onclick="manualRefresh()">Refresh</button>
     <button class="ghost" onclick="localStorage.removeItem('afs_k');location.reload()">Lock</button>
   </div>
 </header>
+
+<h2>Live — what the machine is doing right now</h2>
+<div id="livebox" class="livebox idle">
+  <div class="live-top"><span class="dot off" id="livedot"></span><span class="live-what" id="livewhat">connecting…</span></div>
+  <div class="live-sub" id="livesub"></div>
+  <div id="livebar" style="display:none"><div class="pbar"><i id="livefill" style="width:0%"></i></div>
+    <div class="pnum"><span id="livedone"></span><span id="liverate"></span><span id="liveeta"></span></div></div>
+  <div class="gpuchips" id="livegpu"></div>
+  <div class="tail" id="livetail" style="display:none"></div>
+</div>
 
 <h2>Machine</h2>
 <div class="cards" id="machine"></div>
@@ -373,7 +429,7 @@ const H=()=>({'x-admin-token':K(),'content-type':'application/json'});
 async function api(p,opt={}){const r=await fetch(p,{...opt,headers:H()});if(!r.ok)throw new Error(p+' → '+r.status);return r.json()}
 function unlock(){const v=document.getElementById('tok').value.trim();if(!v)return;localStorage.setItem('afs_k',v);
   fetch('/api/agents',{headers:{'x-admin-token':v}}).then(r=>{if(r.ok){show()}else{document.getElementById('gerr').textContent='rejected';localStorage.removeItem('afs_k')}})}
-function show(){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='';load();setInterval(load,20000)}
+function show(){document.getElementById('gate').style.display='none';document.getElementById('app').style.display='';load();pollLive();setInterval(load,25000);setInterval(pollLive,2000)}
 const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const ago=t=>{if(!t)return'—';const d=Math.floor(Date.now()/1000)-t;
   if(d<60)return d+'s ago';if(d<3600)return Math.floor(d/60)+'m ago';if(d<86400)return Math.floor(d/3600)+'h ago';return Math.floor(d/86400)+'d ago'};
@@ -394,10 +450,87 @@ async function load(){
   document.getElementById('stamp').textContent='updated '+new Date().toLocaleTimeString();
   const q=document.getElementById('quick');
   if(!q.dataset.done){q.innerHTML=QUICK.map((x,i)=>'<button onclick="qk('+i+')">'+esc(x[0])+'</button>').join('');q.dataset.done=1}
-  try{
-    const [a,s,j,r,l]=await Promise.all([api('/api/agents'),api('/api/stats/latest?limit=1'),api('/api/jobs?limit=40'),api('/api/renders'),api('/api/ledger')]);
-    machine(a,s);renders(r);jobs(j);ledger(l);
-  }catch(e){document.getElementById('stamp').innerHTML='<span class="err">'+esc(e.message)+'</span>'}
+  // allSettled, not all: one throttled call must not wipe the whole dashboard. workers.dev
+  // rate-limits bursts, and Promise.all turned a single 1042 into a total failure — which is
+  // what made Refresh look broken.
+  const [a,s,j,r,l]=await Promise.allSettled([
+    api('/api/agents'),api('/api/stats/latest?limit=1'),api('/api/jobs?limit=40'),api('/api/renders'),api('/api/ledger')]);
+  const okv=x=>x.status==='fulfilled'?x.value:null;
+  const failed=[a,s,j,r,l].filter(x=>x.status==='rejected').length;
+  if(okv(a)&&okv(s))machine(okv(a),okv(s));
+  if(okv(r))renders(okv(r));
+  if(okv(j))jobs(okv(j));
+  if(okv(l))ledger(okv(l));
+  if(failed){document.getElementById('stamp').innerHTML=
+    'updated '+new Date().toLocaleTimeString()+' <span class="err">('+failed+' of 5 calls throttled — click Refresh again)</span>'}
+}
+
+async function manualRefresh(){
+  const b=document.getElementById('refreshBtn'); const old=b.textContent;
+  b.disabled=true; b.textContent='refreshing…';
+  await load(); await pollLive();
+  b.textContent='updated'; setTimeout(()=>{b.textContent=old;b.disabled=false},900);
+}
+
+const fmtB=b=>{ if(b==null)return '—';
+  if(b>=1073741824)return (b/1073741824).toFixed(2)+' GB';
+  if(b>=1048576)return (b/1048576).toFixed(1)+' MB';
+  return (b/1024).toFixed(0)+' KB'; };
+const fmtT=s=>{ if(s==null||!isFinite(s)||s<0)return '—';
+  s=Math.round(s); if(s<60)return s+' s';
+  if(s<3600)return Math.floor(s/60)+' min '+(s%60)+' s';
+  return Math.floor(s/3600)+' h '+Math.floor((s%3600)/60)+' min'; };
+
+async function pollLive(){
+  let d; try{ d=await api('/api/live'); }catch(e){ return }
+  const L=d.live, box=document.getElementById('livebox'), dot=document.getElementById('livedot');
+  const what=document.getElementById('livewhat'), sub=document.getElementById('livesub');
+  const bar=document.getElementById('livebar'), tail=document.getElementById('livetail');
+  const age = L ? d.server_time-L.ts : 999;
+  const running = L && age < 25 && L.job_id;
+
+  if(!L){ box.className='livebox idle'; dot.className='dot off';
+    what.textContent='nothing reported yet'; sub.textContent=''; bar.style.display='none';
+    tail.style.display='none'; return; }
+
+  if(running){ box.className='livebox'; dot.className='dot'; }
+  else { box.className='livebox idle'; dot.className='dot off'; }
+
+  const verb = {download:'Downloading',render:'Rendering',install:'Installing',shell:'Running'}[L.task]||'Working on';
+  what.textContent = running ? (verb+' — '+(L.item||L.label||'')) : 'Idle — last: '+(L.label||'—');
+
+  let h='';
+  if(L.source) h+='<div><span class="k">from</span> '+esc(L.source)+'</div>';
+  if(L.dest)   h+='<div><span class="k">saving to</span> <b>'+esc(L.dest)+'</b></div>';
+  if(L.job_id) h+='<div><span class="k">job</span> #'+L.job_id+' · '+esc(L.label||'')+' · running '+fmtT(L.elapsed_s)+'</div>';
+  h+='<div><span class="k">reported</span> '+(age<3?'just now':age+' s ago')+'</div>';
+  sub.innerHTML=h;
+
+  if(L.total_bytes && L.done_bytes!=null){
+    const pct=Math.max(0,Math.min(100,100*L.done_bytes/L.total_bytes));
+    bar.style.display='block';
+    document.getElementById('livefill').style.width=pct.toFixed(1)+'%';
+    document.getElementById('livedone').innerHTML='<b>'+fmtB(L.done_bytes)+'</b> of '+fmtB(L.total_bytes)+' · '+pct.toFixed(1)+'%';
+    document.getElementById('liverate').innerHTML=L.rate_bps?('<b>'+(L.rate_bps/1048576).toFixed(1)+' MB/s</b>'):'';
+    const left=(L.rate_bps&&L.rate_bps>0)?((L.total_bytes-L.done_bytes)/L.rate_bps):null;
+    document.getElementById('liveeta').textContent=left!=null?(fmtT(left)+' left'):'';
+  } else if(L.done_bytes){
+    bar.style.display='block';
+    document.getElementById('livefill').style.width='100%';
+    document.getElementById('livedone').innerHTML='<b>'+fmtB(L.done_bytes)+'</b> written';
+    document.getElementById('liverate').innerHTML=L.rate_bps?('<b>'+(L.rate_bps/1048576).toFixed(1)+' MB/s</b>'):'';
+    document.getElementById('liveeta').textContent='';
+  } else { bar.style.display='none'; }
+
+  const g=JSON.parse(L.gpu_json||'[]');
+  document.getElementById('livegpu').innerHTML=g.map(x=>
+    '<span class="chip">GPU <b>'+(x.util??0)+'%</b></span>'+
+    '<span class="chip">VRAM <b>'+((x.mem_used_mb||0)/1024).toFixed(1)+' GB</b></span>'+
+    '<span class="chip">'+(x.temp_c??'—')+'°C</span>'+
+    (x.power_w!=null?'<span class="chip">'+Math.round(x.power_w)+' W</span>':'')).join('');
+
+  if(L.tail && L.tail.trim()){ tail.style.display='block'; tail.textContent=L.tail; tail.scrollTop=tail.scrollHeight; }
+  else tail.style.display='none';
 }
 
 function machine(a,s){

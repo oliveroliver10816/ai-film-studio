@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.6'
+$Version = '1.0.7'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -145,6 +145,75 @@ function Read-TextShared($path) {
   }
 }
 
+
+# ---------------------------------------------------------------- live status
+# Posted every few seconds WHILE a job runs, so the dashboard can show what is happening
+# instead of going quiet for an hour. A job describes itself by writing
+# D:\aifilm\logs\current.json ({task,item,source,dest,total_bytes}); everything else
+# (bytes written so far, transfer rate, output tail, GPU) is measured here.
+$script:LastLiveBytes = $null
+$script:LastLiveTime  = $null
+
+function Get-Tail($path, $lines) {
+  $t = Read-TextShared $path
+  if (-not $t) { return '' }
+  $arr = $t -split "`r?`n"
+  if ($arr.Count -le $lines) { return ($arr -join [Environment]::NewLine) }
+  return (($arr[($arr.Count - $lines)..($arr.Count - 1)]) -join [Environment]::NewLine)
+}
+
+function Send-Live($job, $startedAt, $outFile) {
+  $cur = $null
+  try {
+    $cj = 'D:\aifilm\logs\current.json'
+    if (Test-Path $cj) { $cur = (Read-TextShared $cj) | ConvertFrom-Json }
+  } catch { }
+
+  $done = $null; $rate = $null
+  if ($cur -and $cur.dest -and (Test-Path $cur.dest)) {
+    try { $done = (Get-Item $cur.dest).Length } catch { }
+    $nowT = Get-Date
+    if ($null -ne $done -and $null -ne $script:LastLiveBytes -and $null -ne $script:LastLiveTime) {
+      $dt = ($nowT - $script:LastLiveTime).TotalSeconds
+      if ($dt -gt 0.5 -and $done -ge $script:LastLiveBytes) {
+        $rate = ($done - $script:LastLiveBytes) / $dt
+      }
+    }
+    $script:LastLiveBytes = $done
+    $script:LastLiveTime  = $nowT
+  }
+
+  $gpu = @()
+  try { $gpu = @(Get-Gpus) } catch { }
+
+  # if/else cannot live inside a PS 5.1 hashtable literal - resolve everything first.
+  # pwsh 7 accepts it, so the parse check on Linux will NOT catch this. Do not reintroduce it.
+  $tTask = 'shell'; $tItem = ''; $tSrc = ''; $tDest = ''; $tTotal = $null
+  if ($cur) {
+    if ($cur.task)         { $tTask  = $cur.task }
+    if ($cur.item)         { $tItem  = $cur.item }
+    if ($cur.source)       { $tSrc   = $cur.source }
+    if ($cur.dest)         { $tDest  = $cur.dest }
+    if ($cur.total_bytes)  { $tTotal = $cur.total_bytes }
+  }
+  $payload = [ordered]@{
+    agent_id    = $Cfg.agent_id
+    job_id      = $job.id
+    label       = $job.label
+    elapsed_s   = [int]((Get-Date) - $startedAt).TotalSeconds
+    task        = $tTask
+    item        = $tItem
+    source      = $tSrc
+    dest        = $tDest
+    done_bytes  = $done
+    total_bytes = $tTotal
+    rate_bps    = $rate
+    gpu         = $gpu
+    tail        = (Get-Tail $outFile 24)
+  }
+  try { Post '/api/live' $payload | Out-Null } catch { }
+}
+
 function Run-Job($job) {
   Log ('job ' + $job.id + ' start: ' + $job.label)
   $stamp   = [guid]::NewGuid().ToString('N').Substring(0, 8)
@@ -174,11 +243,16 @@ function Run-Job($job) {
     # exactly when we most want to watch the GPU.
     $waited = 0
     $exited = $false
+    $startedAt = Get-Date
+    $script:LastLiveBytes = $null
+    $script:LastLiveTime  = $null
+    Send-Live $job $startedAt $outFile
     while ($waited -lt $timeout) {
-      $slice = [Math]::Min(30, $timeout - $waited)
+      $slice = [Math]::Min(4, $timeout - $waited)
       if ($p.WaitForExit($slice * 1000)) { $exited = $true; break }
       $waited += $slice
-      if (($waited % 60) -eq 0) { Send-Stats }
+      Send-Live $job $startedAt $outFile
+      if (($waited % 60) -lt 4) { Send-Stats }
     }
     if (-not $exited) {
       try { $p.Kill() } catch { }
@@ -216,6 +290,8 @@ function Run-Job($job) {
     $code = -8
   }
 
+  try { Post '/api/live' ([ordered]@{ agent_id = $Cfg.agent_id; job_id = $null; label = $job.label; task = ''; item = ''; source = ''; dest = ''; tail = '' }) | Out-Null } catch { }
+  try { Remove-Item 'D:\aifilm\logs\current.json' -Force -ErrorAction SilentlyContinue } catch { }
   try {
     Post '/api/result' ([ordered]@{ job_id = $job.id; exit_code = $code; stdout = $so; stderr = $se }) | Out-Null
     Log ('job ' + $job.id + ' done, exit ' + $code + ', ' + $so.Length + ' chars out')
