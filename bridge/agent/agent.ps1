@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.8'
+$Version = '1.0.9'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -224,10 +224,15 @@ function Run-Job($job) {
   $outFile = Join-Path $Work ('job' + $job.id + '_' + $stamp + '.out')
   $errFile = Join-Path $Work ('job' + $job.id + '_' + $stamp + '.err')
 
-  # UTF8 *with* BOM. Windows PowerShell 5.1 reads a .ps1 without a BOM as ANSI, so any non-ASCII
-  # character in a job script comes back corrupted — an em-dash returned as mojibake and our
-  # prompts are full of typographic punctuation. The BOM is what makes 5.1 decode it as UTF-8.
-  [IO.File]::WriteAllText($script, $job.command, (New-Object Text.UTF8Encoding($true)))
+  # Encoding has to be forced in BOTH directions or non-ASCII is silently damaged.
+  #  IN  — Windows PowerShell 5.1 reads a .ps1 with no BOM as ANSI, so a UTF-8 script full of
+  #        typographic punctuation arrives corrupted. The BOM is what makes 5.1 decode UTF-8.
+  #  OUT — 5.1 writes redirected stdout in the console/OEM codepage, which best-fit maps what it
+  #        cannot represent: an em-dash came back as "-", curly quotes as straight, an arrow as
+  #        nothing at all. Forcing Console.OutputEncoding to UTF-8 at the top of every job makes
+  #        the bytes we read back match the bytes the job produced.
+  $preamble = 'try { $OutputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false } catch { }' + [Environment]::NewLine
+  [IO.File]::WriteAllText($script, $preamble + $job.command, (New-Object Text.UTF8Encoding($true)))
 
   try {
     $p = Start-Process -FilePath 'powershell.exe' `
