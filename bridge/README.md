@@ -147,3 +147,31 @@ were throttled. The button also disables itself and says *refreshing…* so it v
 ⚠ **`if/else` inside a PS 5.1 hashtable literal parses fine under pwsh 7**, so the Linux parse check
 does NOT catch it. It was reintroduced while writing the live payload and caught by eye. Resolve
 values into variables first, always.
+
+## Text safety — moving prompts to the machine (settled 2026-08-01)
+
+Three separate hazards, found in order, each masking the next. All three are now handled.
+
+1. ⚠ **Windows PowerShell 5.1 reads a `.ps1` with no BOM as ANSI.** A UTF-8 job script full of
+   typographic punctuation arrived corrupted and failed to parse. Agent ≥1.0.8 writes job scripts
+   as **UTF-8 with BOM**.
+2. ⚠ **PS 5.1 writes redirected stdout in the console/OEM codepage** and best-fit maps what it
+   cannot encode — an em-dash came back as `-`, curly quotes as straight, an arrow as nothing.
+   Agent ≥1.0.9 prepends
+   `$OutputEncoding = [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false`
+   to every job. Verified round-trip: `— “ ” → ° é ⭐ 원수` all survive.
+3. ⭐⭐ **PowerShell's parser treats `‘ ’ “ ”` as STRING DELIMITERS.** This is not an encoding
+   problem — the bytes arrive perfectly — the parser simply ends the string early. Our shot
+   prompts and voice-delivery notes are full of curly quotes, so **prompt text must never be
+   embedded in a PowerShell string literal**, not even a here-string.
+
+⭐ **THE RULE: any arbitrary text (prompts, workflow JSON, scripts) travels base64-encoded and is
+decoded on the machine.** Parser-proof for any content:
+
+```powershell
+$txt = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('<base64>'))
+[IO.File]::WriteAllText($path, $txt, (New-Object Text.UTF8Encoding($false)))
+```
+
+Verified end to end with a real prompt containing `— “ ” ‘ ’ ° →`: 156 characters in, 156 out,
+SHA-256 identical. Do not go back to inline string literals for prompt text.
