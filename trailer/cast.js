@@ -19,7 +19,7 @@ const CAST = [
       ["Face", "Oval tapering to a narrow sharp chin, high flat wide-set cheekbones, clean jawline."],
       ["Skin", "Fair, cool undertone, fine pore texture, faint freckles across the nose bridge."],
       ["Eyes", "Almond, grey-green, slightly hooded lids, dark natural lashes, no eyeliner."],
-      ["Marks", "One small dark mole 1 cm below the outer corner of the <b>left</b> eye. Faint vertical crease between the brows."],
+      ["Marks", "One small dark mole 1 cm below the outer corner of the <b>right</b> eye, level with the top of the nostril — never lower, never near the mouth. Faint vertical crease between the brows."],
       ["Hair", "Dark auburn, centre parting, low smooth chignon at the nape, matte."],
       ["Mouth", "Medium-full, sharp cupid's bow, matte deep oxblood-red."],
       ["Wardrobe", "Charcoal wool overcoat (S02, S09) · oxblood silk blouse (S05) · black satin gown (S07, S08)."],
