@@ -231,9 +231,59 @@ export default {
 
     if (p === "/api/live") {
       if (!adminOK(request, env, url)) return json({ error: "forbidden" }, 403);
-      const row = await env.DB.prepare(`SELECT * FROM live ORDER BY ts DESC LIMIT 1`).first();
+      const t = now();
+      let row = await env.DB.prepare(`SELECT * FROM live ORDER BY ts DESC LIMIT 1`).first();
       const a = await env.DB.prepare(`SELECT id,hostname,last_seen FROM agents ORDER BY last_seen DESC LIMIT 1`).first();
-      return json({ live: row || null, agent: a || null, server_time: now() });
+      const job = await env.DB.prepare(
+        `SELECT id,label,started_at,timeout_s FROM jobs WHERE status='running' ORDER BY id DESC LIMIT 1`
+      ).first();
+
+      // The agent's own 4-second stream is the good source. But an older agent — or one busy
+      // inside a long job it cannot be updated during — leaves that table stale while the machine
+      // is plainly working. Rather than show "idle" over a running job, derive what we can from
+      // the 60-second heartbeats that ARE arriving. Marked as derived so nobody mistakes the
+      // granularity for the real stream.
+      const stale = !row || !row.job_id || (t - row.ts) > 25;
+      if (stale && job) {
+        const st = await env.DB.prepare(
+          `SELECT ts, gpu_json, disk_json FROM stats ORDER BY ts DESC LIMIT 2`
+        ).all();
+        const at0 = await env.DB.prepare(
+          `SELECT disk_json FROM stats WHERE ts <= ?1 ORDER BY ts DESC LIMIT 1`
+        ).bind(job.started_at + 5).first();
+        const freeOf = (js) => {
+          try { const d = JSON.parse(js || "[]").find(x => x.drive === "D"); return d ? d.free_gb : null; }
+          catch (e) { return null; }
+        };
+        const nowFree = st.results[0] ? freeOf(st.results[0].disk_json) : null;
+        const prevFree = st.results[1] ? freeOf(st.results[1].disk_json) : null;
+        const startFree = at0 ? freeOf(at0.disk_json) : null;
+        const GB = 1073741824;
+        let done = null, rate = null;
+        if (nowFree != null && startFree != null) done = Math.round((startFree - nowFree) * GB);
+        if (nowFree != null && prevFree != null && st.results[1]) {
+          const dt = st.results[0].ts - st.results[1].ts;
+          if (dt > 0) rate = ((prevFree - nowFree) * GB) / dt;
+        }
+        row = {
+          agent_id: a ? a.id : "",
+          ts: st.results[0] ? st.results[0].ts : t,
+          job_id: job.id,
+          label: job.label,
+          elapsed_s: t - job.started_at,
+          task: /download/i.test(job.label) ? "download" : (/render|bench/i.test(job.label) ? "render" : "shell"),
+          item: job.label,
+          source: "",
+          dest: "",
+          done_bytes: done && done > 0 ? done : null,
+          total_bytes: null,
+          rate_bps: rate && rate > 0 ? rate : null,
+          gpu_json: st.results[0] ? st.results[0].gpu_json : "[]",
+          tail: "",
+          derived: 1,
+        };
+      }
+      return json({ live: row || null, agent: a || null, running_job: job || null, server_time: t });
     }
 
     if (p === "/api/ledger" && request.method === "POST") {
@@ -487,7 +537,7 @@ async function pollLive(){
   const what=document.getElementById('livewhat'), sub=document.getElementById('livesub');
   const bar=document.getElementById('livebar'), tail=document.getElementById('livetail');
   const age = L ? d.server_time-L.ts : 999;
-  const running = L && age < 25 && L.job_id;
+  const running = !!(d.running_job) || (L && age < 25 && L.job_id);
 
   if(!L){ box.className='livebox idle'; dot.className='dot off';
     what.textContent='nothing reported yet'; sub.textContent=''; bar.style.display='none';
@@ -503,7 +553,8 @@ async function pollLive(){
   if(L.source) h+='<div><span class="k">from</span> '+esc(L.source)+'</div>';
   if(L.dest)   h+='<div><span class="k">saving to</span> <b>'+esc(L.dest)+'</b></div>';
   if(L.job_id) h+='<div><span class="k">job</span> #'+L.job_id+' · '+esc(L.label||'')+' · running '+fmtT(L.elapsed_s)+'</div>';
-  h+='<div><span class="k">reported</span> '+(age<3?'just now':age+' s ago')+'</div>';
+  h+='<div><span class="k">reported</span> '+(age<3?'just now':age+' s ago')+
+     (L.derived?' <span style="color:var(--steel)">— derived from 60-second heartbeats; the 4-second stream needs agent 1.0.7</span>':'')+'</div>';
   sub.innerHTML=h;
 
   if(L.total_bytes && L.done_bytes!=null){
@@ -514,7 +565,7 @@ async function pollLive(){
     document.getElementById('liverate').innerHTML=L.rate_bps?('<b>'+(L.rate_bps/1048576).toFixed(1)+' MB/s</b>'):'';
     const left=(L.rate_bps&&L.rate_bps>0)?((L.total_bytes-L.done_bytes)/L.rate_bps):null;
     document.getElementById('liveeta').textContent=left!=null?(fmtT(left)+' left'):'';
-  } else if(L.done_bytes){
+  } else if(L.done_bytes){  // total unknown: still show what has been written and how fast
     bar.style.display='block';
     document.getElementById('livefill').style.width='100%';
     document.getElementById('livedone').innerHTML='<b>'+fmtB(L.done_bytes)+'</b> written';

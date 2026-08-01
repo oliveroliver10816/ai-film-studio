@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.7'
+$Version = '1.0.8'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -224,8 +224,10 @@ function Run-Job($job) {
   $outFile = Join-Path $Work ('job' + $job.id + '_' + $stamp + '.out')
   $errFile = Join-Path $Work ('job' + $job.id + '_' + $stamp + '.err')
 
-  # UTF8 without BOM, so PowerShell does not choke on the first line
-  [IO.File]::WriteAllText($script, $job.command, (New-Object Text.UTF8Encoding($false)))
+  # UTF8 *with* BOM. Windows PowerShell 5.1 reads a .ps1 without a BOM as ANSI, so any non-ASCII
+  # character in a job script comes back corrupted — an em-dash returned as mojibake and our
+  # prompts are full of typographic punctuation. The BOM is what makes 5.1 decode it as UTF-8.
+  [IO.File]::WriteAllText($script, $job.command, (New-Object Text.UTF8Encoding($true)))
 
   try {
     $p = Start-Process -FilePath 'powershell.exe' `
