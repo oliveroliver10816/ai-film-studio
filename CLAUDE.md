@@ -1,7 +1,53 @@
 # ai-film-studio — reference teardown + the free local film pipeline
 
-**Status (2026-08-01): RESEARCH DELIVERED + DEPLOYED · BRIDGE LIVE · STACK INSTALLED ON THE PC.**
-Nothing generated yet, ₹0 spent — everything installed is free software.
+**Status (2026-08-01): ⭐ A COMPLETE 60-SECOND FILM EXISTS, generated end to end on the Blackwell.**
+₹0 spent. Every model Apache-2.0 or MIT.
+
+## ⭐ THE ARRANGEMENT — the film
+
+**WATCH: https://oliveroliver10816.github.io/ai-film-studio/film/**
+**PLAN: https://oliveroliver10816.github.io/ai-film-studio/plan/** (from the 61-agent audit)
+
+60.375 s · 1280×704 · 24 fps · **−14.36 LUFS**, true peak −4.5 dBTP · 11.3 MB · h264/aac 48 kHz.
+10 sustained shots + 14 flash cuts + title card, cut to the reference film's measured grammar.
+Produced unattended overnight while Bob slept, on his instruction to use local TTS and not stop.
+
+**How, in order:** 12 Flow cast images → watermark cropped → 11 kept as references →
+**10 keyframes** (7 via **Qwen-Image-Edit 2511** conditioned on an approved face, 3 via
+**Qwen-Image 2512** text-to-image, 22.4 s average) → **10 shots** via **Wan 2.2 TI2V-5B**
+image-to-video → **4 voice lines** via **Microsoft neural TTS** (`edge-tts`, en-GB-Sonia /
+en-GB-Ryan) → ffmpeg cut, montage from tails of existing shots, drawtext title, drone + swell,
+loudnorm to −14 LUFS.
+
+⭐ **Going local is what solved character consistency.** The face now comes from a reference
+image rather than a description, so it is *carried* between shots instead of re-rolled — which
+is exactly the failure that produced a different man in 1 of Bob's 4 Flow headshots.
+
+### Measured this night — replaces the estimates
+| | |
+|---|---|
+| Whole batch, 10 shots | **1,084 s for 53.58 s of film = 20.23 GPU-seconds per video-second** |
+| Same model, cold card, 1 shot | 16.23 — **the 25% gap is thermal throttling** |
+| ⚠ **GPU temperature** | **93–95 °C peak, 88.4 °C mean**, clocks falling 2,835 → 1,612 MHz |
+| Cooldown between shots | a 72 °C target **could not hold it down**; back to 95 °C inside one render |
+| Peak VRAM | 55.7 GB (images) / 34.5 GB (video) of 95.6 — **heat is the limit, not memory** |
+| Keyframe cost | 12–36 s, 22.4 s average |
+| Model integrity | **8 of 8 files match the publisher's SHA-256** |
+
+⚠⚠ **THERMALS ARE THE TOP OPEN ITEM.** Case airflow / fan curve should be looked at before any
+run longer than an hour. A 10-minute film at this rate is ~3.4 h of GPU, all at the thermal limit.
+
+### The audit
+61 agents over six dimensions, **54 findings raised, 52 refuted by per-finding adversarial
+review, 2 survived** — both fixed the same night: (1) cast masters existed only on drive D:,
+now backed up to `cast/` + `keyframes/` with a SHA-256 manifest; (2) an interpreted `\a`/`\v`
+put BEL/VT bytes into three cells of the live trailer page — fixed, and `publish-gate.sh` now
+refuses to publish any file containing a control character.
+
+### Assets in this repo
+`film/` the finished mp4 + poster + frame sheets · `cast/` 11 irreplaceable masters + MANIFEST ·
+`keyframes/` the 10 approved stills · `plan/` the plan of action · `trailer/` shot list and
+prompt book · `bridge/` worker, agent, uploader, runner (`run.py`, `batch.py`, `assemble.py`).
 
 **LIVE:** https://oliveroliver10816.github.io/ai-film-studio/ (noindex, PUBLIC repo
 `oliveroliver10816/ai-film-studio`, collaborators SilentAurora245 + mary3862jon).
