@@ -60,6 +60,44 @@ class Handler(BaseHTTPRequestHandler):
         if u.path in ("/", "/index.html"):
             return self._send(200, PAGE, "text/html; charset=utf-8")
 
+        # Serve a finished render back out. Same token as upload. Read-only, and confined to
+        # D:\aifilm\out so a path trick cannot reach the rest of the disk.
+        if u.path.startswith("/get/"):
+            if not self._authed(qs):
+                return self._send(403, json.dumps({"error": "bad token"}))
+            rel = unquote(u.path[len("/get/"):])
+            root = os.path.abspath(r"D:\aifilm\out")
+            full = os.path.abspath(os.path.join(root, rel.replace("/", os.sep)))
+            if not full.startswith(root + os.sep) or not os.path.isfile(full):
+                return self._send(404, json.dumps({"error": "not found"}))
+            size = os.path.getsize(full)
+            self.send_response(200)
+            self.send_header("Content-Type", "application/octet-stream")
+            self.send_header("Content-Length", str(size))
+            self.send_header("Content-Disposition",
+                             'attachment; filename="%s"' % os.path.basename(full))
+            self.end_headers()
+            with open(full, "rb") as fh:
+                while True:
+                    chunk = fh.read(1024 * 256)
+                    if not chunk:
+                        break
+                    self.wfile.write(chunk)
+            return
+
+        if u.path == "/api/outputs":
+            if not self._authed(qs):
+                return self._send(403, json.dumps({"error": "bad token"}))
+            root = r"D:\aifilm\out"
+            items = []
+            for dirpath, _, names in os.walk(root):
+                for n in names:
+                    fp = os.path.join(dirpath, n)
+                    items.append({"path": os.path.relpath(fp, root).replace(os.sep, "/"),
+                                  "bytes": os.path.getsize(fp)})
+            items.sort(key=lambda x: -x["bytes"])
+            return self._send(200, json.dumps(items[:200]))
+
         if u.path == "/api/list":
             if not self._authed(qs):
                 return self._send(403, json.dumps({"error": "bad token"}))
