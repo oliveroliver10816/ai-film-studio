@@ -124,8 +124,41 @@ def main():
     results = []
     t_all = time.time()
 
+    cool_to = float(os.environ.get("BATCH_COOL_TO", "0"))     # 0 disables
+    cool_max = float(os.environ.get("BATCH_COOL_MAX_S", "240"))
+
+    def cooldown(idx):
+        """Let the card come back down before the next item.
+
+        Measured on this box: the GPU climbs to 93 C within three back-to-back renders and
+        clocks fall from 2842 MHz to ~1900 MHz — real throttling. On a long unattended queue
+        that turns into slower renders and a card held at its thermal limit for hours. Waiting
+        a minute between items costs far less than the throttle does.
+        """
+        if cool_to <= 0:
+            return 0.0
+        t0 = time.time()
+        while time.time() - t0 < cool_max:
+            cur = None
+            try:
+                o = subprocess.run(["nvidia-smi", "--query-gpu=temperature.gpu",
+                                    "--format=csv,noheader,nounits"],
+                                   capture_output=True, text=True, timeout=10)
+                cur = float((o.stdout or "0").strip().splitlines()[0])
+            except Exception:
+                return time.time() - t0
+            if cur <= cool_to:
+                break
+            time.sleep(5)
+        w = time.time() - t0
+        if w > 1:
+            print(f"      cooled {w:.0f}s before item {idx} (target <= {cool_to:.0f}C)", flush=True)
+        return w
+
     for i, item in enumerate(batch, 1):
         shot = item.get("shot", f"item{i}")
+        if i > 1:
+            cooldown(i)
         try:
             with open(CURRENT, "w", encoding="utf-8") as fh:
                 json.dump({"task": "render", "item": f"{shot} ({i} of {len(batch)}) — {item.get('model','')}",
