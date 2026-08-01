@@ -1,0 +1,170 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>THE ARRANGEMENT — ElevenLabs voice sheet</title>
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#06080A;--ink2:#0B0F14;--surface:#121820;--surface2:#18202A;--line:#243039;--lsoft:#1A222B;
+--bone:#E9E7DE;--dim:#96A0A6;--faint:#7F8A90;--sodium:#D89B4E;--hi:#F0BE79;--steel:#5EA8C9;--alarm:#E2613F;--ok:#7FB47A;
+--disp:"Big Shoulders Display",Impact,sans-serif;--body:"Instrument Sans",system-ui,sans-serif;--mono:"JetBrains Mono",ui-monospace,monospace}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.62 var(--body);-webkit-font-smoothing:antialiased}
+.wrap{max-width:960px;margin:0 auto;padding:0 clamp(16px,4vw,34px) 90px}
+header{padding:clamp(36px,7vw,72px) 0 24px;border-bottom:1px solid var(--line)}
+.kick{font:500 11px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--faint)}
+h1{font:800 clamp(38px,8vw,80px)/0.86 var(--disp);text-transform:uppercase;margin:14px 0 0}
+h1 span{color:var(--sodium)}
+h2{font:800 clamp(22px,3.6vw,36px)/1 var(--disp);text-transform:uppercase;margin:48px 0 10px}
+p{max-width:72ch;color:var(--dim)} p strong{color:var(--bone);font-weight:600}
+.scroll{overflow-x:auto;border:1px solid var(--line);background:var(--ink2);margin-top:16px}
+table{width:100%;border-collapse:collapse;font:400 13px var(--mono);min-width:520px}
+th{text-align:left;font:500 10px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--lsoft);color:var(--dim);vertical-align:top}
+td b{color:var(--bone)} tr:last-child td{border-bottom:0}
+.line{border:1px solid var(--line);background:var(--surface);margin-top:18px}
+.lhead{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px;padding:15px 20px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.num{font:800 30px/0.85 var(--disp);color:var(--sodium)}
+.who{font:700 13px var(--mono);letter-spacing:.16em;color:var(--bone)}
+.meta{font:500 11px var(--mono);color:var(--faint);flex:1 1 200px}
+.fname{font:500 11px var(--mono);color:var(--faint)} .fname b{color:var(--sodium)}
+.lbody{padding:16px 20px 20px}
+.pb{margin:10px 0 0;border:1px solid var(--line);background:#040608}
+.pb-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 12px;border-bottom:1px solid var(--line);background:var(--ink2)}
+.pb-head span{font:500 10px var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.pb-head button{font:700 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--line);color:var(--dim);padding:4px 10px;cursor:pointer}
+.pb-head button:hover{color:var(--sodium);border-color:var(--sodium)}
+.pb-head button.done{color:var(--ok);border-color:var(--ok)}
+.pb pre{margin:0;padding:12px;font:400 13px/1.6 var(--mono);color:#C8CFD3;white-space:pre-wrap;word-break:break-word}
+.note{font:400 14px/1.55 var(--body);color:var(--dim);margin:12px 0 0;max-width:none}
+.note b{color:var(--bone)}
+.warn,.ok{border-left:2px solid var(--alarm);background:var(--surface);padding:15px 19px;margin:20px 0 0}
+.ok{border-left-color:var(--ok)}
+.warn p,.ok p{margin:0;max-width:74ch;font-size:14.5px} .warn p+p,.ok p+p{margin-top:9px}
+footer{padding:40px 0 60px;font:400 12px var(--mono);color:var(--faint)}
+a{color:var(--steel)}
+</style>
+<div class="wrap">
+<header>
+  <div class="kick">For the VA — ElevenLabs · 4 files · 01 Aug 2026</div>
+  <h1>Voice <span>sheet</span></h1>
+  <p style="margin-top:18px;max-width:60ch">Four lines. Each one generated separately and saved under the exact filename given. No music, no effects, no trimming — the silence at the head and tail is wanted.</p>
+</header>
+
+<h2>Settings — identical for every line</h2>
+<div class="scroll"><table>
+<thead><tr><th>Setting</th><th>Value</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td><b>Model</b></td><td><b>Eleven Multilingual v2</b></td><td>The most stable model for quiet, held delivery. If the tool offers v3, use v2 anyway — v3 is more expressive and less repeatable, and two of these lines have to match a mouth on screen.</td></tr>
+<tr><td><b>Stability</b></td><td><b>45%</b></td><td>Low enough to carry feeling, high enough not to wander between takes.</td></tr>
+<tr><td><b>Similarity</b></td><td><b>80%</b></td><td>Keeps one voice across all files.</td></tr>
+<tr><td><b>Style</b></td><td><b>0%</b></td><td>Trailer delivery is underplayed. Style pushes it theatrical, which is exactly wrong here.</td></tr>
+<tr><td><b>Speaker boost</b></td><td><b>On</b></td><td>Consistency across separate generations.</td></tr>
+<tr><td><b>Speed</b></td><td><b>0.92</b> (if the tool exposes it)</td><td>Slightly under natural. Reads as weight. If there is no speed control, leave it — the pause tags carry most of it.</td></tr>
+<tr><td><b>Format</b></td><td><b>WAV if offered</b>, otherwise MP3 192 kbps or better</td><td>Two of these lines will drive lip-sync, so the cleaner the source the better.</td></tr>
+</tbody></table></div>
+
+<h2>Voices</h2>
+<p>Both are in ElevenLabs' standard voice library, so they should be in the tool's list. <strong>Match the name first; if the name isn't there, match the description.</strong></p>
+<div class="scroll"><table>
+<thead><tr><th>Character</th><th>Voice</th><th>What it needs to sound like</th><th>Fallback</th></tr></thead>
+<tbody>
+<tr><td><b>ELENA</b><br>3 lines</td><td><b>Charlotte</b></td><td>Female, low register, English, unhurried, a little husk at the bottom of the range. Never bright, never young, never selling anything.</td><td><b>Alice</b> — British, clear, confident. Slightly cooler and more precise than Charlotte.</td></tr>
+<tr><td><b>ADRIAN</b><br>1 line</td><td><b>Daniel</b></td><td>Male, deep, dry, controlled. No warmth and no menace — a man stating a fact he finds tiring.</td><td><b>George</b> — British, warm gravel. Use if Daniel reads too much like a newsreader.</td></tr>
+</tbody></table></div>
+
+<div class="warn">
+  <p><strong>Do the audition before generating all four.</strong> Generate <b>line 03</b> only, in Charlotte and in Alice, and <b>line 02</b> only, in Daniel and in George. Send those four files back. We pick, then you make the finals. Generating everything in one voice and hoping is how a whole set gets redone.</p>
+</div>
+
+<h2>The four lines</h2>
+<p>Each has two versions. Use the <strong>first</strong> — it contains <code>&lt;break&gt;</code> tags, which ElevenLabs honours through the API and which is where the timing comes from. If the tool strips tags or errors on them, use the second, where the pauses are written as punctuation instead.</p>
+
+<article class="line" id="l1">
+  <div class="lhead">
+    <div class="num">01</div>
+    <div class="who">ELENA</div>
+    <div class="meta">S01 → S02 (voice over, 0.0–11.4 s) · must fit <b>5.2 s</b></div>
+    <div class="fname">save as <b>01_elena_funeral.wav</b></div>
+  </div>
+  <div class="lbody">
+    <div class="pb"><div class="pb-head"><span>Paste this — with the pause tags</span><button data-copy>copy</button></div><pre>Everyone at the funeral &lt;break time="0.45s" /&gt; told me to let it go.</pre></div>
+    <div class="pb"><div class="pb-head"><span>If the tool rejects tags, use this instead</span><button data-copy>copy</button></div><pre>Everyone at the funeral... told me to let it go.</pre></div>
+    <p class="note"><b>Delivery:</b> Flat. Not sad, not bitter. A sentence she has said too many times to feel it any more. Downward at the end, no lift.</p>
+    <p class="note"><b>Voice:</b> Charlotte &nbsp;·&nbsp; fallback if unavailable: Alice</p>
+  </div>
+</article>
+<article class="line" id="l2">
+  <div class="lhead">
+    <div class="num">02</div>
+    <div class="who">ADRIAN</div>
+    <div class="meta">S06 (on camera, 26.4–33.3 s) · must fit <b>6.9 s</b></div>
+    <div class="fname">save as <b>02_adrian_takeitback.wav</b></div>
+  </div>
+  <div class="lbody">
+    <div class="pb"><div class="pb-head"><span>Paste this — with the pause tags</span><button data-copy>copy</button></div><pre>You married me &lt;break time="0.4s" /&gt; to take it back.</pre></div>
+    <div class="pb"><div class="pb-head"><span>If the tool rejects tags, use this instead</span><button data-copy>copy</button></div><pre>You married me... to take it back.</pre></div>
+    <p class="note"><b>Delivery:</b> Quiet and completely certain. He is not asking and he is not angry — he already knows. Land flat on “back”, no rise.</p>
+    <p class="note"><b>Voice:</b> Daniel &nbsp;·&nbsp; fallback if unavailable: George</p>
+  </div>
+</article>
+<article class="line" id="l3">
+  <div class="lhead">
+    <div class="num">03</div>
+    <div class="who">ELENA</div>
+    <div class="meta">S08 (on camera, 37.8–44.7 s) · must fit <b>6.8 s</b></div>
+    <div class="fname">save as <b>03_elena_allofit.wav</b></div>
+  </div>
+  <div class="lbody">
+    <div class="pb"><div class="pb-head"><span>Paste this — with the pause tags</span><button data-copy>copy</button></div><pre>I married you &lt;break time="0.35s" /&gt; to take &lt;break time="0.3s" /&gt; all of it.</pre></div>
+    <div class="pb"><div class="pb-head"><span>If the tool rejects tags, use this instead</span><button data-copy>copy</button></div><pre>I married you... to take... all of it.</pre></div>
+    <p class="note"><b>Delivery:</b> Almost a whisper, close to the mic. No triumph at all. Weight on “all”, then let “of it” fall away to nothing.</p>
+    <p class="note"><b>Voice:</b> Charlotte &nbsp;·&nbsp; fallback if unavailable: Alice</p>
+  </div>
+</article>
+<article class="line" id="l4">
+  <div class="lhead">
+    <div class="num">04</div>
+    <div class="who">ELENA</div>
+    <div class="meta">S10 → montage (voice over, 49.2 s on) · must fit <b>6.0 s</b></div>
+    <div class="fname">save as <b>04_elena_notes.wav</b></div>
+  </div>
+  <div class="lbody">
+    <div class="pb"><div class="pb-head"><span>Paste this — with the pause tags</span><button data-copy>copy</button></div><pre>He taught me how to do this. &lt;break time="0.7s" /&gt; He just never thought &lt;break time="0.35s" /&gt; I was taking notes.</pre></div>
+    <div class="pb"><div class="pb-head"><span>If the tool rejects tags, use this instead</span><button data-copy>copy</button></div><pre>He taught me how to do this.  He just never thought... I was taking notes.</pre></div>
+    <p class="note"><b>Delivery:</b> The only line with any dryness in it. Not a joke — she is not enjoying it. Small pause before “I was taking notes”.</p>
+    <p class="note"><b>Voice:</b> Charlotte &nbsp;·&nbsp; fallback if unavailable: Alice</p>
+  </div>
+</article>
+
+<h2>Before you send them back</h2>
+<div class="scroll"><table>
+<thead><tr><th>Check</th><th>What it should be</th></tr></thead>
+<tbody>
+<tr><td>File names</td><td>Exactly as listed — <code>01_elena_funeral.wav</code> and so on. The assembly matches on filename.</td></tr>
+<tr><td>Length</td><td>Each file must be shorter than the budget shown on it. If one is over, <b>merge its sentences rather than cutting words</b> and regenerate — then re-check, because the same text does not produce the same length twice.</td></tr>
+<tr><td>Silence</td><td>Leave the head and tail silence in. We trim it in the edit, where we can see the picture.</td></tr>
+<tr><td>Consistency</td><td>All three Elena lines from the same voice, same settings, ideally the same session.</td></tr>
+</tbody></table></div>
+
+<div class="ok">
+  <p><strong>Where to put them:</strong> the same upload link as everything else, in the <b>voice</b> tab. They land straight on the render machine and I'll pick them up from there — nothing to email.</p>
+</div>
+
+<footer>
+  <a href="../film/">the current cut (Microsoft TTS placeholder)</a> · <a href="../trailer/">the shot list</a> · <a href="../">the teardown</a><br>
+  The film currently uses a local Microsoft neural voice as a placeholder. These four files replace it.
+</footer>
+
+<script>
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-copy]'); if(!b) return;
+  const txt=b.closest('.pb').querySelector('pre').innerText;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const o=b.textContent; b.textContent='copied'; b.classList.add('done');
+    setTimeout(()=>{b.textContent=o;b.classList.remove('done')},1400);
+  });
+});
+</script>
+</div>
