@@ -11,7 +11,7 @@ $LogPath = Join-Path $Root 'agent.log'
 # Own scratch dir rather than $env:TEMP — TEMP is not guaranteed to exist in every context the
 # scheduler can start us in, and a null TEMP silently broke every job in testing.
 $Work    = Join-Path $Root 'work'
-$Version = '1.0.5'
+$Version = '1.0.6'
 
 if (-not (Test-Path $CfgPath)) { Write-Error "missing $CfgPath"; exit 1 }
 $Cfg = Get-Content $CfgPath -Raw | ConvertFrom-Json
@@ -107,9 +107,18 @@ function Send-Stats {
     $cpu = (Get-CimInstance Win32_Processor -ErrorAction Stop |
             Measure-Object -Property LoadPercentage -Average).Average
   } catch { Log ('cpu/ram read failed: ' + $_.Exception.Message) }
+  # the quick tunnel's hostname changes every restart, so report the current one with each
+  # heartbeat and let the bridge hand out a permanent redirect to it
+  $inbox = ''
+  try {
+    if (Test-Path 'D:\aifilm\logs\tunnel-url.txt') {
+      $inbox = (Get-Content 'D:\aifilm\logs\tunnel-url.txt' -Raw -ErrorAction Stop).Trim()
+    }
+  } catch { }
   try {
     Post '/api/stats' ([ordered]@{
       agent_id     = $Cfg.agent_id
+      inbox_url    = $inbox
       gpu          = $gpu
       disk         = $disk
       cpu_pct      = $cpu

@@ -116,6 +116,10 @@ export default {
         b.ram_used_mb ?? null, b.ram_total_mb ?? null, JSON.stringify(b.disk || [])
       ).run();
       await env.DB.prepare(`UPDATE agents SET last_seen=?1 WHERE id=?2`).bind(t, b.agent_id).run();
+      if (b.inbox_url) {
+        await env.DB.prepare(`UPDATE agents SET inbox_url=?1 WHERE id=?2`)
+          .bind(b.inbox_url, b.agent_id).run();
+      }
       if (b.specs) {
         await env.DB.prepare(`UPDATE agents SET specs_json=?1 WHERE id=?2`)
           .bind(JSON.stringify(b.specs), b.agent_id).run();
@@ -222,6 +226,34 @@ export default {
       if (!adminOK(request, env, url)) return json({ error: "forbidden" }, 403);
       const { results } = await env.DB.prepare(`SELECT * FROM ledger ORDER BY id DESC LIMIT 400`).all();
       return json({ ledger: results });
+    }
+
+    // One bookmarkable address for the upload page. A Cloudflare quick tunnel gets a new random
+    // hostname every restart; the agent reports the current one, and this hands out a redirect to
+    // it. Gated on the upload token so this does not become public write access to the machine.
+    if (p === "/inbox") {
+      const k = url.searchParams.get("k") || "";
+      if (!env.UPLOAD_TOKEN || k !== env.UPLOAD_TOKEN) {
+        return new Response("Missing or wrong key.", { status: 403, headers: { "content-type": "text/plain" } });
+      }
+      const row = await env.DB.prepare(
+        `SELECT inbox_url, last_seen FROM agents WHERE inbox_url IS NOT NULL AND inbox_url != ''
+          ORDER BY last_seen DESC LIMIT 1`
+      ).first();
+      if (!row || !row.inbox_url) {
+        return new Response(
+          "The render machine has not reported an upload address yet. It reports one within a minute of starting up.",
+          { status: 503, headers: { "content-type": "text/plain" } });
+      }
+      const stale = now() - row.last_seen > 300;
+      return new Response(null, {
+        status: 302,
+        headers: {
+          location: row.inbox_url + "/#t=" + encodeURIComponent(k),
+          "cache-control": "no-store",
+          "x-agent-last-seen": String(now() - row.last_seen) + "s ago" + (stale ? " (STALE)" : ""),
+        },
+      });
     }
 
     if (p === "/" || p === "/index.html") {
