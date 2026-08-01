@@ -135,7 +135,11 @@ def main():
         b64 = open(b64, "r", encoding="utf-8").read().strip()
     batch = json.loads(base64.b64decode(b64).decode("utf-8"))
     per_timeout = int(os.environ.get("BATCH_ITEM_TIMEOUT", "1800"))
-    abort_temp = float(os.environ.get("BATCH_ABORT_TEMP", "87"))
+    # The card reports its own limits: thermal SLOWDOWN at 95 C, SHUTDOWN at 98 C
+    # (nvidia-smi -q -d TEMPERATURE, read on this box). 90 leaves 5 C to slowdown and 8 C to
+    # shutdown. An earlier 87 was below where the card even begins to slow and aborted healthy
+    # work 46 s into a render.
+    abort_temp = float(os.environ.get("BATCH_ABORT_TEMP", "90"))
 
     watch = GpuWatch()
     watch.start()
