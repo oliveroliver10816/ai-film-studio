@@ -97,3 +97,22 @@ diffed to prove nothing else changed):
 - token separation: agent token gets 403 on every admin endpoint, admin token gets 403 on
   `/api/poll`, no token gets 403
 - dashboard: 0 console errors, no horizontal overflow at 1440 and 390
+
+## The upload link (added 2026-08-01)
+
+Bob generates images on a different machine from the Blackwell, so files needed a route in.
+`uploader/uploader.py` runs on the PC and writes into `D:\aifilm\inbox\{cast,keyframes,voice}`;
+a Cloudflare quick tunnel exposes it; the worker's `/inbox?k=<upload_token>` redirects to whatever
+hostname the tunnel currently has. Scheduled task `AIFilmInbox` brings both back at logon.
+
+- ⚠ **R2 is not enabled on this Cloudflare account** (`code: 10042`) — that is why storage sits on
+  the machine itself rather than in a bucket. The result is better: no size cap, no copy in between.
+- ⚠ **Quick-tunnel hostnames are random and change on every restart.** Never hand out the
+  `trycloudflare.com` URL directly; hand out `/inbox?k=…`, which follows it.
+- ⚠ **Raw `PUT` beats multipart here** — `cgi` was removed in Python 3.13, and the filename in the
+  URL plus the File object as the body needs no parser at all.
+- ⚠ Write to `.part` and rename on completion, or a dropped connection leaves a truncated file that
+  looks finished.
+- ⚠ **PowerShell backtick line-continuations do not survive an unquoted bash heredoc** — they came
+  through empty and `cloudflared` launched with no arguments at all, so no tunnel was created while
+  the job still reported success. Use splatting (`@args`) for multi-line `Start-Process` calls.
