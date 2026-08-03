@@ -1,0 +1,30 @@
+
+==============================================================================
+TABLE doxcn5Ms6rJhpFf7ZmRbqyR3RMp  4x2
+Pattern || Example
+Time range || 0-3 seconds... 3-7 seconds... 7-12 seconds...
+Exact time point || At 5 seconds, the camera whip-pans rapidly to the left and completes the transition.
+Relative timing || Three seconds after the character presses the button, the room lights gradually turn off.
+
+==============================================================================
+TABLE doxcnNnbfscCSqgUrEoUmPkBmvd  5x3
+Material Type || Input Limit || Recommended Range
+Images || Up to 30 images, each no larger than 4K || Prefer 1-8 distinct subjects across subject-reference images
+Videos || Up to 10 videos, with a combined duration of no more than 30 seconds || Prefer 1-5 distinct subjects and 5-10 seconds per subject video
+Audio || Up to 10 audio clips, with a combined duration of no more than 30 seconds || Keep only dialogue, voice characteristics, ambience, or music directly relevant to the task
+Video Editing || A source video may be used together with reference images || Prefer a source video under 20 seconds and 1-5 reference images
+
+==============================================================================
+TABLE doxcnr6fvwcwHrhRDUw8UXvK2tc  4x3
+Task Type || Aspect Ratio || Duration
+Video editing || Automatically preserves the input video's aspect ratio; cannot be set separately || Automatically preserves approximately the input video's duration; cannot be set separately. Input-frame processing may introduce a difference of up to approximately 0.3 seconds
+First-frame or first-and-last-frame generation || Automatically uses the first image's aspect ratio. The first and last images should use the same aspect ratio to avoid stretching the last frame || Can be set
+Video extension || Automatically preserves the input video's aspect ratio; cannot be set separately || Can be set
+
+==============================================================================
+TABLE doxcnzSWPqUXmaMbtSAp3rvaa7e  5x3
+Content || Syntax || Example
+Music || () || (Soft, rhythmic piano music plays in the background)
+Sound Effects || <> || <A bell rings in the distance>
+Dialogue || {} || {Hello, welcome back.}
+Subtitles || 【】 || 【Chapter One: Departure】

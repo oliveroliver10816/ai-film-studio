@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>THE ARRANGEMENT — Chapter One · Seedance shot package</title>
+<meta name="description" content="Twelve 10-second shots, 120 seconds. Script, keyframe prompts and Seedance image-to-video prompts with dialogue, music and SFX written in.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,opsz,wght@1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0B0C; --panel:#121315; --panel2:#0E0F11; --line:#26282B;
+  --ink:#EDEAE6; --dim:#9A948C; --ox:#D4566A; --brass:#D4A537; --cold:#6E9BC4;
+  --disp:'Big Shoulders Display',Impact,sans-serif;
+  --body:'Instrument Sans',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --serif:'Newsreader',Georgia,serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:16px;line-height:1.62;overflow-x:hidden;
+  background-image:radial-gradient(120% 60% at 50% -10%, #16181B 0%, #0A0B0C 62%);
+  background-attachment:fixed}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+a{color:var(--cold)}
+
+/* ---------- header ---------- */
+header{padding:96px 0 56px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 22px}
+h1{font-family:var(--disp);font-weight:800;font-size:clamp(52px,11vw,132px);line-height:.86;
+  margin:0;letter-spacing:-.015em;text-transform:uppercase}
+h1 em{display:block;font-style:normal;color:var(--ox)}
+.logline{font-family:var(--serif);font-style:italic;font-size:clamp(19px,2.5vw,27px);
+  line-height:1.45;color:var(--ink);max-width:34ch;margin:30px 0 0}
+.facts{display:flex;flex-wrap:wrap;gap:0;margin:44px 0 0;border-top:1px solid var(--line)}
+.fact{flex:1 1 150px;padding:18px 20px 16px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.fact:last-child{border-right:0}
+.fact b{display:block;font-family:var(--disp);font-weight:700;font-size:32px;line-height:1;color:var(--brass)}
+.fact span{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--dim);margin-top:8px}
+
+/* ---------- sections ---------- */
+section{padding:72px 0 8px}
+h2{font-family:var(--disp);font-weight:700;font-size:clamp(30px,5vw,54px);line-height:.95;
+  margin:0 0 8px;text-transform:uppercase;letter-spacing:-.01em}
+.sub{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ox);margin:0 0 26px}
+p{max-width:74ch}
+.lede{font-size:18px;color:var(--ink)}
+.muted{color:var(--dim)}
+
+/* ---------- panels ---------- */
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:2px;padding:26px 28px;margin:20px 0}
+.panel h3{font-family:var(--disp);font-weight:700;font-size:24px;margin:0 0 12px;
+  text-transform:uppercase;letter-spacing:.01em}
+ol.steps{counter-reset:s;list-style:none;margin:0;padding:0}
+ol.steps li{counter-increment:s;position:relative;padding:0 0 16px 46px;max-width:74ch}
+ol.steps li:before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:1px;
+  font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.06em}
+ol.steps li b{color:var(--ink)}
+
+/* ---------- tables ---------- */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14.5px}
+th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--dim);border-bottom:1px solid var(--line)}
+td code{font-family:var(--mono);font-size:14px;color:var(--brass)}
+.tscroll{overflow-x:auto}
+
+/* ---------- master strip (signature) ---------- */
+.strip{display:flex;width:100%;height:132px;border:1px solid var(--line);background:var(--panel2);
+  margin:26px 0 10px;overflow:hidden}
+.seg{flex:1 1 0;border-right:1px solid var(--line);position:relative;cursor:default;
+  transition:background .18s ease}
+.seg:last-child{border-right:0}
+.seg:hover{background:#191B1E}
+.seg .sid{position:absolute;top:7px;left:8px;font-family:var(--mono);font-size:9.5px;
+  letter-spacing:.1em;color:var(--dim)}
+.seg .bars{position:absolute;left:0;right:0;bottom:26px;height:64px}
+.seg .bar{position:absolute;left:12%;right:12%;background:var(--ox);border-radius:1px}
+.seg.sil .bar{background:var(--line)}
+.seg .lbl{position:absolute;bottom:7px;left:8px;right:8px;font-family:var(--disp);
+  font-weight:500;font-size:12px;line-height:1.05;color:var(--ink);text-transform:uppercase;
+  letter-spacing:.02em;overflow:hidden}
+.legend{display:flex;gap:26px;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:0 0 6px}
+.legend i{display:inline-block;width:22px;height:8px;vertical-align:middle;margin-right:8px;font-style:normal}
+
+/* ---------- script ---------- */
+.script{font-family:var(--mono);font-size:14px;line-height:1.85;background:var(--panel2);
+  border:1px solid var(--line);padding:30px 32px;margin:22px 0}
+.script .sh{color:var(--brass);letter-spacing:.1em;margin-top:26px}
+.script .sh:first-child{margin-top:0}
+.script .ac{color:var(--dim);max-width:70ch}
+.script .cue{color:var(--ox);letter-spacing:.14em;margin:14px 0 0 8ch}
+.script .dl{color:var(--ink);margin:0 0 0 4ch;max-width:44ch}
+.script .pr{color:var(--dim);margin:0 0 0 6ch;font-style:italic}
+
+/* ---------- shot cards ---------- */
+.shot{border:1px solid var(--line);background:var(--panel);margin:26px 0;border-radius:2px}
+.shot > header{padding:22px 26px 18px;border-bottom:1px solid var(--line);border-top:0;
+  display:flex;flex-wrap:wrap;gap:14px;align-items:baseline}
+.shot .num{font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.12em}
+.shot h3{font-family:var(--disp);font-weight:800;font-size:clamp(26px,4vw,40px);margin:0;
+  text-transform:uppercase;line-height:.95;letter-spacing:-.005em;flex:1 1 auto}
+.shot .time{font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.08em}
+.shot .fr{padding:0 26px;margin:16px 0 0;font-family:var(--mono);font-size:12px;color:var(--cold);
+  letter-spacing:.04em}
+.shot .why{padding:0 26px;margin:14px 0 20px;color:var(--dim);max-width:78ch}
+.beatbar{margin:0 26px 20px;border:1px solid var(--line);background:var(--panel2)}
+.beatrow{display:flex;gap:0;border-bottom:1px solid var(--line);font-size:13.5px}
+.beatrow:last-child{border-bottom:0}
+.beatrow .bt{flex:0 0 92px;padding:9px 12px;font-family:var(--mono);font-size:11px;color:var(--brass);
+  border-right:1px solid var(--line);letter-spacing:.04em}
+.beatrow .bd{padding:9px 14px;color:var(--dim)}
+.lines{margin:0 26px 20px}
+.line{border-left:2px solid var(--ox);padding:2px 0 2px 16px;margin:0 0 16px}
+.line .who{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--ox);
+  text-transform:uppercase}
+.line .txt{font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.4;margin:4px 0 5px;
+  max-width:46ch}
+.line .how{font-size:13.5px;color:var(--dim);max-width:66ch}
+.aud{margin:0 26px 20px;font-size:13.5px;color:var(--dim)}
+.aud b{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--brass);display:block;margin:0 0 4px}
+.aud code{font-family:var(--mono);font-size:13px;color:var(--ink)}
+
+.pbox{border-top:1px solid var(--line)}
+.phead{display:flex;align-items:center;gap:14px;padding:14px 26px;background:var(--panel2)}
+.phead .pt{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--dim);flex:1 1 auto}
+.phead .pt b{color:var(--ink)}
+button.copy{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  background:transparent;color:var(--brass);border:1px solid var(--brass);padding:8px 14px;
+  border-radius:2px;cursor:pointer;transition:background .15s ease,color .15s ease;white-space:nowrap}
+button.copy:hover{background:var(--brass);color:#0A0B0C}
+button.copy.done{background:var(--brass);color:#0A0B0C}
+pre.prompt{margin:0;padding:20px 26px 26px;font-family:var(--mono);font-size:12.5px;line-height:1.72;
+  color:var(--ink);white-space:pre-wrap;word-break:break-word;overflow-x:auto;
+  border-top:1px solid var(--line);background:var(--panel2)}
+pre.prompt.hid{display:none}
+
+.callout{border-left:3px solid var(--ox);background:var(--panel);padding:18px 22px;margin:22px 0}
+.callout b{color:var(--ox)}
+.callout.brass{border-left-color:var(--brass)}
+.callout.brass b{color:var(--brass)}
+
+footer{margin-top:80px;border-top:1px solid var(--line);padding:34px 0 70px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim)}
+
+@media(max-width:720px){
+  header{padding:60px 0 40px}
+  .strip{height:112px}
+  .seg .lbl{font-size:10px}
+  .shot > header{padding:18px 18px 14px}
+  .shot .fr,.shot .why{padding:0 18px}
+  .beatbar,.lines,.aud{margin-left:18px;margin-right:18px}
+  .phead,pre.prompt{padding-left:18px;padding-right:18px}
+  .script{padding:22px 18px}
+  .beatrow{flex-direction:column}
+  .beatrow .bt{flex:none;border-right:0;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <p class="kicker">ai-film-studio · shot package · 3 Aug 2026</p>
+  <h1>The Arrangement<em>Chapter One</em></h1>
+  <p class="logline">On the night the contract is signed, she lets him believe he has won — then hands him the one page he never read.</p>
+  <div class="facts">
+    <div class="fact"><b>12</b><span>shots</span></div>
+    <div class="fact"><b>10.0s</b><span>each</span></div>
+    <div class="fact"><b>120s</b><span>total runtime</span></div>
+    <div class="fact"><b>13</b><span>spoken lines</span></div>
+    <div class="fact"><b>2</b><span>characters, locked</span></div>
+  </div>
+</header>
+
+<section id="run">
+  <h2>How to run it</h2>
+  <p class="sub">Dola · Seedance 2.0 fast · free accounts</p>
+  <p class="lede">Every shot is two prompts: one that makes the still, one that makes the still move and speak. Do them in that order, one shot at a time, and keep the still even when the video fails — the still is the expensive part and it is reusable.</p>
+
+  <div class="panel">
+    <h3>The loop, per shot</h3>
+    <ol class="steps">
+      <li><b>Generate the keyframe</b> from the IMAGE PROMPT. Either route works: Google Flow on the other PC, or Qwen-Image-Edit 2511 on the Blackwell conditioned on the locked cast master. <span class="muted">The local route is the one that has already held a face across ten shots, so prefer it.</span></li>
+      <li><b>Crop the watermark</b> if it came from Flow — four-pointed star, bottom right, about 115&nbsp;px in from each edge. Output <b>1920×1080</b>, 16:9.</li>
+      <li><b>Upload the keyframe to Dola as the first frame</b>, then paste the VIDEO PROMPT.</li>
+      <li><b>If a second reference image is allowed</b>, add the cast master named on the card and keep the two <code>@Image</code> lines at the top of the prompt. <b>If it is not</b>, delete those two lines and everything else still works.</li>
+      <li><b>Generate at 10 seconds, 16:9.</b> Keep the take if the face holds and no text appears anywhere in frame. Those are the only two automatic rejects.</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h3>The four syntax marks</h3>
+    <p class="muted" style="margin-top:0">Straight out of ByteDance's own prompt guide. Everything else can be plain English; these four tell the model what kind of sound it is looking at.</p>
+    <div class="tscroll"><table id="syntax"><thead><tr><th>Content</th><th>Syntax</th><th>Example</th></tr></thead><tbody></tbody></table></div>
+    <div class="callout"><b>One trap.</b> The same guide also uses angle brackets for character placeholders — <code>&lt;Character A&gt;</code> — in its multi-reference templates. That collides with the sound-effect mark. Every prompt below therefore writes character names in plain capitals and reserves <code>&lt;&nbsp;&gt;</code> for sound effects only. Do not mix the two conventions in one prompt.</div>
+  </div>
+
+  <div class="panel">
+    <h3>Five rules that are in every prompt on this page</h3>
+    <ol class="steps">
+      <li><b>No readable text, ever.</b> Four of these twelve shots involve a contract. Legible paper is one of the last reliable tells of generated video, so the folder stays shut, pages sit at forty degrees to the lens, and the one thing the audience needs to know is <em>read aloud</em> in shot nine instead of shown.</li>
+      <li><b>No gesturing.</b> She moves her head and eyes only; he is slow to turn and never rushed. Hands are the other tell, so hands stay on the table or at their sides in all twelve shots.</li>
+      <li><b>The camera is locked in eleven shots of twelve.</b> One slow push in shot nine, one handheld drift in shot eleven. Restraint everywhere else is what makes those two land — and a locked camera is also the cheapest way to stop a generator inventing motion it cannot sustain.</li>
+      <li><b>The identity block is repeated in full, every time.</b> The model has no memory between clips. Anything that must hold across two minutes has to be restated in all twelve prompts, which is why they are long.</li>
+      <li><b>Compose for 2.39:1, do not render bars.</b> Frame with headroom and crop in ffmpeg at the end. Asking the model for black bars wastes pixels and it renders them inconsistently.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="strip">
+  <h2>Where the dialogue sits</h2>
+  <p class="sub">Each column is one 10-second clip · red = a spoken line, in its time budget</p>
+  <p>The one thing that can quietly break this package is a line that does not fit inside ten seconds. Speech duration comes from pauses, not word count — roughly 0.85&nbsp;s per sentence boundary on top of the words themselves — so every line is placed in a time range in the prompt and drawn here against the clip it has to live in. Two shots carry no dialogue at all, on purpose: the first and the last.</p>
+  <div class="legend">
+    <span><i style="background:var(--ox)"></i>spoken line</span>
+    <span><i style="background:var(--line)"></i>no dialogue</span>
+  </div>
+  <div class="strip" id="masterstrip"></div>
+  <p class="muted" style="font-size:13.5px">Longest single shot load is shot eleven — two lines and a beat between them inside ten seconds. That is the shot to generate first, because if it fails the whole ending needs restaging.</p>
+</section>
+
+<section id="script">
+  <h2>The script</h2>
+  <p class="sub">120 seconds · one room · one continuous scene</p>
+  <p>Two characters, one location, one night. The four lines that already exist in the sixty-second trailer are inside this scene in their original context — this is the scene those lines were cut from.</p>
+  <div class="script" id="screenplay"></div>
+</section>
+
+<section id="cast">
+  <h2>Cast &amp; reference files</h2>
+  <p class="sub">Locked · already on disk · do not regenerate</p>
+  <p>Both faces are already approved and backed up in <code>assets-source/cast/</code> at 2552×1336 with the Flow watermark cropped. Do not generate new cast images for this chapter — separate generations do not hold a face, and one in four drifted to a different person last time. Use these.</p>
+
+  <div class="tscroll"><table>
+    <thead><tr><th>Shot</th><th>Who is in frame</th><th>Reference master to attach</th></tr></thead>
+    <tbody id="reftable"></tbody>
+  </table></div>
+
+  <div class="callout"><b>The mole is gone.</b> Elena's spec used to carry a mole below the right eye. It drifted between generations — below the eye in one view, beside the mouth in another — so it has been removed from the description on this page. A mark that moves between shots is exactly what an audience notices without being able to say why. <b>Adrian's eyebrow scar stays</b>: it held in three generations out of four and it is the anchor that tells you the right man turned up.</div>
+</section>
+
+<section id="shots">
+  <h2>The twelve shots</h2>
+  <p class="sub">Image prompt · video prompt · copy either</p>
+  <div id="shotlist"></div>
+</section>
+
+<section id="assembly">
+  <h2>Assembly &amp; the audio question</h2>
+  <p class="sub">What happens after the twelve clips land</p>
+
+  <div class="callout brass"><b>Read this before you generate.</b> Music is written into all twelve prompts, as asked — so this run also tests whether Seedance's score generation is any good. But be aware of the trade: generated music is <em>baked into the same audio track as the dialogue</em>. Twelve clips scored independently will not match each other, and you cannot swap the music out afterwards without losing the dialogue with it. <b>So: run it this way first and judge the result.</b> If the score does not hold across the twelve, regenerate with the single <code>(&nbsp;)</code> line deleted from each prompt — the clips then come back with dialogue, ambience and effects only, and one continuous bed goes underneath in the edit. That is how it is normally done, and it is one deleted line away.</div>
+
+  <p>The score as written is a single idea across the whole film, which is what makes the mismatch risk visible rather than hidden: one sustained low cello note opens it (shots one and two), it drops to a single piano note under her first line, <b>it stops completely at the signature in shot seven and stays gone through shot eight</b> — that silence is doing the work of the turn — then a low string cluster rises from shot nine, swells under the payoff in shot eleven, and resolves back to the opening cello note as she leaves.</p>
+
+  <div class="panel">
+    <h3>Cut order</h3>
+    <ol class="steps">
+      <li><b>Concatenate</b> the twelve accepted takes in order, no transitions — every cut in this film is a straight cut.</li>
+      <li><b>Crop to 2.39:1</b> and letterbox to the delivery frame in ffmpeg.</li>
+      <li><b>Master to −14 LUFS</b>, true peak −1.5 dBTP. <span class="muted">The Korean reference sits at −24, ten under platform target — do not copy that.</span></li>
+      <li><b>Keep every reject.</b> Failed takes are the measurement: keep-rate per shot is the number that tells us whether this route is usable at all.</li>
+    </ol>
+  </div>
+</section>
+
+<section id="test">
+  <h2>What this run actually answers</h2>
+  <p class="sub">Five questions · write the answer down per shot</p>
+  <div class="tscroll"><table>
+    <thead><tr><th>Question</th><th>How you see it</th><th>Where it shows first</th></tr></thead>
+    <tbody>
+      <tr><td><b>Does it hold our locked faces?</b></td><td>Same person in S04 and S10 — identical frames, thirty seconds apart. Adrian's eyebrow scar present in S05 and S09.</td><td>S04 → S10</td></tr>
+      <tr><td><b>Can it deliver written dialogue?</b></td><td>The words spoken are the words in the braces, in a British accent, lip-synced, inside the time range given.</td><td>S02</td></tr>
+      <tr><td><b>Can it hold two speakers in one clip?</b></td><td>S11 — his line, a beat, then hers. Not swapped, not overlapping, both inside ten seconds.</td><td>S11</td></tr>
+      <tr><td><b>Does it obey a locked camera?</b></td><td>Eleven shots with no camera move at all, then exactly one push and one drift where asked.</td><td>S01</td></tr>
+      <tr><td><b>Does it keep paper blank?</b></td><td>No letters, numbers or printing resolve on any page in S03, S06, S07 or S09.</td><td>S07</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Generate <b>S11 first</b>, then S04 and S10 as a pair. Those three answer four of the five questions before you spend an account's quota on the other nine.</p>
+</section>
+
+<footer>
+  ai-film-studio · chapter-one · noindex · cast locked 1 Aug 2026 · prompt grammar from ByteDance's Dreamina Seedance 2.5 guide, archived in <code>docs/</code>
+</footer>
+
+</div>
+
+<script src="shots.js"></script>
+<script>
+/* ---------- syntax table ---------- */
+document.querySelector('#syntax tbody').innerHTML = SYNTAX.map(r =>
+  `<tr><td>${r[0]}</td><td><code>${r[1]}</code></td><td class="muted">${r[2]}</td></tr>`).join('');
+
+/* ---------- master strip ---------- */
+document.getElementById('masterstrip').innerHTML = SHOTS.map(s => {
+  const n = s.lines.length;
+  let bars = '';
+  if (n === 0) {
+    bars = `<div class="bar" style="top:26px;height:12px"></div>`;
+  } else {
+    for (let i = 0; i < n; i++) {
+      const h = n === 1 ? 22 : 16;
+      const top = n === 1 ? 20 : 8 + i * 26;
+      bars += `<div class="bar" style="top:${top}px;height:${h}px"></div>`;
+    }
+  }
+  return `<div class="seg${n===0?' sil':''}" title="${s.id} — ${s.title}">
+    <span class="sid">${s.id}</span>
+    <div class="bars">${bars}</div>
+    <span class="lbl">${s.title}</span>
+  </div>`;
+}).join('');
+
+/* ---------- screenplay ---------- */
+const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+document.getElementById('screenplay').innerHTML = SHOTS.map(s => {
+  let h = `<div class="sh">${s.id} &nbsp;|&nbsp; ${s.title} &nbsp;|&nbsp; ${s.t}</div>`;
+  h += `<div class="ac">${esc(s.framing)}</div>`;
+  s.beats.forEach(b => { h += `<div class="ac">${esc(b[0])} — ${esc(b[1])}</div>`; });
+  s.lines.forEach(l => {
+    h += `<div class="cue">${esc(l.who)}</div>`;
+    h += `<div class="dl">${esc(l.text)}</div>`;
+    h += `<div class="pr">(${esc(l.how)})</div>`;
+  });
+  if (!s.lines.length) h += `<div class="pr" style="margin-left:4ch">(no dialogue)</div>`;
+  return h;
+}).join('');
+
+/* ---------- reference table ---------- */
+document.getElementById('reftable').innerHTML = SHOTS.map(s =>
+  `<tr><td><b>${s.id}</b></td><td>${esc(s.framing)}</td><td>${
+    s.refs.length ? s.refs.map(r=>`<code>${r}</code>`).join('<br>')
+                  : '<span class="muted">insert shot — no face in frame</span>'}</td></tr>`).join('');
+
+/* ---------- shot cards ---------- */
+document.getElementById('shotlist').innerHTML = SHOTS.map((s, i) => {
+  const beats = s.beats.map(b =>
+    `<div class="beatrow"><div class="bt">${esc(b[0])}</div><div class="bd">${esc(b[1])}</div></div>`).join('');
+  const lines = s.lines.length ? `<div class="lines">` + s.lines.map(l =>
+    `<div class="line"><div class="who">${esc(l.who)}</div>
+     <div class="txt">${esc(l.text)}</div>
+     <div class="how">${esc(l.how)}</div></div>`).join('') + `</div>` : '';
+  const aud = `<div class="aud"><b>Audio written into the prompt</b>
+     <div>music &nbsp;<code>(${esc(s.music)})</code></div>
+     ${s.sfx.map(x=>`<div>effect &nbsp;<code>&lt;${esc(x)}&gt;</code></div>`).join('')}</div>`;
+  return `<article class="shot" id="${s.id.toLowerCase()}">
+    <header>
+      <span class="num">${s.id}</span>
+      <h3>${esc(s.title)}</h3>
+      <span class="time">${esc(s.t)}${s.silent?' · no dialogue':''}</span>
+    </header>
+    <div class="fr">${esc(s.framing)}</div>
+    <p class="why">${esc(s.why)}</p>
+    <div class="beatbar">${beats}</div>
+    ${lines}
+    ${aud}
+    <div class="pbox">
+      <div class="phead"><span class="pt"><b>Image prompt</b> — makes the keyframe</span>
+        <button class="copy" data-t="i" data-i="${i}">Copy</button></div>
+      <pre class="prompt" id="ip${i}">${esc(s.image())}</pre>
+    </div>
+    <div class="pbox">
+      <div class="phead"><span class="pt"><b>Video prompt</b> — Seedance, image-to-video, 10 s</span>
+        <button class="copy" data-t="v" data-i="${i}">Copy</button></div>
+      <pre class="prompt" id="vp${i}">${esc(s.video())}</pre>
+    </div>
+  </article>`;
+}).join('');
+
+/* ---------- copy ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('button.copy');
+  if (!b) return;
+  const i = +b.dataset.i;
+  const txt = b.dataset.t === 'i' ? SHOTS[i].image() : SHOTS[i].video();
+  const done = () => { const o = b.textContent; b.textContent = 'Copied'; b.classList.add('done');
+    setTimeout(() => { b.textContent = o; b.classList.remove('done'); }, 1400); };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(txt).then(done).catch(() => fallback(txt, done));
+  } else fallback(txt, done);
+});
+function fallback(txt, done) {
+  const ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); done(); } catch (err) {}
+  document.body.removeChild(ta);
+}
+
+/* ---------- self-check, visible in console ---------- */
+(() => {
+  const total = SHOTS.length * 10;
+  const lines = SHOTS.reduce((a, s) => a + s.lines.length, 0);
+  console.log(`chapter-one: ${SHOTS.length} shots, ${total}s, ${lines} spoken lines`);
+})();
+</script>
+</body>
+</html>

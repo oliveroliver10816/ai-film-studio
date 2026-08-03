@@ -1,0 +1,312 @@
+[page] Dreamina Seedance 2.5 Prompt Guide
+[text] 中文版本： 
+[text] Dreamina Seedance 2.5 supports both text-only video generation and creation with image, video, and audio references. It can also edit existing videos. Start by stating what you want to generate, then add reference materials, event progression, visual treatment, and audio as needed.
+[heading2] ## Basic Prompting Techniques
+[heading3] ### The Core Prompt Formula
+[text] Prompts can flexibly combine the following elements:
+[text] Subject + Action or Event + Scene and Environment (Optional) + Visual Style (Optional) + Camera Movement/Cut (Optional) + Audio (Optional)
+[bullet] - Subject + Action or Event: State who or what is doing what. This is the foundation of the video.
+[bullet] - Scene and Environment: Describe the location, time, weather, spatial relationships, and background state.
+[bullet] - Visual Style: Describe lighting, color, materials, image texture, or the overall mood.
+[bullet] - Camera Movement/Cut: Describe shot size, camera angle, camera movement, the focus subject, and shot transitions.
+[bullet] - Audio: Describe dialogue, voice characteristics, ambience, sound effects, and music.
+[grid] 
+[heading4] #### Basic Template
+[code] ```<Subject> performs <primary action or event> in <scene and environment>.
+The visuals feature <visual style>.
+Use <shot size, camera angle, camera movement, or cuts>.
+Audio includes <dialogue, ambience, sound effects, or music>.
+[heading4] #### Example
+[code] ```A ceramic artist finishes a pale blue cup in a studio at dawn, lifts it from the wheel, and places it in the center of a wooden shelf.
+Soft morning light enters through the window. The wet clay has a delicate sheen, and the workbench remains tidy.
+Begin with a medium shot of the wheel-throwing process, slowly push in toward the cup's surface texture, then cut to a frontal view of the shelf.
+Retain the low hum of the pottery wheel, the friction of clay, and subtle indoor ambience.
+[text] You may omit any components you do not need. Generation parameters do not need to be included in the prompt; configurable parameters are set on the generation page or through the API.
+[heading3] ### When Using Reference Materials, Prepare Them and Define Their Roles
+[heading4] #### Material Quantity and Selection
+[text] Seedance 2.5 can combine up to 50 reference materials. Each material type follows the input limits below. The recommended ranges are intended to improve generation stability; they are not capability limits.
+[table] 
+[text] You may still try ranges above these recommendations: 9-12 subjects in subject images, 6-10 subjects in subject audio/video, or 6-8 reference images for video editing. Stability may decrease as the number of materials grows. If more than five subjects also require multiple views, place different views in separate images; independent view images are usually more stable than combining several views into one collage.
+[heading4] #### Define Each Material's Role
+[text] After uploading reference materials, specify exactly what each one contributes. Add exclusions when people, backgrounds, or compositions in a material could be unintentionally carried into the output. Material mappings must be written in the prompt: do not rely only on text labels inside images, and do not make the model infer which person, prop, or scene each material represents.
+[grid] 
+[heading4] #### Reference Role Template
+[code] ```@Image 1 defines <subject>'s <appearance, clothing, structure, or material>.
+@Video 1 defines <motion, camera movement, or pacing>.
+@Audio 1 defines <character or sound type>'s <voice, dialogue, ambience, or music>.
+
+<Subject> completes <primary action or event> in <scene>.
+The visuals feature <visual style>, with <camera treatment>.
+[heading4] #### Example
+[code] ```@Image 1 defines the ceramic artist's facial features, hairstyle, and dark green apron. Do not use the image background.
+@Image 2 defines the wooden workbench, window placement, and morning light of the pottery studio. Do not use the people in the image.
+@Video 1 defines the pacing of throwing clay with both hands, lifting the cup, and placing it down. Do not use the person's identity, clothing, or scene from the video.
+
+The ceramic artist finishes a pale blue cup in the pottery studio at dawn, lifts it from the wheel, and places it in the center of a wooden shelf.
+Begin with a medium shot of the wheel-throwing process, then slowly push in toward the cup's surface texture. Retain the sound of the wheel, the friction of clay, and indoor ambience.
+[text] If several images show different views of the same person or product, state this explicitly:
+[code] ```@Image 1 defines the front view of the same folding desk lamp.
+@Image 2 defines the left-side structure of the same folding desk lamp.
+@Image 3 defines the right-side structure of the same folding desk lamp.
+@Image 4 defines the rear structure of the same folding desk lamp.
+All four images define one folding desk lamp. The output must contain only one lamp throughout.
+[text] When a reference video already defines the motion, camera movement, and sequence accurately, state only which attributes to inherit; there is no need to restate every action. Repeating the motion description may conflict with the reference itself. A blockout video mainly provides motion and spatial structure, so the prompt must still define the intended subjects, scene, action, and visual style.
+[heading3] ### Special Syntax for Audio and Text
+[text] Prompts can be written entirely in natural language. When you need to distinguish music, sound effects, dialogue, and subtitles more explicitly, use the following syntax:
+[table] 
+[heading4] #### Dialogue Language Reinforcement
+[text] When dialogue is not in Chinese, specify the language before the line:
+[code] ```The girl says softly in Japanese: {もう大丈夫です}
+[text] If the dialogue text is in English but the model speaks it in Chinese, or if you need a specific regional variety, reinforce the language before the line. Use this formula:
+[text] Dialogue Language + Regional Variety or Accent + Delivery Style + Speaker + {Dialogue}
+[code] ```Dialogue language: American English. The girl says in natural, conversational American English: {I thought you weren't coming.}
+
+Dialogue language: authentic Los Angeles English. The young man says in natural Los Angeles vernacular: {No way, you actually made it.}
+[heading2] ## New Capabilities in Dreamina Seedance 2.5
+[heading3] ### Multi-Reference Creation: Tell the Model Which Materials to Use in Each Scene
+[text] Seedance 2.5 supports up to 50 reference materials. When many materials are provided, the goal is not to put every reference into one sentence, but to define the relationships among characters, props, scenes, actions, and audio.
+[text] Use the following order:
+[text] Define Each Material's Role → Map Subjects → Group by Type → Create Subject Profiles → Select References by Scene
+[heading4] #### Step 1: Name and Map Each Subject Individually
+[text] Bind each person, product, and prop to its reference material separately:
+[code] ```<Character A> corresponds to @Image 1. Use only the appearance, hairstyle, and clothing.
+<Character B> corresponds to @Image 2. Use only the appearance, hairstyle, and clothing.
+<Prop A> corresponds to @Image 3. Use only the structure, material, and color.
+<Scene A> references @Image 4. Use only the spatial layout, architecture, and lighting. Do not use the people in the image.
+[text] Do not write, "@Images 1 through 4 define four characters respectively." That wording does not state which image corresponds to which character.
+[heading4] #### Step 2: Group Materials by Type
+[code] ```[Characters]
+<Conservator> corresponds to @Image 1. Use only the appearance, hairstyle, and clothing.
+<Registrar> corresponds to @Image 2. Use only the appearance, hairstyle, and clothing.
+<Exhibition Installer> corresponds to @Image 3. Use only the appearance, hairstyle, and clothing.
+<Guide> corresponds to @Image 4. Use only the appearance, hairstyle, and clothing.
+Do not interchange the four characters' appearances, clothing, actions, positions, or dialogue.
+
+[Props]
+<Sample Case> corresponds to @Image 5 and belongs only to <Conservator>.
+<Record Board> corresponds to @Image 6 and belongs only to <Registrar>.
+
+[Scenes]
+<Conservation Lab> references @Image 7. Use only the space, materials, and lighting.
+<Gallery> references @Image 8. Use only the space, materials, and lighting.
+
+[Motion and Audio]
+@Video 1 defines the motion of <Conservator> opening <Sample Case>. Do not use the person or scene from the video.
+@Audio 1 defines <Guide>'s voice and specified dialogue.
+[heading4] #### Step 3: Create a Centralized Profile for Important Subjects
+[text] When the same character uses several references across multiple scenes, add a subject profile:
+[code] ```[Subject Profile: Conservator]
+Appearance and clothing: @Image 1.
+Fixed prop: <Sample Case> from @Image 5.
+Locations: <Conservation Lab> and <Gallery>.
+Motion references: the case-opening motion from @Video 1 and the sample-placement motion from @Video 2.
+Do not use: other characters' clothing. Do not give this character <Record Board> or guide equipment.
+[heading4] #### Step 4: Select References by Scene
+[code] ```Scene 1 | Inspection in the Conservation Lab
+Use: <Conservator>, <Sample Case>, <Conservation Lab>, and the case-opening motion from @Video 1.
+Event: <Conservator> opens <Sample Case> at the workbench and inspects the sample inside.
+End state: <Conservator> remains on the inner side of the workbench. <Sample Case> stays beside the conservator's right hand, which is on the left side of the frame.
+
+Scene 2 | Registration in the Gallery
+Use: <Registrar>, <Record Board>, and <Gallery>.
+Event: <Registrar> checks the number on <Record Board> beside the display case.
+End state: <Registrar> still holds <Record Board> with both hands. No other character enters the display-case area.
+[text] The goal of multi-reference creation is to help the model select the correct materials for the current scene, not to make every material appear at the same time.
+[heading3] ### 30-Second Videos: Organize Events with Stages and End States
+[text] When a video contains several events, divide the story into consecutive stages. Give each stage only one primary state change, and state what should be directly visible at the end of that stage.
+[grid] 
+[heading4] #### Long-Video Template
+[code] ```[Generation Goal]
+Generate a <video type>. The central subject is <subject>, and the primary event is <story summary>.
+
+[Stage 1]
+Initial state: <initial state of characters, props, and scene>.
+Primary event: <one primary action or event>.
+End state: <character positions, prop ownership, or visible scene state>.
+
+[Stage 2]
+Continue from the previous stage: <state that must remain unchanged>.
+Primary event: <one primary action or event>.
+End state: <observable state>.
+
+[Stage 3]
+Primary event: <closing event>.
+End state: <final visible state>.
+
+[Maintain Consistency]
+Keep <character identity, number of characters, clothing, prop ownership, spatial direction, and audio relationships> consistent.
+[heading4] #### Example
+[code] ```[Generation Goal]
+Generate an instructional video showing a flower shop's order-packing process. <Florist> and <Store Assistant> arrange, wrap, and hand off a bouquet together.
+
+[Stage 1]
+Initial state: <Florist> stands behind the workbench. Loose flower stems, scissors, and wrapping paper lie on the tabletop.
+Primary event: <Florist> arranges the stems and trims them to length.
+End state: <Florist> holds the bouquet in the left hand, and the scissors are back on the right side of the workbench.
+
+[Stage 2]
+Continue from the previous stage: both characters retain the same identities and clothing, and <Florist> still holds the bouquet.
+Primary event: <Store Assistant> unfolds the wrapping paper. <Florist> places the bouquet inside and ties it with a green ribbon.
+End state: the wrapped bouquet lies flat in the center of the workbench, with the ribbon bow facing the camera.
+
+[Stage 3]
+Primary event: <Store Assistant> picks up the bouquet and places it on the pickup shelf.
+End state: the bouquet is centered on the pickup shelf, and both characters stand behind the workbench inspecting the finished order.
+
+[Maintain Consistency]
+Keep <Florist> and <Store Assistant>'s identities, clothing, workbench orientation, scissors position, and bouquet ownership consistent.
+[heading4] #### Timestamps and Pacing Control
+[text] For ordinary narratives, use stages by default. Use one-second precision only when you need to control a critical handoff, entrance or exit, transition, or explicit beat. Use time ranges to allocate pacing, exact time points for a single key event, and relative timing to describe a delay between events.
+[code] ```0-5 seconds: Show an empty wooden display table. A hand places a white ceramic plate on it. End state: the hand has left the frame, and only the white plate remains in the center of the table.
+5-10 seconds: Remove the white plate, then place a clear glass on the table. End state: only the clear glass remains in the center of the table.
+10-15 seconds: Remove the clear glass, then place a green ceramic vase on the table. End state: only the green vase remains in the center of the table.
+[table] 
+[text] Time ranges should be consecutive and non-overlapping. They represent an event's time budget, not a precise edit point, so actions may occur slightly before or after a boundary. Too little content in a range gives the model more freedom; too much can cause excessive cutting or omitted events. Do not use timestamps to demand frequencies such as “complete three actions in one second.”
+[heading3] ### Parameter Rules for Editing, First/Last-Frame, and Extension Tasks
+[text] Video editing, first-frame or first-and-last-frame generation, and video extension automatically lock some generation parameters based on the input materials.
+[table] 
+[text] Parameters automatically locked for these tasks cannot be specified separately on the generation page or through the API. Other parameters depend on the options currently available.
+[heading3] ### Video Editing: Define the Master Video, Edit Scope, and Content to Preserve
+[text] When editing an existing video, first define the source video as the sole editing master. Then specify the edit target, edit scope, target material, and content to preserve. The output automatically preserves the input video's aspect ratio and approximately preserves its duration; neither can be set separately. Input-frame processing may introduce a difference of up to approximately 0.3 seconds, usually because of transition-frame handling, while the overall content and event order remain substantially unchanged.
+[heading4] #### General Editing Pattern
+[grid] 
+[heading5] ##### Template
+[code] ```[Edit Goal]
+Edit @Video 1. Within <the entire video or a specific time range>, <add, remove, replace, or adjust> <visual object, region, or audio category>.
+
+[Source Video Role]
+@Video 1 is the sole editing master. It defines <characters, scene, actions, composition, camera movement, occlusion relationships, audio, and event order>.
+
+[Target Material Role]
+@Image 1 or @Audio 1 defines <specified attributes of the target object or sound>.
+
+[Edit Scope]
+Modify only <object, region, time range, or audio category>.
+
+[Content to Preserve]
+Keep <visual content, motion, audio, and timing relationships that must not change> from @Video 1.
+[heading5] ##### Example
+[code] ```[Edit Goal]
+Edit @Video 1. Only from 4-7 seconds, change the cool blue light on the right wall to warm orange light.
+
+[Source Video Role]
+@Video 1 is the sole editing master. It defines the character, room layout, actions, composition, camera movement, audio, and event order.
+
+[Edit Scope]
+Change only the light color on the right wall and the area it illuminates. Allow the character's skin tone to respond naturally to the environmental light.
+
+[Content to Preserve]
+Keep the character's identity, clothing, expression, position, motion, room structure, camera movement, dialogue, and ambience from @Video 1.
+[heading4] #### Subject Replacement
+[grid] 
+[heading5] ##### Template
+[code] ```[Edit Goal]
+Edit @Video 1. Change only <original object> to <target object>.
+
+[Source Video Role]
+@Video 1 is the sole editing master. It defines the original scene, camera position, camera movement, motion path, occlusion relationships, and event order.
+
+[Target Reference Role]
+@Image 1 defines <target object>'s <appearance, structure, or material>. Do not use <irrelevant background, people, or composition>.
+
+[Edit Scope]
+Modify only <specific object and area>. The entire video contains <number> target object(s). Do not modify <content to preserve>.
+
+[Timeline Inheritance]
+<Target object> inherits every appearance, motion, occlusion, and exit of <original object>, including timing, duration, path, and speed changes.
+Except for the object or area explicitly modified above, keep all other people, props, scene content, camera movements, cuts, and event order from @Video 1 unchanged.
+[heading5] ##### Example
+[code] ```[Edit Goal]
+Edit @Video 1. Replace only the yellow folding desk lamp with the white folding desk lamp in @Image 1.
+
+[Source Video Role]
+@Video 1 is the sole editing master. It defines the desk, books, hand movements, camera position, camera movement, occlusion relationships, and event order.
+
+[Target Reference Role]
+@Image 1 defines only the white folding desk lamp's appearance, structure, and material. Do not use the image's background, composition, or other objects.
+
+[Edit Scope]
+Keep exactly one white folding desk lamp throughout the video. Replace only the original yellow folding desk lamp. Do not modify the books, desk, hands, or background.
+
+[Timeline Inheritance]
+The white folding desk lamp inherits every appearance, lamp-arm rotation, hand occlusion, and exit of the original yellow folding desk lamp, including timing, path, and speed changes.
+Except for the object or area explicitly modified above, keep all other people, props, scene content, camera movements, cuts, and event order from @Video 1 unchanged.
+[heading4] #### Background Replacement
+[grid] 
+[heading5] ##### Template
+[code] ```[Edit Goal]
+Edit @Video 1. Replace only <original background area> with <target environment> from @Image 1.
+
+[Source Video Role]
+@Video 1 is the sole editing master. It defines the people, foreground objects, actions, composition, camera movement, and event order.
+
+[Target Reference Role]
+@Image 1 defines only <target environment>'s spatial layout, materials, depth of field, ambient color, and lighting direction. Do not use the people or foreground objects in the image.
+
+[Edit Scope]
+Modify only <background outside the subject's silhouette>. Do not modify <subject identity, facial features, hairstyle, clothing, expression, position, size, or motion>.
+
+[Timeline Inheritance]
+Keep the character actions and occlusion relationships from @Video 1. Except for the object or area explicitly modified above, keep all other people, props, scene content, camera movements, cuts, and event order from @Video 1 unchanged.
+[heading5] ##### Example
+[code] ```@Video 1 is the sole editing master. It defines the people, actions, composition, camera treatment, and event order.
+@Image 1 provides only the spatial layout, depth of field, ambient color, and lighting direction of a daylit glass greenhouse. Do not use the people in the image.
+
+Replace only the light gray background outside the person's silhouette in @Video 1 with the daylit glass greenhouse from @Image 1.
+Keep the person's identity, facial features, hairstyle, clothing, expression, position, size, and arm-raising motion from @Video 1.
+Except for the object or area explicitly modified above, keep all other people, props, scene content, camera movements, cuts, and event order from @Video 1 unchanged.
+[heading4] #### Audio Editing
+[text] Dialogue, language, voice, background music, and sound effects can be edited separately. State the speaker or sound category, the intended change, and which other sounds must remain unchanged.
+[code] ```Edit @Video 1. Remove only the original background music. Keep the character dialogue, lip sync, ambience, and action sound effects; preserve the visuals, camera treatment, and editing rhythm from @Video 1.
+
+Edit @Video 1. Change <Presenter>'s spoken language to natural American English while preserving the dialogue content and speaking times. Keep all other character voices, background music, ambience, and visuals from @Video 1.
+[heading3] ### Video Extension: Align the Boundary Frame Before Describing New Content
+[text] Video extension creates content beyond the boundary of a source video. For a forward extension after the original video, the extension's first frame should continue from the source video's last frame. For a backward extension before the original video, the extension's last frame should connect to the source video's first frame. In addition to the boundary frame, inspect whether the characters, props, background, and events in the extended segment are correct.
+[heading4] #### Forward Extension (After the Original Video)
+[text] First describe the continuous state of the source video's last frame, then describe what happens afterward.
+[grid] 
+[heading5] ##### Basic Template
+[code] ```@Video 1 is the source video to extend forward.
+
+Extend @Video 1 forward. The first frame of the extended segment directly continues from the last frame of @Video 1. Maintain continuity in <subject pose and orientation>, <prop position>, <background and spatial relationships>, <camera position and composition>, <lighting>, and <motion direction>.
+
+Then, <describe the new action, event, camera treatment, or audio to add>.
+
+Throughout the extension, maintain continuity in <character identity and clothing>, <key props>, <background layout>, and <axis of action>.
+Keep each subject as the same continuous instance throughout: do not duplicate or split it, and keep the person's appearance or the object's number of parts stable.
+[heading5] ##### Example
+[code] ```@Video 1 is the source video to extend forward.
+
+Extend @Video 1 forward. The first frame of the extended segment directly continues from the last frame of @Video 1. Maintain the same locked-off medium shot, the orange paper airplane's position and orientation, the classroom-window background, the afternoon lighting, and its movement toward the right side of the frame.
+
+Then, the orange paper airplane continues gliding toward the right and exits the frame while the white curtain beside the window sways slightly. Keep the camera and classroom background in the state established by the source video's last frame.
+[heading5] ##### With Additional Reference Materials
+[text] Define the role of every additional material first, then state that the source video controls the extension boundary. New materials may supplement characters, props, or audio, but they must not override the source video's last-frame control over the extension's opening image.
+[grid] 
+[text] Template
+[code] ```@Image 1 defines <Character A>'s facial features.
+@Image 2 defines <Character A>'s clothing.
+@Image 3 defines <key prop>'s structure and material.
+@Video 1 is the source video to extend forward.
+
+Extend @Video 1 forward. The first frame of the extended segment directly continues from the last frame of @Video 1. Maintain continuity in <boundary-frame state>.
+
+Then, <Character A uses the key prop to complete a new action or event>.
+
+Throughout the extension, maintain continuity in <character identity and clothing>, <key prop>, <background layout>, and <axis of action>.
+Keep each subject as the same continuous instance throughout: do not duplicate or split it, and keep the person's appearance or the object's number of parts stable.
+[text] Example
+[code] ```@Image 1 defines <Gardener>'s facial features.
+@Image 2 defines <Gardener>'s light green work apron.
+@Image 3 defines <Wicker Flower Basket>'s structure and material.
+@Video 1 is the source video to extend forward.
+
+Extend @Video 1 forward. The first frame of the extended segment directly continues from the last frame of @Video 1. Maintain the greenhouse workbench, <Gardener>'s position, and <Wicker Flower Basket>'s position.
+
+Then, <Gardener> lifts <Wicker Flower Basket> with both hands and places it on the middle shelf of the wooden rack behind them.
+
+Throughout the extension, maintain continuity in <Gardener>'s face, apron, greenhouse layout, and camera direction.
+[heading4] #### Backward Extension (Before the Original Video)
+[text] First describe what happens before the source video begins, then define the source video's first frame as the explicit end state of the extended segment. Writing only "then connect to the source video" may introduce later characters or effects too early, or cause the image to change again after reaching the target state.
+[grid] 
+[heading5] ##### Basic Template
