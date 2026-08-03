@@ -1,5 +1,73 @@
 # ai-film-studio — reference teardown + the free local film pipeline
 
+## ⭐ CHAPTER ONE — the Seedance shot package (2026-08-03)
+
+**LIVE: https://oliveroliver10816.github.io/ai-film-studio/chapter-one/** (noindex)
+`chapter-one/index.html` + `chapter-one/shots.js`. **12 shots × 10.0 s = 120 s, 13 spoken lines,
+2 characters.** *THE ARRANGEMENT — Chapter One: "The Signature"* is the full scene the 60-second
+trailer's four lines were cut from, same locked cast, one room, one night.
+
+**Bob's decisions that set this up (2026-08-02/03) — do not re-litigate:**
+- 🛑 **NEVER suggest fal.ai free credits again.** He signed up himself; **there are none.** The
+  July `seedance-batch` note claiming otherwise is WRONG. See memory [[fal-ai-has-no-free-credits]].
+- **Route = Dola** (serves **Seedance 2.0 fast**, watermarked, 10 s clips). **His VA creates several
+  accounts**, and **we build a pooled driver like `veo-flow-multi`** to drive them.
+- 🛑 **NO discussion of buying credits / the paid API / any spend** until the capability test returns
+  a result. Test first, then decide.
+- ⚠ The watermark-removal method from the tutorial and the bulk-account-farming tools are **both
+  declined** and stay declined.
+
+**⭐ The prompt grammar came from ByteDance's own doc**, not from guesswork:
+*Dreamina Seedance 2.5 Prompt Guide*, `bytedance.larkoffice.com/docx/A88jd0B47oAd8zxWp5ycZFMfnxh`.
+It is **login-gated** — a plain fetch 302s to `accounts.larkoffice.com`; it opens with a **guest
+cookie jar** (`curl -c/-b`, hit the doc URL once with `?from=from_copylink`, then again). The doc is
+server-rendered into `window.DATA.clientVars` as a **Lark `block_map`** — walk `children` for prose
+and `cell_set[rowId+colId].block_id` for tables. **Archived at `docs/seedance-prompt-guide.txt`
+(+ `-tables.txt`).** ⚠ SSR gave 239 blocks and the tail (backward video-extension) is cut off.
+- **Formula:** Subject + Action → Scene → Visual Style → Camera → Audio.
+- ⭐ **Syntax: music `( )` · SFX `< >` · dialogue `{ }` · subtitles `【 】`.**
+- ⭐ **Dialogue control = language + regional variety/accent + delivery style + speaker + `{line}`.**
+- ⭐ **`0-3 seconds: … 3-7 seconds: …` with an explicit `End state:` per range** is the lever that
+  places a line inside a 10 s clip. Ranges must be consecutive and non-overlapping.
+- **References must be mapped one-by-one** (`@Image 1 defines X's face only. Do not use its
+  background.`) — never "@Images 1-4 define four characters respectively".
+- ⚠ **The guide uses `< >` for BOTH sound effects AND character placeholders.** Our prompts write
+  character names in plain capitals and reserve `< >` for SFX only. Do not mix the two.
+
+**Build rules encoded in the package (each one is a known tell):** no readable text in any frame
+(4 shots involve a contract — the folder stays shut, pages sit at 40° to the lens, and the one fact
+the audience needs is **read aloud** in S09); no gesturing, hands on the table or at sides; **11 of
+12 shots locked off**, one slow push (S09), one handheld drift (S11); the identity/camera/text LOCK
+block restated in **all twelve** prompts because the model has no memory between clips; compose for
+2.39:1 and crop in ffmpeg rather than asking for bars.
+
+⚠ **The mole is REMOVED from Elena's spec** (it drifted between Flow generations). Adrian's eyebrow
+scar stays — it held 3 of 4 and it is how you know the right man turned up.
+⚠ **Audio trade, stated on the page:** music is written into all 12 prompts as Bob asked, but
+generated score is baked into the same track as the dialogue, so 12 independently-scored clips will
+not match and cannot be re-scored without losing the dialogue. Fallback is **one deleted `( )` line
+per prompt** → clips return dialogue + ambience + SFX only, and one continuous bed goes under in the
+edit.
+⚠ **Dialogue, music and SFX are declared ONCE per shot** in `lines`/`music`/`sfx` and the Audio block
+is **assembled by `AUDIO(this)`**. The first draft hand-wrote them into the prompt bodies and the
+gate caught **20 divergences** between what the page displayed and what the prompt actually said.
+Never hand-write an audio line into a prompt body again.
+
+**QA gate, run on the LIVE URL:** 12 cards · 24 copy buttons · 24 prompt blocks · 12 strip segments ·
+**0 console errors** · no horizontal overflow at 1440 or 390 · **47 contrast combos, 0 WCAG failures**
+(alpha composited against the first opaque ancestor) · clipboard read back and asserted to contain the
+real S11 video prompt (2,939 chars) · control-character gate clean.
+
+**Generate in this order:** **S11 first** (two speakers, two lines, one beat, one take — if it fails
+the ending needs restaging), then **S04 and S10 as a pair** (identical frames 30 s apart = the face
+test). Those three answer four of the five test questions before an account's quota is spent.
+
+**NOT DONE YET:** the pooled Dola driver. It needs **one working account** first — the endpoints have
+to be observed before anything can be written against them. Nothing generated, no account created,
+$0 spent.
+
+---
+
 **Status (2026-08-01): ⭐ A COMPLETE 60-SECOND FILM EXISTS, generated end to end on the Blackwell.**
 ₹0 spent. Every model Apache-2.0 or MIT.
 
