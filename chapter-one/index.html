@@ -251,9 +251,41 @@ footer{margin-top:80px;border-top:1px solid var(--line);padding:34px 0 70px;
   <div class="callout"><b>The mole is gone.</b> Elena's spec used to carry a mole below the right eye. It drifted between generations — below the eye in one view, beside the mouth in another — so it has been removed from the description on this page. A mark that moves between shots is exactly what an audience notices without being able to say why. <b>Adrian's eyebrow scar stays</b>: it held in three generations out of four and it is the anchor that tells you the right man turned up.</div>
 </section>
 
+<section id="format">
+  <h2>Plain text or JSON</h2>
+  <p class="sub">Every shot ships in both · we settle it by measuring, not by believing</p>
+  <p class="lede">A side-by-side doing the rounds ran the <em>same</em> scene through the <em>same</em> model twice — once as a paragraph, once as JSON with labelled fields — and reports that the paragraph version dropped a gloved hand out of the scene entirely while the JSON version kept it. The fix it proposes is to give small elements their own field instead of burying them mid-sentence.</p>
+
+  <div class="callout"><b>Watched it frame by frame, and the demo does not clearly show what it claims.</b> Both halves have a hand early on and both lose it later. So treat the <em>claim</em> as unproven — but the <em>technique</em> is still right, and it is right for a reason that has nothing to do with that clip: a labelled field cannot be skimmed past. It is the same instinct as ByteDance's own guide, which drops natural language the moment things get complicated and switches to <code>[Characters]</code>, <code>[Props]</code>, <code>[Scenes]</code>, <code>[Stage 1]</code> blocks. JSON is that idea taken all the way.</div>
+
+  <div class="panel">
+    <h3>What that post carries — and what it leaves out</h3>
+    <div class="tscroll"><table>
+      <thead><tr><th>Field</th><th>In the post</th><th>Why it is in ours</th></tr></thead>
+      <tbody>
+        <tr><td><code>scene</code></td><td>yes</td><td>split into location, time, weather, set, and the set's state at the first frame</td></tr>
+        <tr><td><code>subject</code></td><td>yes</td><td>full identity description plus wardrobe, per character, per shot</td></tr>
+        <tr><td><code>action</code></td><td>yes</td><td>⭐ ours is <b>time-sliced</b> with an explicit <b>end state</b> — ByteDance's own lever, absent from the post</td></tr>
+        <tr><td><code>camera</code></td><td>yes</td><td>split into shot size, lens, aperture, height, angle, movement, focus point, depth of field, cuts</td></tr>
+        <tr><td><code>lighting</code></td><td>yes</td><td>the film's scheme plus a per-shot note, with the ratio and the fill stated</td></tr>
+        <tr><td><code>object_interaction</code></td><td>yes</td><td>⭐ the post's real idea. Ours adds <b>physics</b> and a <b>must_persist</b> flag per object</td></tr>
+        <tr><td><code>audio</code></td><td class="muted">missing</td><td>Seedance generates sound. Music, effects and ambience all have their own keys</td></tr>
+        <tr><td><code>dialogue</code></td><td class="muted">missing</td><td>speaker, on-screen or off, language, delivery, and the line itself</td></tr>
+        <tr><td><code>reference_images</code></td><td class="muted">missing</td><td>each slot's role <em>and</em> what must NOT be taken from it</td></tr>
+        <tr><td><code>continuity_lock</code></td><td class="muted">missing</td><td>identity, wardrobe, fixed marks, location and the axis of action — across all twelve</td></tr>
+        <tr><td><code>negative</code></td><td class="muted">missing</td><td>nine exclusions, led by no readable text and no gesturing</td></tr>
+        <tr><td><code>grade</code></td><td class="muted">missing</td><td>stock, grain, halation and the two colours allowed to stay saturated</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="margin-bottom:0">Six fields in, twelve out. The ones it leaves out are the ones that broke our last run.</p>
+  </div>
+
+  <div class="callout brass"><b>The first thing to generate is not a shot — it is this A/B.</b> Take <b>S07, the signature</b>: a hand, a pen, a page, small-scale physics, framed at the edge of the lens. It is the exact failure mode the post describes, and it is the most fragile shot in the film. Run its <b>plain-text prompt</b> and its <b>JSON prompt</b> back to back, change nothing else, and look only at whether the hand and the nib survived. Two generations settles for our own pipeline what no one else's screenshot can.</div>
+</section>
+
 <section id="shots">
   <h2>The twelve shots</h2>
-  <p class="sub">Image prompt · video prompt · copy either</p>
+  <p class="sub">Image prompt · video prompt · JSON prompt · copy any</p>
   <div id="shotlist"></div>
 </section>
 
@@ -377,6 +409,11 @@ document.getElementById('shotlist').innerHTML = SHOTS.map((s, i) => {
         <button class="copy" data-t="v" data-i="${i}">Copy</button></div>
       <pre class="prompt" id="vp${i}">${esc(s.video())}</pre>
     </div>
+    <div class="pbox">
+      <div class="phead"><span class="pt"><b>JSON prompt</b> — same shot, structured · use for the A/B</span>
+        <button class="copy" data-t="j" data-i="${i}">Copy</button></div>
+      <pre class="prompt" id="jp${i}">${esc(JSON.stringify(buildJSON(s), null, 2))}</pre>
+    </div>
   </article>`;
 }).join('');
 
@@ -385,7 +422,9 @@ document.addEventListener('click', e => {
   const b = e.target.closest('button.copy');
   if (!b) return;
   const i = +b.dataset.i;
-  const txt = b.dataset.t === 'i' ? SHOTS[i].image() : SHOTS[i].video();
+  const txt = b.dataset.t === 'i' ? SHOTS[i].image()
+            : b.dataset.t === 'j' ? JSON.stringify(buildJSON(SHOTS[i]), null, 2)
+            : SHOTS[i].video();
   const done = () => { const o = b.textContent; b.textContent = 'Copied'; b.classList.add('done');
     setTimeout(() => { b.textContent = o; b.classList.remove('done'); }, 1400); };
   if (navigator.clipboard && window.isSecureContext) {

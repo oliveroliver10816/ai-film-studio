@@ -764,3 +764,187 @@ const SYNTAX = [
   ["Dialogue", "{ }", "{You married me to take it back.}"],
   ["Subtitles", "【 】", "【Chapter One】 — not used in this film"]
 ];
+
+/* ==========================================================================
+   STRUCTURED (JSON) PROMPT LAYER
+   --------------------------------------------------------------------------
+   Added 2026-08-04 after the voyzlab A/B (x.com/voyzlab/status/2084332023544455378):
+   same model, same scene, plain-text vs JSON prompt — the claim is that a labelled
+   field structure stops the model dropping small scene elements (a hand in mud), and
+   that the fix is to give those elements their OWN field rather than burying them in
+   a paragraph.
+
+   We take the technique and extend it. That post carries five fields — scene, subject,
+   action, camera, lighting — plus object_interaction. It has NO audio, NO dialogue, NO
+   time structure, NO reference-image roles, NO continuity lock and NO exclusions, all of
+   which we already know matter. The schema below is the superset.
+
+   ⚠ Same discipline as the natural-language layer: this is BUILT from the existing
+   fields, never hand-copied. The dialogue, music and SFX come from lines/music/sfx, so
+   the two prompt formats cannot drift apart.
+   ========================================================================== */
+
+/* Per-shot structure that the prose fields do not already carry. */
+const STRUCT = {
+S01:{ set_state:"the room is dark and empty; the table runs away into darkness on the right and is barely lit; rain runs continuously down the outside of the glass",
+  cam:{shot_size:"wide",lens:"40mm anamorphic",aperture:"T2.8",height:"chest height",angle:"level, no tilt",movement:"none — fully locked off",focus:"the reflected face in the plane of the glass",dof:"city forty floors below thrown to soft round bokeh",cuts:"none"},
+  light_note:"her face is lit almost entirely by the cold blue spill off the glass; the warm pendants are far behind her and read only as two small brass blooms in the deep background",
+  objects:[{object:"rain on the glass wall",interaction:"runs down the outside of the pane in continuous vertical streaks for the whole ten seconds",physics:"gravity-driven rivulets that merge and break; refraction distorts the city lights behind them",must_persist:true},
+           {object:"her reflection in the glass",interaction:"holds steady and sharp in the pane; the eyes move once",physics:"a true mirror reflection, correct parallax against the glass surface, not a second person",must_persist:true}] },
+
+S02:{ set_state:"the long black table is completely bare — no plates, no glasses, no place settings, no paper; fourteen dark green leather chairs; the man is seated at the far head",
+  cam:{shot_size:"wide",lens:"40mm anamorphic",aperture:"T2.8",height:"table height, low",angle:"level, looking down the long axis of the table",movement:"none — fully locked off",focus:"deep focus held on the man at the far end",dof:"the near foreground silhouette falls slightly soft",cuts:"none"},
+  light_note:"the three pendants light the man and the centre of the table; the near foreground where the woman stands is almost unlit and reads as a dark mass",
+  objects:[{object:"her heels on the marble floor",interaction:"she walks away from camera down the length of the table at an even, unhurried pace",physics:"weight transfers heel to toe; the sound is evenly spaced and recedes with her",must_persist:true},
+           {object:"the man's hands",interaction:"both rest flat on the table surface and stay there for the whole clip",physics:"stationary contact with the lacquer, no drumming, no gesture",must_persist:true}] },
+
+S03:{ set_state:"only the table surface, the closed folder, the pen and the three reflected pendant streaks are in frame; the room behind falls to black",
+  cam:{shot_size:"insert / macro",lens:"100mm anamorphic macro",aperture:"T2.8",height:"above the table",angle:"high angle looking down at about sixty degrees",movement:"none — fully locked off",focus:"the brass pen",dof:"the far end of the folder falls soft",cuts:"none"},
+  light_note:"the three pendants sit directly above the frame, so the folder and hands are hard top-lit with deep shadow underneath and the lamps reflect as three long streaks in the lacquer",
+  objects:[{object:"black leather document folder",interaction:"pushed by the man's hands from the right of frame to the centre, then released; it stays CLOSED for the entire clip",physics:"leather sliding on polished lacquer — slight initial resistance, then a smooth glide that decelerates and stops; the folder does not tip, open or bounce",must_persist:true},
+           {object:"brass fountain pen",interaction:"lifted a few centimetres off the folder by one hand and set back down squarely on top of it",physics:"rigid metal object, one small contact click, it does not roll after being set down",must_persist:true},
+           {object:"the man's hands",interaction:"enter from the right of frame, push, place the pen, then withdraw out of the right of frame",physics:"five fingers per hand, correct proportion, a plain gold band on the left hand, shirt cuff and navy sleeve visible at the wrist; no face, head or shoulders ever enter frame",must_persist:true}] },
+
+S04:{ set_state:"almost nothing of the room is legible behind her — one small brass pendant far back on the left as a soft warm bloom, and a faint cold blue vertical edge of rain-glass on the right",
+  cam:{shot_size:"close-up, head and shoulders",lens:"75mm anamorphic",aperture:"T2.0",height:"exact eye level",angle:"square to the subject",movement:"none — fully locked off",focus:"critically on the near eye",dof:"background completely soft",cuts:"none"},
+  light_note:"the pendant directly overhead is the key, so the brow throws shadow into the eye sockets, there is shadow under the nose and jaw, and there is no fill at all under the chin",
+  objects:[{object:"her eyes",interaction:"directed slightly off-camera left for the whole shot, one slow blink after the line lands, then back to level",physics:"the eyes move independently of the head; the head itself never turns",must_persist:true}] },
+
+S05:{ set_state:"almost nothing of the room is legible behind him — one small brass pendant far back on the right as a soft warm bloom, near-total blackness elsewhere",
+  cam:{shot_size:"close-up, head and shoulders",lens:"75mm anamorphic",aperture:"T2.0",height:"exact eye level, matched to S04",angle:"square to the subject, reverse of S04",movement:"none — fully locked off",focus:"critically on the near eye",dof:"background completely soft",cuts:"none"},
+  light_note:"the pendant directly overhead is the key, so the heavy brow ridge throws deep shadow into the eye sockets and the shadow under the jaw is solid black with no fill",
+  objects:[{object:"the pale scar through the outer third of his right eyebrow",interaction:"remains visible and unchanged for the entire clip",physics:"a fixed skin feature — it must not migrate, fade or duplicate",must_persist:true},
+           {object:"his chair",interaction:"he leans back into it a few centimetres at the end of the shot",physics:"leather compresses and creaks once; the chair itself does not slide",must_persist:false}] },
+
+S06:{ set_state:"the rain-glass wall runs behind both of them across the back of frame; an open black leather folder lies on the table between them, angled steeply away from the lens",
+  cam:{shot_size:"two-shot, near-profile",lens:"40mm anamorphic",aperture:"T2.0",height:"table height",angle:"side-on across the table, level",movement:"none — fully locked off, no rack focus",focus:"critically on the woman's near eye",dof:"the man falls clearly soft",cuts:"none"},
+  light_note:"the pendants sit between the two of them so both are rimmed and top-lit, with the cold blue rain-glass behind separating them from the background",
+  objects:[{object:"the pages of the folder",interaction:"she turns exactly three pages, one at a time, unhurried, without ever looking down at them",physics:"heavy paper — each page lifts, bows under its own weight and settles flat; the pages stay angled away from the lens and never become readable",must_persist:true},
+           {object:"her eyes",interaction:"stay on the man across the table the entire time and never drop to the page",physics:"the eyeline is held even while the hands work below frame centre",must_persist:true}] },
+
+S07:{ set_state:"only the black lacquer, one sheet of heavy cream paper at about forty degrees to the lens, and the brass pen are in frame; everything beyond falls to black",
+  cam:{shot_size:"extreme close macro insert",lens:"100mm anamorphic macro",aperture:"T2.8",height:"just above the table",angle:"low onto the page",movement:"none — fully locked off, no rack focus",focus:"critically on the nib alone",dof:"extremely shallow — the paper is out of focus within two centimetres of the nib in both directions",cuts:"none"},
+  light_note:"the pendant directly overhead makes a hard specular highlight run down the brass barrel of the pen, and the paper carries a deep raking shadow across its lower half",
+  objects:[{object:"brass fountain pen with a steel nib",interaction:"lifted slightly, settled onto the paper, drawn in ONE single slow continuous signing stroke, lifted at the end, then laid down flat beside the page",physics:"the nib stays in contact with the paper through the whole stroke and deflects very slightly under pressure; ink is wet and dark where it is laid and does not resolve into legible letters; the pen is rigid and does not bend or roll when set down",must_persist:true},
+           {object:"the woman's hand",interaction:"enters from the very bottom edge of frame holding the pen and never rises far enough to reveal the wrist or sleeve",physics:"only the first joints of two fingers and part of the thumb are in frame — correct human finger count and proportion, a plain narrow gold band visible, slow controlled motion, no tremor",must_persist:true},
+           {object:"the sheet of heavy cream paper",interaction:"stays flat on the lacquer and takes the pressure of the nib",physics:"heavy stock — it does not ripple, lift, slide or crease under the pen",must_persist:true}] },
+
+S08:{ set_state:"the man's shoulder and the back of his head fill the near left third as a dark out-of-focus mass; the woman stands small and sharp at the far end; one sheet of cream paper is on the lacquer",
+  cam:{shot_size:"medium, over the shoulder",lens:"40mm anamorphic",aperture:"T2.0",height:"just behind and above the man's shoulder",angle:"looking down the table past him",movement:"none — fully locked off, no rack focus",focus:"held on the distant woman",dof:"the entire foreground shoulder is heavily soft",cuts:"none"},
+  light_note:"the pendants light the woman and the table between them; the man's shoulder in the near foreground is an almost black silhouette with only a thin cold blue rim from the window on his left edge",
+  objects:[{object:"a single sheet of heavy cream paper",interaction:"pushed by the woman from the far end and allowed to slide the length of the table until it comes to rest in front of the man",physics:"paper on polished lacquer — it glides fast, decelerates smoothly and stops flat without fluttering, lifting or spinning; it stays blank and unreadable throughout",must_persist:true},
+           {object:"her hand",interaction:"extended flat on the table after the push, then lowered at the end of the shot",physics:"a single controlled push from the wrist, no snatching back",must_persist:true}] },
+
+S09:{ set_state:"the room falls to near black behind him with one small brass pendant bloom high on the left and a cold blue edge of rain-glass on the far right; he holds a single sheet of paper at the bottom of frame",
+  cam:{shot_size:"close-up, head and shoulders, slightly off centre right",lens:"75mm anamorphic",aperture:"T2.0",height:"eye level",angle:"square to the subject",movement:"locked for the first four seconds, then ONE very slow smooth continuous push in — no more than ten percent change in frame size overall; no pan, no tilt, no shake",focus:"critically on the near eye",dof:"the held paper falls soft in the near foreground",cuts:"none"},
+  light_note:"the pendant overhead keys him, and a faint cold bounce comes up off the pale paper into the underside of his jaw — the only fill anywhere in the film, and it should be barely perceptible",
+  objects:[{object:"the sheet of paper he is holding",interaction:"lifted slightly and read from, then held still as his eyes stop; it stays angled steeply away from the lens for the entire clip",physics:"a small tremor runs through the held sheet; no writing, printing, letters or numbers ever become visible on it",must_persist:true},
+           {object:"his eyes",interaction:"track left to right along one line, stop dead on a single point, then come off the page and go slightly out of focus past the camera",physics:"saccadic reading motion first, then a fixed stare — the change between the two is the whole point of the shot",must_persist:true}] },
+
+S10:{ set_state:"identical to S04 — one small brass pendant far back on the left as a soft warm bloom, a faint cold blue vertical edge of rain-glass on the right, everything else black",
+  cam:{shot_size:"close-up, head and shoulders",lens:"75mm anamorphic",aperture:"T2.0",height:"exact eye level, matched frame-for-frame to S04",angle:"square to the subject",movement:"none — fully locked off",focus:"critically on the near eye",dof:"background completely soft",cuts:"none"},
+  light_note:"identical to S04: pendant directly overhead as key, shadow into the eye sockets, shadow under the nose and jaw, no fill at all under the chin",
+  objects:[{object:"her eyes",interaction:"directed straight ahead and only slightly off-camera right; they do not move during the line and she does not blink after it",physics:"a held stare — the absence of movement is the performance",must_persist:true}] },
+
+S11:{ set_state:"both characters in frame across the table, he at the head in the act of standing, she at the far side; the rain-glass runs the full width behind them",
+  cam:{shot_size:"wide, two people",lens:"40mm anamorphic",aperture:"T2.8",height:"chest height",angle:"across the table, very slightly off-level",movement:"the ONLY handheld shot in the film — a small, slow, natural operator drift that follows him up as he stands; it must not shake, whip, snap or zoom",focus:"deep focus so both figures read",dof:"both sharp enough to read",cuts:"none"},
+  light_note:"he rises up through the hard pendant light so the top light rakes down his face; she stays outside the pendant pool, lit mainly by the cold blue window",
+  objects:[{object:"his chair",interaction:"pushed back hard across the marble as he stands",physics:"heavy leather and wood on stone — it scrapes, travels a short distance and stops; it does not topple",must_persist:true},
+           {object:"both characters' hands",interaction:"stay at their sides or resting on the table for the entire clip",physics:"no pointing, no raised palms, no gesticulation, no walking — the stillness is deliberate",must_persist:true}] },
+
+S12:{ set_state:"the table is completely bare — no folder, no pen, no paper anywhere on it; she walks towards camera, he stands alone at the far head",
+  cam:{shot_size:"wide",lens:"40mm anamorphic",aperture:"T2.0",height:"table height, low",angle:"level, the exact reverse of S02",movement:"none — fully locked off",focus:"held on the woman at mid distance",dof:"the standing man behind her is clearly soft",cuts:"none"},
+  light_note:"she passes directly under each of the three pendants in turn so the top light strikes her three times as she comes; behind her the room is dim and the man stands mostly outside the light",
+  objects:[{object:"the three pendant lamps",interaction:"she passes under each one in turn as she walks towards the lens",physics:"a hard top light that strikes her, falls off, and strikes again — three distinct pools, not a continuous wash",must_persist:true},
+           {object:"her heels on the marble floor",interaction:"approach the camera and then pass it as she exits frame left",physics:"the footsteps grow louder and closer, then pass the microphone position and fall away",must_persist:true}] }
+};
+
+/* Continuity that must hold across every shot in the film. */
+const FILM_LOCK = {
+  characters_in_film: 2,
+  identity: "ELENA and ADRIAN are the same two people in every shot — same bone structure, same hair, same age. Never substitute, duplicate or re-roll a face.",
+  wardrobe: "Each character wears one outfit for the entire film and it never changes.",
+  fixed_marks: "ADRIAN carries a faint pale vertical scar across the outer third of his RIGHT eyebrow in every shot he appears in. ELENA has no mole and no beauty mark anywhere.",
+  location: "One room, one continuous night. The set never changes.",
+  axis: "The table's long axis is the axis of action. ELENA is always at the far end from the camera's opening position and ADRIAN is always at the head."
+};
+
+const NEGATIVE_LIST = [
+  "no on-screen text, captions, subtitles or watermark",
+  "no readable writing, letters or numbers on any surface, page or object",
+  "no extra people and no crowd",
+  "no plants, no artwork, no decoration",
+  "no visible modern electronics, phone or laptop",
+  "no lens flare",
+  "no black letterbox bars rendered into the frame",
+  "no gesturing, pointing or raised palms",
+  "no camera shake, whip pan, snap zoom or cut"
+];
+
+/* Build the structured prompt from the SAME source fields as the prose prompt. */
+function buildJSON(s){
+  const st = STRUCT[s.id];
+  const who = [];
+  const inShot = (s.image() || "");
+  if (/THE WOMAN|the woman's hand|A woman/.test(inShot)) who.push({name:"ELENA", description:ELENA, wardrobe:ELENA_FIT});
+  if (/THE MAN|THE HANDS: the hands of|A man/.test(inShot)) who.push({name:"ADRIAN", description:ADRIAN, wardrobe:ADRIAN_FIT});
+
+  const refs = s.refs.length
+    ? [{slot:"@Image 1", role:"first_frame",
+        defines:"framing, set, wardrobe, lighting and colour grade — continue directly from it",
+        do_not_use:"nothing; this image is the shot"}].concat(
+        s.refs.length === 1
+          ? [{slot:"@Image 2", role:"identity_reference", file:s.refs[0],
+              defines:"facial features, bone structure, hairline and skin only",
+              do_not_use:"its background, clothing, lighting, pose or composition"}]
+          : [])
+    : [{slot:"@Image 1", role:"first_frame",
+        defines:"framing, table, objects, hands, lighting and colour grade — continue directly from it",
+        do_not_use:"nothing; this image is the shot"}];
+
+  /* Action is parsed out of the video prompt's own time ranges, not the short display
+     beats — those ranges are the authoritative, fully-detailed version and they already
+     carry the End state lines. Parsing them keeps one source of truth for the timeline. */
+  const action = (s.video().match(/^\d+-\d+ seconds:.*$/gm) || []).map(row => {
+    const head = row.match(/^(\d+)-(\d+) seconds:\s*/);
+    const body = row.slice(head[0].length).trim();
+    const m = body.match(/End state:\s*(.+)$/i);
+    const out = { time: `${head[1]}-${head[2]}s`, event: m ? body.slice(0, m.index).trim() : body };
+    if (m) out.end_state = m[1].trim();
+    return out;
+  });
+
+  return {
+    shot_id: s.id,
+    shot_title: s.title,
+    duration_seconds: 10,
+    aspect_ratio: "16:9",
+    reference_images: refs,
+    scene: {
+      location: "a private dining room on the fortieth floor of an office tower",
+      time_of_day: "night",
+      weather: "heavy rain on the window wall outside",
+      set: SET,
+      set_state_at_first_frame: st.set_state
+    },
+    subject: who,
+    action: action,
+    object_interaction: st.objects,
+    camera: st.cam,
+    lighting: Object.assign({ scheme: LIGHT }, { this_shot: st.light_note }),
+    grade: GRADE,
+    audio: {
+      music: s.music,
+      sound_effects: s.sfx,
+      dialogue_language: "British English",
+      dialogue: s.lines.map(l => ({
+        speaker: l.who.replace(/\s*\(off\)/,''),
+        on_screen: !/\(off\)/.test(l.who),
+        delivery: l.say,
+        line: l.text
+      }))
+    },
+    continuity_lock: FILM_LOCK,
+    negative: NEGATIVE_LIST.slice()
+  };
+}
