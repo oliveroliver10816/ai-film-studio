@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Dola accounts — setup sheet</title>
+<meta name="description" content="Step-by-step sheet for creating and recording Dola accounts, and the rules that must be followed while doing it.">
+<link rel="icon" href="../chapter-one/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0B0C;--panel:#121315;--panel2:#0E0F11;--line:#26282B;
+  --ink:#EDEAE6;--dim:#9A948C;--ox:#D4566A;--brass:#D4A537;--cold:#6E9BC4;
+  --disp:'Big Shoulders Display',Impact,sans-serif;
+  --body:'Instrument Sans',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);
+  font-size:16.5px;line-height:1.65;overflow-x:hidden;
+  background-image:radial-gradient(120% 60% at 50% -10%,#16181B 0%,#0A0B0C 62%);
+  background-attachment:fixed}
+.wrap{max-width:920px;margin:0 auto;padding:0 24px}
+header{padding:84px 0 44px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--brass);margin:0 0 20px}
+h1{font-family:var(--disp);font-weight:800;font-size:clamp(46px,10vw,104px);line-height:.88;
+  margin:0;text-transform:uppercase;letter-spacing:-.015em}
+h1 em{display:block;font-style:normal;color:var(--ox)}
+.intro{font-size:18px;max-width:60ch;margin:26px 0 0}
+section{padding:58px 0 0}
+h2{font-family:var(--disp);font-weight:700;font-size:clamp(28px,5vw,46px);line-height:.95;
+  margin:0 0 6px;text-transform:uppercase}
+.sub{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--ox);margin:0 0 22px}
+p{max-width:70ch}
+.muted{color:var(--dim)}
+ol.steps{counter-reset:s;list-style:none;margin:0;padding:0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 18px 48px;max-width:70ch}
+ol.steps>li:before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:2px;
+  font-family:var(--mono);font-size:12px;color:var(--brass);letter-spacing:.06em}
+ul.plain{margin:0;padding-left:20px}
+ul.plain li{margin:0 0 9px;max-width:70ch}
+.panel{background:var(--panel);border:1px solid var(--line);padding:24px 26px;margin:20px 0}
+.panel h3{font-family:var(--disp);font-weight:700;font-size:23px;margin:0 0 10px;text-transform:uppercase}
+.stop{border-left:3px solid var(--ox);background:var(--panel);padding:18px 22px;margin:20px 0}
+.stop b{color:var(--ox)}
+.ok{border-left:3px solid var(--brass);background:var(--panel);padding:18px 22px;margin:20px 0}
+.ok b{color:var(--brass)}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14.5px}
+th,td{text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+td.f{font-family:var(--mono);color:var(--brass);white-space:nowrap}
+.tscroll{overflow-x:auto}
+code{font-family:var(--mono);font-size:14.5px;color:var(--brass);word-break:break-word}
+.copyrow{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:14px 0}
+button.copy{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+  background:transparent;color:var(--brass);border:1px solid var(--brass);padding:9px 15px;
+  cursor:pointer;transition:background .15s,color .15s}
+button.copy:hover,button.copy.done{background:var(--brass);color:#0A0B0C}
+pre{font-family:var(--mono);font-size:13px;line-height:1.7;background:var(--panel2);
+  border:1px solid var(--line);padding:18px 20px;white-space:pre-wrap;word-break:break-word;
+  overflow-x:auto;color:var(--ink);margin:0}
+footer{margin-top:70px;border-top:1px solid var(--line);padding:30px 0 64px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dim)}
+@media(max-width:640px){header{padding:54px 0 34px}.panel,.stop,.ok{padding:16px 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="kicker">ai-film-studio · account setup · 4 Aug 2026</p>
+  <h1>Dola<em>accounts</em></h1>
+  <p class="intro">You are creating a few separate Dola accounts and writing down some details about each one. Nothing technical. Follow the steps in order and copy the answers into the table at the end.</p>
+</header>
+
+<section>
+  <h2>Before you start</h2>
+  <p class="sub">Have these ready</p>
+  <ul class="plain">
+    <li>A laptop or desktop computer with <b>Google Chrome</b>.</li>
+    <li>Your normal home internet. <b>Do not use a VPN.</b></li>
+    <li>A phone that can receive text messages, in case Google asks.</li>
+    <li>About <b>20 minutes per account</b>. Do not rush them all in one go.</li>
+  </ul>
+  <div class="ok"><b>Start with 3 accounts only.</b> Make three, send them to Bob, and wait. We need to check how much free usage one account actually gets before making more. Making ten now could waste them.</div>
+</section>
+
+<section>
+  <h2>The rules</h2>
+  <p class="sub">Read once · they matter more than the steps</p>
+  <ol class="steps">
+    <li><b>Make a brand-new Gmail for each account.</b> Never use an existing email, and never use any email that belongs to Bob or to any of his work.</li>
+    <li><b>Every account gets its own new Gmail.</b> Three accounts means three new Gmails. Never sign into Dola twice with the same Gmail.</li>
+    <li><b>Do not put the same recovery phone number or recovery email on more than one Gmail.</b> This is the most important rule on the page. If two accounts share a recovery number, Google treats them as the same person and both can be closed.</li>
+    <li><b>One Chrome profile per account.</b> In Chrome, click your picture at the top right, then <b>Add</b>, and make a new profile before each new account. Do not use Incognito.</li>
+    <li><b>Space them out.</b> Make one account, then wait at least <b>two hours</b> before making the next one. Do not make all three in the same hour.</li>
+    <li><b>Never close or delete a Chrome profile once it is made.</b> The saved login inside it is the part we actually need.</li>
+    <li><b>Do not type any password into this page or into any message.</b> Write the passwords in a private note and send that to Bob directly.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>Steps, for one account</h2>
+  <p class="sub">Repeat the whole list three times</p>
+  <ol class="steps">
+    <li>Open Chrome. Click your picture at the top right → <b>Add</b> → <b>Continue without an account</b>. Name the profile <code>dola1</code> (then <code>dola2</code>, <code>dola3</code>).</li>
+    <li>In that new profile, go to <code>accounts.google.com/signup</code> and make a <b>brand-new Gmail</b>. Give it a different recovery email or phone from the other accounts.</li>
+    <li>Still in the same Chrome profile, go to <code>https://www.dola.com/chat/</code>.</li>
+    <li>Sign in and choose <b>Continue with Google</b>. Pick the new Gmail you just made.</li>
+    <li>Accept whatever it asks and land on the chat screen.</li>
+    <li>Look for the <b>video</b> option and check whether it says <b>Seedance 2.0</b>. Write down yes or no — if it is not there, say so, that account is still useful information.</li>
+    <li>Send one test message to the chat: type <code>hello</code> and press enter. This proves the account works.</li>
+    <li>Now generate <b>one</b> short test video so we can see the free limit. Use the prompt in the box below, exactly as written.</li>
+    <li>Write down what happened: did it generate, how long it took, and whether the screen showed any message about a limit, credits or an upgrade.</li>
+    <li><b>Leave the Chrome profile signed in and do not close it down.</b> Move on to the next account only after two hours.</li>
+  </ol>
+
+  <div class="panel">
+    <h3>Test prompt — use exactly this</h3>
+    <div class="copyrow"><button class="copy" data-target="tp">Copy the test prompt</button>
+      <span class="muted" style="font-size:13.5px">Paste it into the video option and generate once.</span></div>
+    <pre id="tp">A single drop of water falls into a still black pool and the ripples spread slowly outwards.
+The visuals feature soft top light, deep shadow and a very dark background.
+Use one locked-off close-up shot. The camera does not move at any point.
+Audio: (no music) &lt;a single water drop and a soft ripple&gt;</pre>
+  </div>
+
+  <div class="stop"><b>If Google asks for a phone number</b> and you have already used your number on an earlier account, stop and tell Bob. Do not reuse the number. That one rule protects every account on the list.</div>
+</section>
+
+<section>
+  <h2>What to write down</h2>
+  <p class="sub">One row per account · send this back to Bob</p>
+  <div class="tscroll"><table>
+    <thead><tr><th>Write down</th><th>Example of what to put</th></tr></thead>
+    <tbody>
+      <tr><td class="f">Chrome profile name</td><td>dola1</td></tr>
+      <tr><td class="f">Gmail address</td><td>the new address you made</td></tr>
+      <tr><td class="f">Recovery email or phone used</td><td>which one you used — not the number itself, just which</td></tr>
+      <tr><td class="f">Date and time created</td><td>4 Aug, 3:20 pm</td></tr>
+      <tr><td class="f">Did Seedance 2.0 appear?</td><td>yes / no</td></tr>
+      <tr><td class="f">Did the test video generate?</td><td>yes / no</td></tr>
+      <tr><td class="f">How long did it take?</td><td>about 2 minutes</td></tr>
+      <tr><td class="f">Any message about limits or credits?</td><td>copy the exact words you saw, or write none</td></tr>
+      <tr><td class="f">Screenshot</td><td>one screenshot of the screen after the video finished</td></tr>
+    </tbody>
+  </table></div>
+  <p class="muted">Copy the exact wording of anything on screen. Do not summarise it and do not guess what it means — just copy what it says.</p>
+</section>
+
+<section>
+  <h2>Do not do these</h2>
+  <p class="sub">Short list</p>
+  <ul class="plain">
+    <li>Do not use a VPN or a proxy at any point.</li>
+    <li>Do not use the same recovery phone or recovery email twice.</li>
+    <li>Do not make all the accounts in one sitting.</li>
+    <li>Do not delete a Chrome profile, clear cookies, or sign out of Dola.</li>
+    <li>Do not pay for anything or start any free trial that asks for a card.</li>
+    <li>Do not use any Gmail that already exists, and none of Bob's.</li>
+  </ul>
+</section>
+
+<footer>ai-film-studio · dola-accounts · noindex · questions go to Bob, not into the app</footer>
+
+</div>
+<script>
+document.addEventListener('click', e => {
+  const b = e.target.closest('button.copy'); if(!b) return;
+  const txt = document.getElementById(b.dataset.target).textContent;
+  const done = () => { const o=b.textContent; b.textContent='Copied'; b.classList.add('done');
+    setTimeout(()=>{b.textContent=o;b.classList.remove('done');},1400); };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(txt).then(done).catch(()=>fb(txt,done));
+  } else fb(txt,done);
+});
+function fb(txt,done){
+  const ta=document.createElement('textarea');
+  ta.value=txt; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select();
+  try{document.execCommand('copy');done();}catch(err){}
+  document.body.removeChild(ta);
+}
+</script>
+</body>
+</html>
