@@ -34,6 +34,36 @@ and `cell_set[rowId+colId].block_id` for tables. **Archived at `docs/seedance-pr
 - ⚠ **The guide uses `< >` for BOTH sound effects AND character placeholders.** Our prompts write
   character names in plain capitals and reserve `< >` for SFX only. Do not mix the two.
 
+### ⭐ STRUCTURED (JSON) PROMPT LAYER — added 2026-08-04
+
+Trigger: Bob sent `x.com/voyzlab/status/2084332023544455378` — same model, same WW1-trench scene,
+plain-text vs JSON prompt, claiming the paragraph version **dropped a gloved hand out of the scene**
+while the JSON version kept it. Fix proposed: give small elements their **own field**
+(`object_interaction`).
+
+⚠ **Watched the clip frame by frame — the demo does NOT clearly show its own claim.** Both halves
+carry a hand early and both lose it later. **Treat the claim as unproven.** The *technique* is still
+right, for an independent reason: a labelled field cannot be skimmed past, and **ByteDance's own guide
+abandons natural language the moment things get complex**, switching to `[Characters]` / `[Props]` /
+`[Scenes]` / `[Stage 1]` blocks. JSON is that instinct taken all the way.
+
+**Our schema is a superset — the post has 6 fields, we ship 12.** It carries scene · subject · action ·
+camera · lighting · object_interaction. **It has NO audio, NO dialogue, NO time structure, NO
+reference-image roles, NO continuity lock, NO exclusions, NO grade** — i.e. it omits precisely the
+things that broke our earlier runs. Ours adds all of those, plus **`physics` and `must_persist` per
+object** and an explicit **`end_state`**.
+
+⚠ **Action rows are parsed from the video prompt's own `N-M seconds:` ranges**, and dialogue/music/SFX
+come from `lines`/`music`/`sfx` — so the prose prompt and the JSON prompt **cannot drift apart**. Same
+rule as before: never hand-author a second copy of anything. 37 action rows, 12 carrying `end_state`,
+avg 7,689 chars per JSON prompt.
+
+⭐ **FIRST GENERATION IS THE A/B, NOT A SHOT.** Run **S07 (THE SIGNATURE)** twice — plain-text prompt
+vs JSON prompt, nothing else changed — and judge only whether **the hand and the nib survived**. S07 is
+a hand + pen + paper + small-scale physics at the edge of frame: the exact failure mode the post
+describes and the most fragile shot in the film. Two generations settle it for our own pipeline
+instead of trusting a 618-follower account's screenshot.
+
 **Build rules encoded in the package (each one is a known tell):** no readable text in any frame
 (4 shots involve a contract — the folder stays shut, pages sit at 40° to the lens, and the one fact
 the audience needs is **read aloud** in S09); no gesturing, hands on the table or at sides; **11 of
