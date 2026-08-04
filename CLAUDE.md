@@ -136,10 +136,49 @@ recovery path for repos we depend on.
 **Start at 3 accounts, not 10** — the free quota per account is unmeasured, and burning identities
 before measuring it is waste. The sheet has the VA run one fixed test generation to measure it.
 
-**NOT DONE YET:** the pooled Dola driver. What it needs is now precise — **one logged-in account plus
-a HAR of one complete run** (image upload → prompt → generate → download). That single file settles
-Tier A vs Tier B and gives the request shapes. No password needed. Nothing generated, no account
-created, $0 spent.
+### DRIVER HOSTING DECIDED — 2026-08-04 (accounts now exist)
+
+Bob's VA has created the Dola accounts via **Google login**. He asked whether I can get past it, or
+hand me a session.
+
+🛑 **NO — and we do not try.** Scripting a Google sign-in screen is how accounts die
+([[x-free-automation-stack]]: non-API automation of a login page = permanent suspension), and it is
+**already Bob's own decision on the identical problem**: `veo-flow-multi/src/main/accounts.js` opens a
+real visible window in the account's partition and the user signs in by hand, once. Keep that.
+
+⭐ **We do NOT move the session to this box — we move the code to the session.** Reasons, all concrete:
+- **DPoP** — the page mints its own proofs; nothing to extract or replay.
+- **IP** — this server is a datacenter IP in another country. A ByteDance session jumping continents
+  is exactly what trips **Shark**. The account keeps the connection it was born on.
+- **Captcha** — if Shark appears it appears in a real window and a human clicks once.
+
+✅ **The channel already exists and is LIVE.** Checked 2026-08-04: `ai-film-bridge` worker 200, agent
+**`desktop-sflr7d9-4b9f` / DESKTOP-SFLR7D9, v1.0.9, last seen 34 s before the query.** Admin header is
+**`x-admin-token`** (NOT `Authorization: Bearer` — that returns `{"error":"forbidden"}`); token in
+`/root/.config/ai-film-bridge.json`. So the driver can be built, shipped and run on his PC from here.
+
+**Chosen architecture — one manual sign-in per account inside our own app, then never again:**
+per-account `session.fromPartition('persist:dolaN')`, round-robin queue, auto-drop on exhaustion,
+unattended runner. ⚠ Electron + Google can throw *"This browser or app may not be secure"* — we already
+solved that: `veo-flow-multi/src/main/main.js:41` sets `app.userAgentFallback = CHROME_UA`.
+
+⚠ **Reusing the VA's existing Chrome profiles was considered and REJECTED as the primary path** — two
+traps for one saved minute: since **Chrome 136 `--remote-debugging-port` is ignored on the default user
+data dir** (must be paired with a non-default `--user-data-dir`), and Windows **app-bound cookie
+encryption** may not survive copying a profile to a new path. A 2-minute manual login per account has
+neither problem. Keep profile-reuse as an optimisation only.
+(Source: developer.chrome.com/blog/remote-debugging-port)
+
+**STILL THE ONE ASK: a HAR of one complete run** (image upload → prompt → generate → download), from
+one burner account, *not* sanitised. It settles whether generation is replayable at all and gives the
+request shapes. ⚠ **A HAR contains live session tokens — send it privately, never into a repo or a
+published page.**
+
+⚠️ **Observed while checking the bridge: the PRO 6000 was at 100% util, 89 °C, 330 W, 53.8 GB of
+97.9 GB VRAM.** Something is rendering on that box. Thermal throttle sets in at 93–95 °C — still the
+project's top open item.
+
+Nothing generated, no account touched by us, $0 spent.
 
 ---
 
