@@ -62,9 +62,54 @@ real S11 video prompt (2,939 chars) · control-character gate clean.
 the ending needs restaging), then **S04 and S10 as a pair** (identical frames 30 s apart = the face
 test). Those three answer four of the five test questions before an account's quota is spent.
 
-**NOT DONE YET:** the pooled Dola driver. It needs **one working account** first — the endpoints have
-to be observed before anything can be written against them. Nothing generated, no account created,
-$0 spent.
+## ⭐ DOLA RECON — 2026-08-04, done from the public bundle, no account needed
+
+**VA setup sheet LIVE: https://oliveroliver10816.github.io/ai-film-studio/dola-accounts/** (noindex).
+Plain-English, no interpretation asked of the VA; she records fields and copies on-screen wording.
+Signup URL: `go.websitewizard.tv/yt/dola-seedance2` → **https://www.dola.com/chat/**.
+
+⭐⭐ **CORRECTION — DOLA IS BYTEDANCE'S OWN APP, NOT A RESELLER.** The 2026-08-02 note calling it a
+reseller is **WRONG**. Evidence, all from the served page + JS bundle (reachable from this box, 200):
+app served from **`sf-flow-web-cdn.ciciai.com/obj/ocean-flow-web-sg/dola_web/`** (Cici = ByteDance's
+international assistant), telemetry to **`mcs-sg.ciciai.com`** and **`mon-va.byteoversea.com`**, i18n
+from **`starling-oversea.byteoversea.com`**, assets from **`lf-flow-web-cdn.doubao.com`**, and a
+literal i18n key **`aiVideo_tag_seedance_2.0_pc": "Seedance 2.0"`**. ⇒ It is **first-party Seedance
+from the maker**, which raises the quality expectation, not lowers it.
+
+⚠️⚠️ **ARCHITECTURE: veo-flow-multi's Tier B (auth-harvest + direct API replay) probably does NOT
+port.** Two blockers found in the bundle:
+- **DPoP** — error paths `dpop_auth_headers_empty_after_retry` / `_error` / `_timeout` (RFC 9449).
+  Requests are proof-of-possession signed with a browser-held key, so **copying a cookie or bearer
+  token is not enough**; the key is typically a non-extractable CryptoKey.
+- **`MessageLimitSharkVerify`** — **Shark** is ByteDance's captcha/risk system, wired to the limit path.
+⇒ Plan for **Tier A: in-page automation inside one persisted, logged-in session per account**
+(`session.fromPartition('persist:dolaN')`, exactly veo-flow-multi's isolation model), where the page
+mints its own DPoP proofs. Parallelism still comes from N windows, which is what we want anyway.
+⚠ Confidence: the DPoP/Shark strings are strong evidence they exist in the auth/limit paths; **only a
+HAR of a real generation settles whether they gate the generation calls.** Do not assert more.
+
+**Generation is a CHAT TOOL CALL, not a REST endpoint.** Paths: `/chat/async/chunk_stream`,
+`/chat/completion`, `/chat/create-image`; API namespaces `/samantha/*` and `/alice/*`; auth via
+**ByteDance Passport** (`/passport/web/web_login_success`). Tool keys in the bundle:
+`video_generation`, `video_generation_prompt`, `image_generation`, `images_generation`,
+`creation_video_upload_file_tool`, `video_upload_file_tool`. ⇒ the driver must speak the streaming
+chat protocol and parse tool events. Also present: `web_id`/`device_id` fingerprints and an A/B
+service (`/samantha/user/ab/get`) — **so Seedance 2.0 may not appear in every account**; the VA sheet
+asks her to check per account.
+
+⚠️ **Passport is the same account system as TikTok and CapCut.** A multi-account ban lands at Passport
+level. Relevant because TikTok is still in the portfolio's forward plan (ViralBench). Standing rule
+from [[no-free-credit-farming]] holds: **never a Google account that touches Bob's Ads/GSC/personal**,
+and **do not reuse the persona Gmails that back our 17 GitHub accounts** — those Gmails are the
+recovery path for repos we depend on.
+
+**Start at 3 accounts, not 10** — the free quota per account is unmeasured, and burning identities
+before measuring it is waste. The sheet has the VA run one fixed test generation to measure it.
+
+**NOT DONE YET:** the pooled Dola driver. What it needs is now precise — **one logged-in account plus
+a HAR of one complete run** (image upload → prompt → generate → download). That single file settles
+Tier A vs Tier B and gives the request shapes. No password needed. Nothing generated, no account
+created, $0 spent.
 
 ---
 
